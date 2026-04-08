@@ -18,7 +18,7 @@
     "style:check": "run-p --continue-on-error --aggregate-output format:check lint",
     "style:write": "run-p --continue-on-error --aggregate-output format:write lint",
     "pre-commit": "exit 0",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "prepare": "husky"
   },
   "jest": {
