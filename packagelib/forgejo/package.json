@@ -1,6 +1,6 @@
 {
   "name": "@greem/forgejo-actions",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Actions forgejo lib",
   "keywords": [
     "github",
@@ -39,7 +39,7 @@
     "build": "tsc",
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
-    "tsc": "tsc"
+    "tsc": "tsc --declaration"
   },
   "bugs": {
     "url": "https://github.com/GreemDev/forgejo-script-action/issues"
@@ -50,6 +50,7 @@
     "undici": "^6.23.0"
   },
   "devDependencies": {
-    "proxy": "^2.1.1"
+    "proxy": "^2.1.1",
+    "tsup": "^7.1.0"
   }
 }

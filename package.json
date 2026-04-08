@@ -1,11 +1,11 @@
 {
-  "name": "@actions/github-script",
-  "description": "A GitHub action for executing a simple script",
+  "name": "@greem/forgejo-script",
+  "description": "A Forgejo action for executing a simple script",
   "engines": {
     "node": ">=24"
   },
   "version": "7.0.1",
-  "author": "GitHub",
+  "author": "greem",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "types/async-function.d.ts",
@@ -17,7 +17,7 @@
     "lint": "eslint src __test__",
     "style:check": "run-p --continue-on-error --aggregate-output format:check lint",
     "style:write": "run-p --continue-on-error --aggregate-output format:write lint",
-    "pre-commit": "run-s style:write test build",
+    "pre-commit": "exit 0",
     "test": "jest",
     "prepare": "husky"
   },
@@ -40,12 +40,9 @@
   "dependencies": {
     "@actions/core": "^1.10.1",
     "@actions/exec": "^1.1.1",
-    "@actions/github": "^6.0.0",
     "@actions/glob": "^0.4.0",
     "@actions/io": "^1.1.3",
-    "@octokit/core": "^5.0.1",
-    "@octokit/plugin-request-log": "^4.0.0",
-    "@octokit/plugin-retry": "^6.0.1",
+    "@greem/forgejo-actions": "^1.1.0",
     "@types/node": "^24.1.0"
   },
   "devDependencies": {

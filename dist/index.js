@@ -1729,259 +1729,6 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
-/***/ 4087:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Context = void 0;
-const fs_1 = __nccwpck_require__(7147);
-const os_1 = __nccwpck_require__(2037);
-class Context {
-    /**
-     * Hydrate the context from the environment
-     */
-    constructor() {
-        var _a, _b, _c;
-        this.payload = {};
-        if (process.env.GITHUB_EVENT_PATH) {
-            if ((0, fs_1.existsSync)(process.env.GITHUB_EVENT_PATH)) {
-                this.payload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, { encoding: 'utf8' }));
-            }
-            else {
-                const path = process.env.GITHUB_EVENT_PATH;
-                process.stdout.write(`GITHUB_EVENT_PATH ${path} does not exist${os_1.EOL}`);
-            }
-        }
-        this.eventName = process.env.GITHUB_EVENT_NAME;
-        this.sha = process.env.GITHUB_SHA;
-        this.ref = process.env.GITHUB_REF;
-        this.workflow = process.env.GITHUB_WORKFLOW;
-        this.action = process.env.GITHUB_ACTION;
-        this.actor = process.env.GITHUB_ACTOR;
-        this.job = process.env.GITHUB_JOB;
-        this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
-        this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
-        this.apiUrl = (_a = process.env.GITHUB_API_URL) !== null && _a !== void 0 ? _a : `https://api.github.com`;
-        this.serverUrl = (_b = process.env.GITHUB_SERVER_URL) !== null && _b !== void 0 ? _b : `https://github.com`;
-        this.graphqlUrl =
-            (_c = process.env.GITHUB_GRAPHQL_URL) !== null && _c !== void 0 ? _c : `https://api.github.com/graphql`;
-    }
-    get issue() {
-        const payload = this.payload;
-        return Object.assign(Object.assign({}, this.repo), { number: (payload.issue || payload.pull_request || payload).number });
-    }
-    get repo() {
-        if (process.env.GITHUB_REPOSITORY) {
-            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-            return { owner, repo };
-        }
-        if (this.payload.repository) {
-            return {
-                owner: this.payload.repository.owner.login,
-                repo: this.payload.repository.name
-            };
-        }
-        throw new Error("context.repo requires a GITHUB_REPOSITORY environment variable like 'owner/repo'");
-    }
-}
-exports.Context = Context;
-//# sourceMappingURL=context.js.map
-
-/***/ }),
-
-/***/ 5438:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOctokit = exports.context = void 0;
-const Context = __importStar(__nccwpck_require__(4087));
-const utils_1 = __nccwpck_require__(3030);
-exports.context = new Context.Context();
-/**
- * Returns a hydrated octokit ready to use for GitHub Actions
- *
- * @param     token    the repo PAT or GITHUB_TOKEN
- * @param     options  other options to set
- */
-function getOctokit(token, options, ...additionalPlugins) {
-    const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
-    return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
-}
-exports.getOctokit = getOctokit;
-//# sourceMappingURL=github.js.map
-
-/***/ }),
-
-/***/ 7914:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getApiBaseUrl = exports.getProxyFetch = exports.getProxyAgentDispatcher = exports.getProxyAgent = exports.getAuthString = void 0;
-const httpClient = __importStar(__nccwpck_require__(6255));
-const undici_1 = __nccwpck_require__(1773);
-function getAuthString(token, options) {
-    if (!token && !options.auth) {
-        throw new Error('Parameter token or opts.auth is required');
-    }
-    else if (token && options.auth) {
-        throw new Error('Parameters token and opts.auth may not both be specified');
-    }
-    return typeof options.auth === 'string' ? options.auth : `token ${token}`;
-}
-exports.getAuthString = getAuthString;
-function getProxyAgent(destinationUrl) {
-    const hc = new httpClient.HttpClient();
-    return hc.getAgent(destinationUrl);
-}
-exports.getProxyAgent = getProxyAgent;
-function getProxyAgentDispatcher(destinationUrl) {
-    const hc = new httpClient.HttpClient();
-    return hc.getAgentDispatcher(destinationUrl);
-}
-exports.getProxyAgentDispatcher = getProxyAgentDispatcher;
-function getProxyFetch(destinationUrl) {
-    const httpDispatcher = getProxyAgentDispatcher(destinationUrl);
-    const proxyFetch = (url, opts) => __awaiter(this, void 0, void 0, function* () {
-        return (0, undici_1.fetch)(url, Object.assign(Object.assign({}, opts), { dispatcher: httpDispatcher }));
-    });
-    return proxyFetch;
-}
-exports.getProxyFetch = getProxyFetch;
-function getApiBaseUrl() {
-    return process.env['GITHUB_API_URL'] || 'https://api.github.com';
-}
-exports.getApiBaseUrl = getApiBaseUrl;
-//# sourceMappingURL=utils.js.map
-
-/***/ }),
-
-/***/ 3030:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOctokitOptions = exports.GitHub = exports.defaults = exports.context = void 0;
-const Context = __importStar(__nccwpck_require__(4087));
-const Utils = __importStar(__nccwpck_require__(7914));
-// octokit + plugins
-const core_1 = __nccwpck_require__(6762);
-const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
-const plugin_paginate_rest_1 = __nccwpck_require__(4193);
-exports.context = new Context.Context();
-const baseUrl = Utils.getApiBaseUrl();
-exports.defaults = {
-    baseUrl,
-    request: {
-        agent: Utils.getProxyAgent(baseUrl),
-        fetch: Utils.getProxyFetch(baseUrl)
-    }
-};
-exports.GitHub = core_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods, plugin_paginate_rest_1.paginateRest).defaults(exports.defaults);
-/**
- * Convience function to correctly format Octokit Options to pass into the constructor.
- *
- * @param     token    the repo PAT or GITHUB_TOKEN
- * @param     options  other options to set
- */
-function getOctokitOptions(token, options) {
-    const opts = Object.assign({}, options || {}); // Shallow clone - don't mutate the object provided by the caller
-    // Auth
-    const auth = Utils.getAuthString(token, opts);
-    if (auth) {
-        opts.auth = auth;
-    }
-    return opts;
-}
-exports.getOctokitOptions = getOctokitOptions;
-//# sourceMappingURL=utils.js.map
-
-/***/ }),
-
 /***/ 8090:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -5932,3696 +5679,6 @@ module.exports = parseParams
 
 /***/ }),
 
-/***/ 334:
-/***/ ((module) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  createTokenAuth: () => createTokenAuth
-});
-module.exports = __toCommonJS(dist_src_exports);
-
-// pkg/dist-src/auth.js
-var REGEX_IS_INSTALLATION_LEGACY = /^v1\./;
-var REGEX_IS_INSTALLATION = /^ghs_/;
-var REGEX_IS_USER_TO_SERVER = /^ghu_/;
-async function auth(token) {
-  const isApp = token.split(/\./).length === 3;
-  const isInstallation = REGEX_IS_INSTALLATION_LEGACY.test(token) || REGEX_IS_INSTALLATION.test(token);
-  const isUserToServer = REGEX_IS_USER_TO_SERVER.test(token);
-  const tokenType = isApp ? "app" : isInstallation ? "installation" : isUserToServer ? "user-to-server" : "oauth";
-  return {
-    type: "token",
-    token,
-    tokenType
-  };
-}
-
-// pkg/dist-src/with-authorization-prefix.js
-function withAuthorizationPrefix(token) {
-  if (token.split(/\./).length === 3) {
-    return `bearer ${token}`;
-  }
-  return `token ${token}`;
-}
-
-// pkg/dist-src/hook.js
-async function hook(token, request, route, parameters) {
-  const endpoint = request.endpoint.merge(
-    route,
-    parameters
-  );
-  endpoint.headers.authorization = withAuthorizationPrefix(token);
-  return request(endpoint);
-}
-
-// pkg/dist-src/index.js
-var createTokenAuth = function createTokenAuth2(token) {
-  if (!token) {
-    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
-  }
-  if (typeof token !== "string") {
-    throw new Error(
-      "[@octokit/auth-token] Token passed to createTokenAuth is not a string"
-    );
-  }
-  token = token.replace(/^(token|bearer) +/i, "");
-  return Object.assign(auth.bind(null, token), {
-    hook: hook.bind(null, token)
-  });
-};
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 6762:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  Octokit: () => Octokit
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_universal_user_agent = __nccwpck_require__(5030);
-var import_before_after_hook = __nccwpck_require__(3682);
-var import_request = __nccwpck_require__(6234);
-var import_graphql = __nccwpck_require__(8467);
-var import_auth_token = __nccwpck_require__(334);
-
-// pkg/dist-src/version.js
-var VERSION = "5.0.1";
-
-// pkg/dist-src/index.js
-var Octokit = class {
-  static {
-    this.VERSION = VERSION;
-  }
-  static defaults(defaults) {
-    const OctokitWithDefaults = class extends this {
-      constructor(...args) {
-        const options = args[0] || {};
-        if (typeof defaults === "function") {
-          super(defaults(options));
-          return;
-        }
-        super(
-          Object.assign(
-            {},
-            defaults,
-            options,
-            options.userAgent && defaults.userAgent ? {
-              userAgent: `${options.userAgent} ${defaults.userAgent}`
-            } : null
-          )
-        );
-      }
-    };
-    return OctokitWithDefaults;
-  }
-  static {
-    this.plugins = [];
-  }
-  /**
-   * Attach a plugin (or many) to your Octokit instance.
-   *
-   * @example
-   * const API = Octokit.plugin(plugin1, plugin2, plugin3, ...)
-   */
-  static plugin(...newPlugins) {
-    const currentPlugins = this.plugins;
-    const NewOctokit = class extends this {
-      static {
-        this.plugins = currentPlugins.concat(
-          newPlugins.filter((plugin) => !currentPlugins.includes(plugin))
-        );
-      }
-    };
-    return NewOctokit;
-  }
-  constructor(options = {}) {
-    const hook = new import_before_after_hook.Collection();
-    const requestDefaults = {
-      baseUrl: import_request.request.endpoint.DEFAULTS.baseUrl,
-      headers: {},
-      request: Object.assign({}, options.request, {
-        // @ts-ignore internal usage only, no need to type
-        hook: hook.bind(null, "request")
-      }),
-      mediaType: {
-        previews: [],
-        format: ""
-      }
-    };
-    requestDefaults.headers["user-agent"] = [
-      options.userAgent,
-      `octokit-core.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`
-    ].filter(Boolean).join(" ");
-    if (options.baseUrl) {
-      requestDefaults.baseUrl = options.baseUrl;
-    }
-    if (options.previews) {
-      requestDefaults.mediaType.previews = options.previews;
-    }
-    if (options.timeZone) {
-      requestDefaults.headers["time-zone"] = options.timeZone;
-    }
-    this.request = import_request.request.defaults(requestDefaults);
-    this.graphql = (0, import_graphql.withCustomRequest)(this.request).defaults(requestDefaults);
-    this.log = Object.assign(
-      {
-        debug: () => {
-        },
-        info: () => {
-        },
-        warn: console.warn.bind(console),
-        error: console.error.bind(console)
-      },
-      options.log
-    );
-    this.hook = hook;
-    if (!options.authStrategy) {
-      if (!options.auth) {
-        this.auth = async () => ({
-          type: "unauthenticated"
-        });
-      } else {
-        const auth = (0, import_auth_token.createTokenAuth)(options.auth);
-        hook.wrap("request", auth.hook);
-        this.auth = auth;
-      }
-    } else {
-      const { authStrategy, ...otherOptions } = options;
-      const auth = authStrategy(
-        Object.assign(
-          {
-            request: this.request,
-            log: this.log,
-            // we pass the current octokit instance as well as its constructor options
-            // to allow for authentication strategies that return a new octokit instance
-            // that shares the same internal state as the current one. The original
-            // requirement for this was the "event-octokit" authentication strategy
-            // of https://github.com/probot/octokit-auth-probot.
-            octokit: this,
-            octokitOptions: otherOptions
-          },
-          options.auth
-        )
-      );
-      hook.wrap("request", auth.hook);
-      this.auth = auth;
-    }
-    const classConstructor = this.constructor;
-    classConstructor.plugins.forEach((plugin) => {
-      Object.assign(this, plugin(this, options));
-    });
-  }
-};
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 9440:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  endpoint: () => endpoint
-});
-module.exports = __toCommonJS(dist_src_exports);
-
-// pkg/dist-src/defaults.js
-var import_universal_user_agent = __nccwpck_require__(5030);
-
-// pkg/dist-src/version.js
-var VERSION = "9.0.0";
-
-// pkg/dist-src/defaults.js
-var userAgent = `octokit-endpoint.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`;
-var DEFAULTS = {
-  method: "GET",
-  baseUrl: "https://api.github.com",
-  headers: {
-    accept: "application/vnd.github.v3+json",
-    "user-agent": userAgent
-  },
-  mediaType: {
-    format: ""
-  }
-};
-
-// pkg/dist-src/util/lowercase-keys.js
-function lowercaseKeys(object) {
-  if (!object) {
-    return {};
-  }
-  return Object.keys(object).reduce((newObj, key) => {
-    newObj[key.toLowerCase()] = object[key];
-    return newObj;
-  }, {});
-}
-
-// pkg/dist-src/util/merge-deep.js
-var import_is_plain_object = __nccwpck_require__(3287);
-function mergeDeep(defaults, options) {
-  const result = Object.assign({}, defaults);
-  Object.keys(options).forEach((key) => {
-    if ((0, import_is_plain_object.isPlainObject)(options[key])) {
-      if (!(key in defaults))
-        Object.assign(result, { [key]: options[key] });
-      else
-        result[key] = mergeDeep(defaults[key], options[key]);
-    } else {
-      Object.assign(result, { [key]: options[key] });
-    }
-  });
-  return result;
-}
-
-// pkg/dist-src/util/remove-undefined-properties.js
-function removeUndefinedProperties(obj) {
-  for (const key in obj) {
-    if (obj[key] === void 0) {
-      delete obj[key];
-    }
-  }
-  return obj;
-}
-
-// pkg/dist-src/merge.js
-function merge(defaults, route, options) {
-  if (typeof route === "string") {
-    let [method, url] = route.split(" ");
-    options = Object.assign(url ? { method, url } : { url: method }, options);
-  } else {
-    options = Object.assign({}, route);
-  }
-  options.headers = lowercaseKeys(options.headers);
-  removeUndefinedProperties(options);
-  removeUndefinedProperties(options.headers);
-  const mergedOptions = mergeDeep(defaults || {}, options);
-  if (options.url === "/graphql") {
-    if (defaults && defaults.mediaType.previews?.length) {
-      mergedOptions.mediaType.previews = defaults.mediaType.previews.filter(
-        (preview) => !mergedOptions.mediaType.previews.includes(preview)
-      ).concat(mergedOptions.mediaType.previews);
-    }
-    mergedOptions.mediaType.previews = (mergedOptions.mediaType.previews || []).map((preview) => preview.replace(/-preview/, ""));
-  }
-  return mergedOptions;
-}
-
-// pkg/dist-src/util/add-query-parameters.js
-function addQueryParameters(url, parameters) {
-  const separator = /\?/.test(url) ? "&" : "?";
-  const names = Object.keys(parameters);
-  if (names.length === 0) {
-    return url;
-  }
-  return url + separator + names.map((name) => {
-    if (name === "q") {
-      return "q=" + parameters.q.split("+").map(encodeURIComponent).join("+");
-    }
-    return `${name}=${encodeURIComponent(parameters[name])}`;
-  }).join("&");
-}
-
-// pkg/dist-src/util/extract-url-variable-names.js
-var urlVariableRegex = /\{[^}]+\}/g;
-function removeNonChars(variableName) {
-  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
-}
-function extractUrlVariableNames(url) {
-  const matches = url.match(urlVariableRegex);
-  if (!matches) {
-    return [];
-  }
-  return matches.map(removeNonChars).reduce((a, b) => a.concat(b), []);
-}
-
-// pkg/dist-src/util/omit.js
-function omit(object, keysToOmit) {
-  return Object.keys(object).filter((option) => !keysToOmit.includes(option)).reduce((obj, key) => {
-    obj[key] = object[key];
-    return obj;
-  }, {});
-}
-
-// pkg/dist-src/util/url-template.js
-function encodeReserved(str) {
-  return str.split(/(%[0-9A-Fa-f]{2})/g).map(function(part) {
-    if (!/%[0-9A-Fa-f]/.test(part)) {
-      part = encodeURI(part).replace(/%5B/g, "[").replace(/%5D/g, "]");
-    }
-    return part;
-  }).join("");
-}
-function encodeUnreserved(str) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
-    return "%" + c.charCodeAt(0).toString(16).toUpperCase();
-  });
-}
-function encodeValue(operator, value, key) {
-  value = operator === "+" || operator === "#" ? encodeReserved(value) : encodeUnreserved(value);
-  if (key) {
-    return encodeUnreserved(key) + "=" + value;
-  } else {
-    return value;
-  }
-}
-function isDefined(value) {
-  return value !== void 0 && value !== null;
-}
-function isKeyOperator(operator) {
-  return operator === ";" || operator === "&" || operator === "?";
-}
-function getValues(context, operator, key, modifier) {
-  var value = context[key], result = [];
-  if (isDefined(value) && value !== "") {
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-      value = value.toString();
-      if (modifier && modifier !== "*") {
-        value = value.substring(0, parseInt(modifier, 10));
-      }
-      result.push(
-        encodeValue(operator, value, isKeyOperator(operator) ? key : "")
-      );
-    } else {
-      if (modifier === "*") {
-        if (Array.isArray(value)) {
-          value.filter(isDefined).forEach(function(value2) {
-            result.push(
-              encodeValue(operator, value2, isKeyOperator(operator) ? key : "")
-            );
-          });
-        } else {
-          Object.keys(value).forEach(function(k) {
-            if (isDefined(value[k])) {
-              result.push(encodeValue(operator, value[k], k));
-            }
-          });
-        }
-      } else {
-        const tmp = [];
-        if (Array.isArray(value)) {
-          value.filter(isDefined).forEach(function(value2) {
-            tmp.push(encodeValue(operator, value2));
-          });
-        } else {
-          Object.keys(value).forEach(function(k) {
-            if (isDefined(value[k])) {
-              tmp.push(encodeUnreserved(k));
-              tmp.push(encodeValue(operator, value[k].toString()));
-            }
-          });
-        }
-        if (isKeyOperator(operator)) {
-          result.push(encodeUnreserved(key) + "=" + tmp.join(","));
-        } else if (tmp.length !== 0) {
-          result.push(tmp.join(","));
-        }
-      }
-    }
-  } else {
-    if (operator === ";") {
-      if (isDefined(value)) {
-        result.push(encodeUnreserved(key));
-      }
-    } else if (value === "" && (operator === "&" || operator === "?")) {
-      result.push(encodeUnreserved(key) + "=");
-    } else if (value === "") {
-      result.push("");
-    }
-  }
-  return result;
-}
-function parseUrl(template) {
-  return {
-    expand: expand.bind(null, template)
-  };
-}
-function expand(template, context) {
-  var operators = ["+", "#", ".", "/", ";", "?", "&"];
-  return template.replace(
-    /\{([^\{\}]+)\}|([^\{\}]+)/g,
-    function(_, expression, literal) {
-      if (expression) {
-        let operator = "";
-        const values = [];
-        if (operators.indexOf(expression.charAt(0)) !== -1) {
-          operator = expression.charAt(0);
-          expression = expression.substr(1);
-        }
-        expression.split(/,/g).forEach(function(variable) {
-          var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
-          values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
-        });
-        if (operator && operator !== "+") {
-          var separator = ",";
-          if (operator === "?") {
-            separator = "&";
-          } else if (operator !== "#") {
-            separator = operator;
-          }
-          return (values.length !== 0 ? operator : "") + values.join(separator);
-        } else {
-          return values.join(",");
-        }
-      } else {
-        return encodeReserved(literal);
-      }
-    }
-  );
-}
-
-// pkg/dist-src/parse.js
-function parse(options) {
-  let method = options.method.toUpperCase();
-  let url = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
-  let headers = Object.assign({}, options.headers);
-  let body;
-  let parameters = omit(options, [
-    "method",
-    "baseUrl",
-    "url",
-    "headers",
-    "request",
-    "mediaType"
-  ]);
-  const urlVariableNames = extractUrlVariableNames(url);
-  url = parseUrl(url).expand(parameters);
-  if (!/^http/.test(url)) {
-    url = options.baseUrl + url;
-  }
-  const omittedParameters = Object.keys(options).filter((option) => urlVariableNames.includes(option)).concat("baseUrl");
-  const remainingParameters = omit(parameters, omittedParameters);
-  const isBinaryRequest = /application\/octet-stream/i.test(headers.accept);
-  if (!isBinaryRequest) {
-    if (options.mediaType.format) {
-      headers.accept = headers.accept.split(/,/).map(
-        (format) => format.replace(
-          /application\/vnd(\.\w+)(\.v3)?(\.\w+)?(\+json)?$/,
-          `application/vnd$1$2.${options.mediaType.format}`
-        )
-      ).join(",");
-    }
-    if (url.endsWith("/graphql")) {
-      if (options.mediaType.previews?.length) {
-        const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
-        headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
-          const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
-          return `application/vnd.github.${preview}-preview${format}`;
-        }).join(",");
-      }
-    }
-  }
-  if (["GET", "HEAD"].includes(method)) {
-    url = addQueryParameters(url, remainingParameters);
-  } else {
-    if ("data" in remainingParameters) {
-      body = remainingParameters.data;
-    } else {
-      if (Object.keys(remainingParameters).length) {
-        body = remainingParameters;
-      }
-    }
-  }
-  if (!headers["content-type"] && typeof body !== "undefined") {
-    headers["content-type"] = "application/json; charset=utf-8";
-  }
-  if (["PATCH", "PUT"].includes(method) && typeof body === "undefined") {
-    body = "";
-  }
-  return Object.assign(
-    { method, url, headers },
-    typeof body !== "undefined" ? { body } : null,
-    options.request ? { request: options.request } : null
-  );
-}
-
-// pkg/dist-src/endpoint-with-defaults.js
-function endpointWithDefaults(defaults, route, options) {
-  return parse(merge(defaults, route, options));
-}
-
-// pkg/dist-src/with-defaults.js
-function withDefaults(oldDefaults, newDefaults) {
-  const DEFAULTS2 = merge(oldDefaults, newDefaults);
-  const endpoint2 = endpointWithDefaults.bind(null, DEFAULTS2);
-  return Object.assign(endpoint2, {
-    DEFAULTS: DEFAULTS2,
-    defaults: withDefaults.bind(null, DEFAULTS2),
-    merge: merge.bind(null, DEFAULTS2),
-    parse
-  });
-}
-
-// pkg/dist-src/index.js
-var endpoint = withDefaults(null, DEFAULTS);
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 8467:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  GraphqlResponseError: () => GraphqlResponseError,
-  graphql: () => graphql2,
-  withCustomRequest: () => withCustomRequest
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_request3 = __nccwpck_require__(6234);
-var import_universal_user_agent = __nccwpck_require__(5030);
-
-// pkg/dist-src/version.js
-var VERSION = "7.0.1";
-
-// pkg/dist-src/with-defaults.js
-var import_request2 = __nccwpck_require__(6234);
-
-// pkg/dist-src/graphql.js
-var import_request = __nccwpck_require__(6234);
-
-// pkg/dist-src/error.js
-function _buildMessageForResponseErrors(data) {
-  return `Request failed due to following response errors:
-` + data.errors.map((e) => ` - ${e.message}`).join("\n");
-}
-var GraphqlResponseError = class extends Error {
-  constructor(request2, headers, response) {
-    super(_buildMessageForResponseErrors(response));
-    this.request = request2;
-    this.headers = headers;
-    this.response = response;
-    this.name = "GraphqlResponseError";
-    this.errors = response.errors;
-    this.data = response.data;
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-};
-
-// pkg/dist-src/graphql.js
-var NON_VARIABLE_OPTIONS = [
-  "method",
-  "baseUrl",
-  "url",
-  "headers",
-  "request",
-  "query",
-  "mediaType"
-];
-var FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
-var GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
-function graphql(request2, query, options) {
-  if (options) {
-    if (typeof query === "string" && "query" in options) {
-      return Promise.reject(
-        new Error(`[@octokit/graphql] "query" cannot be used as variable name`)
-      );
-    }
-    for (const key in options) {
-      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
-        continue;
-      return Promise.reject(
-        new Error(
-          `[@octokit/graphql] "${key}" cannot be used as variable name`
-        )
-      );
-    }
-  }
-  const parsedOptions = typeof query === "string" ? Object.assign({ query }, options) : query;
-  const requestOptions = Object.keys(
-    parsedOptions
-  ).reduce((result, key) => {
-    if (NON_VARIABLE_OPTIONS.includes(key)) {
-      result[key] = parsedOptions[key];
-      return result;
-    }
-    if (!result.variables) {
-      result.variables = {};
-    }
-    result.variables[key] = parsedOptions[key];
-    return result;
-  }, {});
-  const baseUrl = parsedOptions.baseUrl || request2.endpoint.DEFAULTS.baseUrl;
-  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
-    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
-  }
-  return request2(requestOptions).then((response) => {
-    if (response.data.errors) {
-      const headers = {};
-      for (const key of Object.keys(response.headers)) {
-        headers[key] = response.headers[key];
-      }
-      throw new GraphqlResponseError(
-        requestOptions,
-        headers,
-        response.data
-      );
-    }
-    return response.data.data;
-  });
-}
-
-// pkg/dist-src/with-defaults.js
-function withDefaults(request2, newDefaults) {
-  const newRequest = request2.defaults(newDefaults);
-  const newApi = (query, options) => {
-    return graphql(newRequest, query, options);
-  };
-  return Object.assign(newApi, {
-    defaults: withDefaults.bind(null, newRequest),
-    endpoint: newRequest.endpoint
-  });
-}
-
-// pkg/dist-src/index.js
-var graphql2 = withDefaults(import_request3.request, {
-  headers: {
-    "user-agent": `octokit-graphql.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`
-  },
-  method: "POST",
-  url: "/graphql"
-});
-function withCustomRequest(customRequest) {
-  return withDefaults(customRequest, {
-    method: "POST",
-    url: "/graphql"
-  });
-}
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 4193:
-/***/ ((module) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  composePaginateRest: () => composePaginateRest,
-  isPaginatingEndpoint: () => isPaginatingEndpoint,
-  paginateRest: () => paginateRest,
-  paginatingEndpoints: () => paginatingEndpoints
-});
-module.exports = __toCommonJS(dist_src_exports);
-
-// pkg/dist-src/version.js
-var VERSION = "9.0.0";
-
-// pkg/dist-src/normalize-paginated-list-response.js
-function normalizePaginatedListResponse(response) {
-  if (!response.data) {
-    return {
-      ...response,
-      data: []
-    };
-  }
-  const responseNeedsNormalization = "total_count" in response.data && !("url" in response.data);
-  if (!responseNeedsNormalization)
-    return response;
-  const incompleteResults = response.data.incomplete_results;
-  const repositorySelection = response.data.repository_selection;
-  const totalCount = response.data.total_count;
-  delete response.data.incomplete_results;
-  delete response.data.repository_selection;
-  delete response.data.total_count;
-  const namespaceKey = Object.keys(response.data)[0];
-  const data = response.data[namespaceKey];
-  response.data = data;
-  if (typeof incompleteResults !== "undefined") {
-    response.data.incomplete_results = incompleteResults;
-  }
-  if (typeof repositorySelection !== "undefined") {
-    response.data.repository_selection = repositorySelection;
-  }
-  response.data.total_count = totalCount;
-  return response;
-}
-
-// pkg/dist-src/iterator.js
-function iterator(octokit, route, parameters) {
-  const options = typeof route === "function" ? route.endpoint(parameters) : octokit.request.endpoint(route, parameters);
-  const requestMethod = typeof route === "function" ? route : octokit.request;
-  const method = options.method;
-  const headers = options.headers;
-  let url = options.url;
-  return {
-    [Symbol.asyncIterator]: () => ({
-      async next() {
-        if (!url)
-          return { done: true };
-        try {
-          const response = await requestMethod({ method, url, headers });
-          const normalizedResponse = normalizePaginatedListResponse(response);
-          url = ((normalizedResponse.headers.link || "").match(
-            /<([^>]+)>;\s*rel="next"/
-          ) || [])[1];
-          return { value: normalizedResponse };
-        } catch (error) {
-          if (error.status !== 409)
-            throw error;
-          url = "";
-          return {
-            value: {
-              status: 200,
-              headers: {},
-              data: []
-            }
-          };
-        }
-      }
-    })
-  };
-}
-
-// pkg/dist-src/paginate.js
-function paginate(octokit, route, parameters, mapFn) {
-  if (typeof parameters === "function") {
-    mapFn = parameters;
-    parameters = void 0;
-  }
-  return gather(
-    octokit,
-    [],
-    iterator(octokit, route, parameters)[Symbol.asyncIterator](),
-    mapFn
-  );
-}
-function gather(octokit, results, iterator2, mapFn) {
-  return iterator2.next().then((result) => {
-    if (result.done) {
-      return results;
-    }
-    let earlyExit = false;
-    function done() {
-      earlyExit = true;
-    }
-    results = results.concat(
-      mapFn ? mapFn(result.value, done) : result.value.data
-    );
-    if (earlyExit) {
-      return results;
-    }
-    return gather(octokit, results, iterator2, mapFn);
-  });
-}
-
-// pkg/dist-src/compose-paginate.js
-var composePaginateRest = Object.assign(paginate, {
-  iterator
-});
-
-// pkg/dist-src/generated/paginating-endpoints.js
-var paginatingEndpoints = [
-  "GET /advisories",
-  "GET /app/hook/deliveries",
-  "GET /app/installation-requests",
-  "GET /app/installations",
-  "GET /assignments/{assignment_id}/accepted_assignments",
-  "GET /classrooms",
-  "GET /classrooms/{classroom_id}/assignments",
-  "GET /enterprises/{enterprise}/dependabot/alerts",
-  "GET /enterprises/{enterprise}/secret-scanning/alerts",
-  "GET /events",
-  "GET /gists",
-  "GET /gists/public",
-  "GET /gists/starred",
-  "GET /gists/{gist_id}/comments",
-  "GET /gists/{gist_id}/commits",
-  "GET /gists/{gist_id}/forks",
-  "GET /installation/repositories",
-  "GET /issues",
-  "GET /licenses",
-  "GET /marketplace_listing/plans",
-  "GET /marketplace_listing/plans/{plan_id}/accounts",
-  "GET /marketplace_listing/stubbed/plans",
-  "GET /marketplace_listing/stubbed/plans/{plan_id}/accounts",
-  "GET /networks/{owner}/{repo}/events",
-  "GET /notifications",
-  "GET /organizations",
-  "GET /orgs/{org}/actions/cache/usage-by-repository",
-  "GET /orgs/{org}/actions/permissions/repositories",
-  "GET /orgs/{org}/actions/runners",
-  "GET /orgs/{org}/actions/secrets",
-  "GET /orgs/{org}/actions/secrets/{secret_name}/repositories",
-  "GET /orgs/{org}/actions/variables",
-  "GET /orgs/{org}/actions/variables/{name}/repositories",
-  "GET /orgs/{org}/blocks",
-  "GET /orgs/{org}/code-scanning/alerts",
-  "GET /orgs/{org}/codespaces",
-  "GET /orgs/{org}/codespaces/secrets",
-  "GET /orgs/{org}/codespaces/secrets/{secret_name}/repositories",
-  "GET /orgs/{org}/copilot/billing/seats",
-  "GET /orgs/{org}/dependabot/alerts",
-  "GET /orgs/{org}/dependabot/secrets",
-  "GET /orgs/{org}/dependabot/secrets/{secret_name}/repositories",
-  "GET /orgs/{org}/events",
-  "GET /orgs/{org}/failed_invitations",
-  "GET /orgs/{org}/hooks",
-  "GET /orgs/{org}/hooks/{hook_id}/deliveries",
-  "GET /orgs/{org}/installations",
-  "GET /orgs/{org}/invitations",
-  "GET /orgs/{org}/invitations/{invitation_id}/teams",
-  "GET /orgs/{org}/issues",
-  "GET /orgs/{org}/members",
-  "GET /orgs/{org}/members/{username}/codespaces",
-  "GET /orgs/{org}/migrations",
-  "GET /orgs/{org}/migrations/{migration_id}/repositories",
-  "GET /orgs/{org}/outside_collaborators",
-  "GET /orgs/{org}/packages",
-  "GET /orgs/{org}/packages/{package_type}/{package_name}/versions",
-  "GET /orgs/{org}/personal-access-token-requests",
-  "GET /orgs/{org}/personal-access-token-requests/{pat_request_id}/repositories",
-  "GET /orgs/{org}/personal-access-tokens",
-  "GET /orgs/{org}/personal-access-tokens/{pat_id}/repositories",
-  "GET /orgs/{org}/projects",
-  "GET /orgs/{org}/public_members",
-  "GET /orgs/{org}/repos",
-  "GET /orgs/{org}/rulesets",
-  "GET /orgs/{org}/secret-scanning/alerts",
-  "GET /orgs/{org}/security-advisories",
-  "GET /orgs/{org}/teams",
-  "GET /orgs/{org}/teams/{team_slug}/discussions",
-  "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments",
-  "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions",
-  "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions",
-  "GET /orgs/{org}/teams/{team_slug}/invitations",
-  "GET /orgs/{org}/teams/{team_slug}/members",
-  "GET /orgs/{org}/teams/{team_slug}/projects",
-  "GET /orgs/{org}/teams/{team_slug}/repos",
-  "GET /orgs/{org}/teams/{team_slug}/teams",
-  "GET /projects/columns/{column_id}/cards",
-  "GET /projects/{project_id}/collaborators",
-  "GET /projects/{project_id}/columns",
-  "GET /repos/{owner}/{repo}/actions/artifacts",
-  "GET /repos/{owner}/{repo}/actions/caches",
-  "GET /repos/{owner}/{repo}/actions/organization-secrets",
-  "GET /repos/{owner}/{repo}/actions/organization-variables",
-  "GET /repos/{owner}/{repo}/actions/runners",
-  "GET /repos/{owner}/{repo}/actions/runs",
-  "GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",
-  "GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs",
-  "GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs",
-  "GET /repos/{owner}/{repo}/actions/secrets",
-  "GET /repos/{owner}/{repo}/actions/variables",
-  "GET /repos/{owner}/{repo}/actions/workflows",
-  "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs",
-  "GET /repos/{owner}/{repo}/activity",
-  "GET /repos/{owner}/{repo}/assignees",
-  "GET /repos/{owner}/{repo}/branches",
-  "GET /repos/{owner}/{repo}/check-runs/{check_run_id}/annotations",
-  "GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/check-runs",
-  "GET /repos/{owner}/{repo}/code-scanning/alerts",
-  "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances",
-  "GET /repos/{owner}/{repo}/code-scanning/analyses",
-  "GET /repos/{owner}/{repo}/codespaces",
-  "GET /repos/{owner}/{repo}/codespaces/devcontainers",
-  "GET /repos/{owner}/{repo}/codespaces/secrets",
-  "GET /repos/{owner}/{repo}/collaborators",
-  "GET /repos/{owner}/{repo}/comments",
-  "GET /repos/{owner}/{repo}/comments/{comment_id}/reactions",
-  "GET /repos/{owner}/{repo}/commits",
-  "GET /repos/{owner}/{repo}/commits/{commit_sha}/comments",
-  "GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls",
-  "GET /repos/{owner}/{repo}/commits/{ref}/check-runs",
-  "GET /repos/{owner}/{repo}/commits/{ref}/check-suites",
-  "GET /repos/{owner}/{repo}/commits/{ref}/status",
-  "GET /repos/{owner}/{repo}/commits/{ref}/statuses",
-  "GET /repos/{owner}/{repo}/contributors",
-  "GET /repos/{owner}/{repo}/dependabot/alerts",
-  "GET /repos/{owner}/{repo}/dependabot/secrets",
-  "GET /repos/{owner}/{repo}/deployments",
-  "GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses",
-  "GET /repos/{owner}/{repo}/environments",
-  "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies",
-  "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/apps",
-  "GET /repos/{owner}/{repo}/events",
-  "GET /repos/{owner}/{repo}/forks",
-  "GET /repos/{owner}/{repo}/hooks",
-  "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries",
-  "GET /repos/{owner}/{repo}/invitations",
-  "GET /repos/{owner}/{repo}/issues",
-  "GET /repos/{owner}/{repo}/issues/comments",
-  "GET /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions",
-  "GET /repos/{owner}/{repo}/issues/events",
-  "GET /repos/{owner}/{repo}/issues/{issue_number}/comments",
-  "GET /repos/{owner}/{repo}/issues/{issue_number}/events",
-  "GET /repos/{owner}/{repo}/issues/{issue_number}/labels",
-  "GET /repos/{owner}/{repo}/issues/{issue_number}/reactions",
-  "GET /repos/{owner}/{repo}/issues/{issue_number}/timeline",
-  "GET /repos/{owner}/{repo}/keys",
-  "GET /repos/{owner}/{repo}/labels",
-  "GET /repos/{owner}/{repo}/milestones",
-  "GET /repos/{owner}/{repo}/milestones/{milestone_number}/labels",
-  "GET /repos/{owner}/{repo}/notifications",
-  "GET /repos/{owner}/{repo}/pages/builds",
-  "GET /repos/{owner}/{repo}/projects",
-  "GET /repos/{owner}/{repo}/pulls",
-  "GET /repos/{owner}/{repo}/pulls/comments",
-  "GET /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions",
-  "GET /repos/{owner}/{repo}/pulls/{pull_number}/comments",
-  "GET /repos/{owner}/{repo}/pulls/{pull_number}/commits",
-  "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
-  "GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews",
-  "GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/comments",
-  "GET /repos/{owner}/{repo}/releases",
-  "GET /repos/{owner}/{repo}/releases/{release_id}/assets",
-  "GET /repos/{owner}/{repo}/releases/{release_id}/reactions",
-  "GET /repos/{owner}/{repo}/rules/branches/{branch}",
-  "GET /repos/{owner}/{repo}/rulesets",
-  "GET /repos/{owner}/{repo}/secret-scanning/alerts",
-  "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}/locations",
-  "GET /repos/{owner}/{repo}/security-advisories",
-  "GET /repos/{owner}/{repo}/stargazers",
-  "GET /repos/{owner}/{repo}/subscribers",
-  "GET /repos/{owner}/{repo}/tags",
-  "GET /repos/{owner}/{repo}/teams",
-  "GET /repos/{owner}/{repo}/topics",
-  "GET /repositories",
-  "GET /repositories/{repository_id}/environments/{environment_name}/secrets",
-  "GET /repositories/{repository_id}/environments/{environment_name}/variables",
-  "GET /search/code",
-  "GET /search/commits",
-  "GET /search/issues",
-  "GET /search/labels",
-  "GET /search/repositories",
-  "GET /search/topics",
-  "GET /search/users",
-  "GET /teams/{team_id}/discussions",
-  "GET /teams/{team_id}/discussions/{discussion_number}/comments",
-  "GET /teams/{team_id}/discussions/{discussion_number}/comments/{comment_number}/reactions",
-  "GET /teams/{team_id}/discussions/{discussion_number}/reactions",
-  "GET /teams/{team_id}/invitations",
-  "GET /teams/{team_id}/members",
-  "GET /teams/{team_id}/projects",
-  "GET /teams/{team_id}/repos",
-  "GET /teams/{team_id}/teams",
-  "GET /user/blocks",
-  "GET /user/codespaces",
-  "GET /user/codespaces/secrets",
-  "GET /user/emails",
-  "GET /user/followers",
-  "GET /user/following",
-  "GET /user/gpg_keys",
-  "GET /user/installations",
-  "GET /user/installations/{installation_id}/repositories",
-  "GET /user/issues",
-  "GET /user/keys",
-  "GET /user/marketplace_purchases",
-  "GET /user/marketplace_purchases/stubbed",
-  "GET /user/memberships/orgs",
-  "GET /user/migrations",
-  "GET /user/migrations/{migration_id}/repositories",
-  "GET /user/orgs",
-  "GET /user/packages",
-  "GET /user/packages/{package_type}/{package_name}/versions",
-  "GET /user/public_emails",
-  "GET /user/repos",
-  "GET /user/repository_invitations",
-  "GET /user/social_accounts",
-  "GET /user/ssh_signing_keys",
-  "GET /user/starred",
-  "GET /user/subscriptions",
-  "GET /user/teams",
-  "GET /users",
-  "GET /users/{username}/events",
-  "GET /users/{username}/events/orgs/{org}",
-  "GET /users/{username}/events/public",
-  "GET /users/{username}/followers",
-  "GET /users/{username}/following",
-  "GET /users/{username}/gists",
-  "GET /users/{username}/gpg_keys",
-  "GET /users/{username}/keys",
-  "GET /users/{username}/orgs",
-  "GET /users/{username}/packages",
-  "GET /users/{username}/projects",
-  "GET /users/{username}/received_events",
-  "GET /users/{username}/received_events/public",
-  "GET /users/{username}/repos",
-  "GET /users/{username}/social_accounts",
-  "GET /users/{username}/ssh_signing_keys",
-  "GET /users/{username}/starred",
-  "GET /users/{username}/subscriptions"
-];
-
-// pkg/dist-src/paginating-endpoints.js
-function isPaginatingEndpoint(arg) {
-  if (typeof arg === "string") {
-    return paginatingEndpoints.includes(arg);
-  } else {
-    return false;
-  }
-}
-
-// pkg/dist-src/index.js
-function paginateRest(octokit) {
-  return {
-    paginate: Object.assign(paginate.bind(null, octokit), {
-      iterator: iterator.bind(null, octokit)
-    })
-  };
-}
-paginateRest.VERSION = VERSION;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 8883:
-/***/ ((module) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  requestLog: () => requestLog
-});
-module.exports = __toCommonJS(dist_src_exports);
-
-// pkg/dist-src/version.js
-var VERSION = "4.0.0";
-
-// pkg/dist-src/index.js
-function requestLog(octokit) {
-  octokit.hook.wrap("request", (request, options) => {
-    octokit.log.debug("request", options);
-    const start = Date.now();
-    const requestOptions = octokit.request.endpoint.parse(options);
-    const path = requestOptions.url.replace(options.baseUrl, "");
-    return request(options).then((response) => {
-      octokit.log.info(
-        `${requestOptions.method} ${path} - ${response.status} in ${Date.now() - start}ms`
-      );
-      return response;
-    }).catch((error) => {
-      octokit.log.info(
-        `${requestOptions.method} ${path} - ${error.status} in ${Date.now() - start}ms`
-      );
-      throw error;
-    });
-  });
-}
-requestLog.VERSION = VERSION;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 3044:
-/***/ ((module) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  legacyRestEndpointMethods: () => legacyRestEndpointMethods,
-  restEndpointMethods: () => restEndpointMethods
-});
-module.exports = __toCommonJS(dist_src_exports);
-
-// pkg/dist-src/version.js
-var VERSION = "10.0.1";
-
-// pkg/dist-src/generated/endpoints.js
-var Endpoints = {
-  actions: {
-    addCustomLabelsToSelfHostedRunnerForOrg: [
-      "POST /orgs/{org}/actions/runners/{runner_id}/labels"
-    ],
-    addCustomLabelsToSelfHostedRunnerForRepo: [
-      "POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
-    ],
-    addSelectedRepoToOrgSecret: [
-      "PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    addSelectedRepoToOrgVariable: [
-      "PUT /orgs/{org}/actions/variables/{name}/repositories/{repository_id}"
-    ],
-    approveWorkflowRun: [
-      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/approve"
-    ],
-    cancelWorkflowRun: [
-      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel"
-    ],
-    createEnvironmentVariable: [
-      "POST /repositories/{repository_id}/environments/{environment_name}/variables"
-    ],
-    createOrUpdateEnvironmentSecret: [
-      "PUT /repositories/{repository_id}/environments/{environment_name}/secrets/{secret_name}"
-    ],
-    createOrUpdateOrgSecret: ["PUT /orgs/{org}/actions/secrets/{secret_name}"],
-    createOrUpdateRepoSecret: [
-      "PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}"
-    ],
-    createOrgVariable: ["POST /orgs/{org}/actions/variables"],
-    createRegistrationTokenForOrg: [
-      "POST /orgs/{org}/actions/runners/registration-token"
-    ],
-    createRegistrationTokenForRepo: [
-      "POST /repos/{owner}/{repo}/actions/runners/registration-token"
-    ],
-    createRemoveTokenForOrg: ["POST /orgs/{org}/actions/runners/remove-token"],
-    createRemoveTokenForRepo: [
-      "POST /repos/{owner}/{repo}/actions/runners/remove-token"
-    ],
-    createRepoVariable: ["POST /repos/{owner}/{repo}/actions/variables"],
-    createWorkflowDispatch: [
-      "POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches"
-    ],
-    deleteActionsCacheById: [
-      "DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}"
-    ],
-    deleteActionsCacheByKey: [
-      "DELETE /repos/{owner}/{repo}/actions/caches{?key,ref}"
-    ],
-    deleteArtifact: [
-      "DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"
-    ],
-    deleteEnvironmentSecret: [
-      "DELETE /repositories/{repository_id}/environments/{environment_name}/secrets/{secret_name}"
-    ],
-    deleteEnvironmentVariable: [
-      "DELETE /repositories/{repository_id}/environments/{environment_name}/variables/{name}"
-    ],
-    deleteOrgSecret: ["DELETE /orgs/{org}/actions/secrets/{secret_name}"],
-    deleteOrgVariable: ["DELETE /orgs/{org}/actions/variables/{name}"],
-    deleteRepoSecret: [
-      "DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}"
-    ],
-    deleteRepoVariable: [
-      "DELETE /repos/{owner}/{repo}/actions/variables/{name}"
-    ],
-    deleteSelfHostedRunnerFromOrg: [
-      "DELETE /orgs/{org}/actions/runners/{runner_id}"
-    ],
-    deleteSelfHostedRunnerFromRepo: [
-      "DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}"
-    ],
-    deleteWorkflowRun: ["DELETE /repos/{owner}/{repo}/actions/runs/{run_id}"],
-    deleteWorkflowRunLogs: [
-      "DELETE /repos/{owner}/{repo}/actions/runs/{run_id}/logs"
-    ],
-    disableSelectedRepositoryGithubActionsOrganization: [
-      "DELETE /orgs/{org}/actions/permissions/repositories/{repository_id}"
-    ],
-    disableWorkflow: [
-      "PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/disable"
-    ],
-    downloadArtifact: [
-      "GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}"
-    ],
-    downloadJobLogsForWorkflowRun: [
-      "GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs"
-    ],
-    downloadWorkflowRunAttemptLogs: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/logs"
-    ],
-    downloadWorkflowRunLogs: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs"
-    ],
-    enableSelectedRepositoryGithubActionsOrganization: [
-      "PUT /orgs/{org}/actions/permissions/repositories/{repository_id}"
-    ],
-    enableWorkflow: [
-      "PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable"
-    ],
-    generateRunnerJitconfigForOrg: [
-      "POST /orgs/{org}/actions/runners/generate-jitconfig"
-    ],
-    generateRunnerJitconfigForRepo: [
-      "POST /repos/{owner}/{repo}/actions/runners/generate-jitconfig"
-    ],
-    getActionsCacheList: ["GET /repos/{owner}/{repo}/actions/caches"],
-    getActionsCacheUsage: ["GET /repos/{owner}/{repo}/actions/cache/usage"],
-    getActionsCacheUsageByRepoForOrg: [
-      "GET /orgs/{org}/actions/cache/usage-by-repository"
-    ],
-    getActionsCacheUsageForOrg: ["GET /orgs/{org}/actions/cache/usage"],
-    getAllowedActionsOrganization: [
-      "GET /orgs/{org}/actions/permissions/selected-actions"
-    ],
-    getAllowedActionsRepository: [
-      "GET /repos/{owner}/{repo}/actions/permissions/selected-actions"
-    ],
-    getArtifact: ["GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"],
-    getEnvironmentPublicKey: [
-      "GET /repositories/{repository_id}/environments/{environment_name}/secrets/public-key"
-    ],
-    getEnvironmentSecret: [
-      "GET /repositories/{repository_id}/environments/{environment_name}/secrets/{secret_name}"
-    ],
-    getEnvironmentVariable: [
-      "GET /repositories/{repository_id}/environments/{environment_name}/variables/{name}"
-    ],
-    getGithubActionsDefaultWorkflowPermissionsOrganization: [
-      "GET /orgs/{org}/actions/permissions/workflow"
-    ],
-    getGithubActionsDefaultWorkflowPermissionsRepository: [
-      "GET /repos/{owner}/{repo}/actions/permissions/workflow"
-    ],
-    getGithubActionsPermissionsOrganization: [
-      "GET /orgs/{org}/actions/permissions"
-    ],
-    getGithubActionsPermissionsRepository: [
-      "GET /repos/{owner}/{repo}/actions/permissions"
-    ],
-    getJobForWorkflowRun: ["GET /repos/{owner}/{repo}/actions/jobs/{job_id}"],
-    getOrgPublicKey: ["GET /orgs/{org}/actions/secrets/public-key"],
-    getOrgSecret: ["GET /orgs/{org}/actions/secrets/{secret_name}"],
-    getOrgVariable: ["GET /orgs/{org}/actions/variables/{name}"],
-    getPendingDeploymentsForRun: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments"
-    ],
-    getRepoPermissions: [
-      "GET /repos/{owner}/{repo}/actions/permissions",
-      {},
-      { renamed: ["actions", "getGithubActionsPermissionsRepository"] }
-    ],
-    getRepoPublicKey: ["GET /repos/{owner}/{repo}/actions/secrets/public-key"],
-    getRepoSecret: ["GET /repos/{owner}/{repo}/actions/secrets/{secret_name}"],
-    getRepoVariable: ["GET /repos/{owner}/{repo}/actions/variables/{name}"],
-    getReviewsForRun: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals"
-    ],
-    getSelfHostedRunnerForOrg: ["GET /orgs/{org}/actions/runners/{runner_id}"],
-    getSelfHostedRunnerForRepo: [
-      "GET /repos/{owner}/{repo}/actions/runners/{runner_id}"
-    ],
-    getWorkflow: ["GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}"],
-    getWorkflowAccessToRepository: [
-      "GET /repos/{owner}/{repo}/actions/permissions/access"
-    ],
-    getWorkflowRun: ["GET /repos/{owner}/{repo}/actions/runs/{run_id}"],
-    getWorkflowRunAttempt: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}"
-    ],
-    getWorkflowRunUsage: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/timing"
-    ],
-    getWorkflowUsage: [
-      "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing"
-    ],
-    listArtifactsForRepo: ["GET /repos/{owner}/{repo}/actions/artifacts"],
-    listEnvironmentSecrets: [
-      "GET /repositories/{repository_id}/environments/{environment_name}/secrets"
-    ],
-    listEnvironmentVariables: [
-      "GET /repositories/{repository_id}/environments/{environment_name}/variables"
-    ],
-    listJobsForWorkflowRun: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"
-    ],
-    listJobsForWorkflowRunAttempt: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs"
-    ],
-    listLabelsForSelfHostedRunnerForOrg: [
-      "GET /orgs/{org}/actions/runners/{runner_id}/labels"
-    ],
-    listLabelsForSelfHostedRunnerForRepo: [
-      "GET /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
-    ],
-    listOrgSecrets: ["GET /orgs/{org}/actions/secrets"],
-    listOrgVariables: ["GET /orgs/{org}/actions/variables"],
-    listRepoOrganizationSecrets: [
-      "GET /repos/{owner}/{repo}/actions/organization-secrets"
-    ],
-    listRepoOrganizationVariables: [
-      "GET /repos/{owner}/{repo}/actions/organization-variables"
-    ],
-    listRepoSecrets: ["GET /repos/{owner}/{repo}/actions/secrets"],
-    listRepoVariables: ["GET /repos/{owner}/{repo}/actions/variables"],
-    listRepoWorkflows: ["GET /repos/{owner}/{repo}/actions/workflows"],
-    listRunnerApplicationsForOrg: ["GET /orgs/{org}/actions/runners/downloads"],
-    listRunnerApplicationsForRepo: [
-      "GET /repos/{owner}/{repo}/actions/runners/downloads"
-    ],
-    listSelectedReposForOrgSecret: [
-      "GET /orgs/{org}/actions/secrets/{secret_name}/repositories"
-    ],
-    listSelectedReposForOrgVariable: [
-      "GET /orgs/{org}/actions/variables/{name}/repositories"
-    ],
-    listSelectedRepositoriesEnabledGithubActionsOrganization: [
-      "GET /orgs/{org}/actions/permissions/repositories"
-    ],
-    listSelfHostedRunnersForOrg: ["GET /orgs/{org}/actions/runners"],
-    listSelfHostedRunnersForRepo: ["GET /repos/{owner}/{repo}/actions/runners"],
-    listWorkflowRunArtifacts: [
-      "GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts"
-    ],
-    listWorkflowRuns: [
-      "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs"
-    ],
-    listWorkflowRunsForRepo: ["GET /repos/{owner}/{repo}/actions/runs"],
-    reRunJobForWorkflowRun: [
-      "POST /repos/{owner}/{repo}/actions/jobs/{job_id}/rerun"
-    ],
-    reRunWorkflow: ["POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun"],
-    reRunWorkflowFailedJobs: [
-      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs"
-    ],
-    removeAllCustomLabelsFromSelfHostedRunnerForOrg: [
-      "DELETE /orgs/{org}/actions/runners/{runner_id}/labels"
-    ],
-    removeAllCustomLabelsFromSelfHostedRunnerForRepo: [
-      "DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
-    ],
-    removeCustomLabelFromSelfHostedRunnerForOrg: [
-      "DELETE /orgs/{org}/actions/runners/{runner_id}/labels/{name}"
-    ],
-    removeCustomLabelFromSelfHostedRunnerForRepo: [
-      "DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels/{name}"
-    ],
-    removeSelectedRepoFromOrgSecret: [
-      "DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    removeSelectedRepoFromOrgVariable: [
-      "DELETE /orgs/{org}/actions/variables/{name}/repositories/{repository_id}"
-    ],
-    reviewCustomGatesForRun: [
-      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule"
-    ],
-    reviewPendingDeploymentsForRun: [
-      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments"
-    ],
-    setAllowedActionsOrganization: [
-      "PUT /orgs/{org}/actions/permissions/selected-actions"
-    ],
-    setAllowedActionsRepository: [
-      "PUT /repos/{owner}/{repo}/actions/permissions/selected-actions"
-    ],
-    setCustomLabelsForSelfHostedRunnerForOrg: [
-      "PUT /orgs/{org}/actions/runners/{runner_id}/labels"
-    ],
-    setCustomLabelsForSelfHostedRunnerForRepo: [
-      "PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
-    ],
-    setGithubActionsDefaultWorkflowPermissionsOrganization: [
-      "PUT /orgs/{org}/actions/permissions/workflow"
-    ],
-    setGithubActionsDefaultWorkflowPermissionsRepository: [
-      "PUT /repos/{owner}/{repo}/actions/permissions/workflow"
-    ],
-    setGithubActionsPermissionsOrganization: [
-      "PUT /orgs/{org}/actions/permissions"
-    ],
-    setGithubActionsPermissionsRepository: [
-      "PUT /repos/{owner}/{repo}/actions/permissions"
-    ],
-    setSelectedReposForOrgSecret: [
-      "PUT /orgs/{org}/actions/secrets/{secret_name}/repositories"
-    ],
-    setSelectedReposForOrgVariable: [
-      "PUT /orgs/{org}/actions/variables/{name}/repositories"
-    ],
-    setSelectedRepositoriesEnabledGithubActionsOrganization: [
-      "PUT /orgs/{org}/actions/permissions/repositories"
-    ],
-    setWorkflowAccessToRepository: [
-      "PUT /repos/{owner}/{repo}/actions/permissions/access"
-    ],
-    updateEnvironmentVariable: [
-      "PATCH /repositories/{repository_id}/environments/{environment_name}/variables/{name}"
-    ],
-    updateOrgVariable: ["PATCH /orgs/{org}/actions/variables/{name}"],
-    updateRepoVariable: [
-      "PATCH /repos/{owner}/{repo}/actions/variables/{name}"
-    ]
-  },
-  activity: {
-    checkRepoIsStarredByAuthenticatedUser: ["GET /user/starred/{owner}/{repo}"],
-    deleteRepoSubscription: ["DELETE /repos/{owner}/{repo}/subscription"],
-    deleteThreadSubscription: [
-      "DELETE /notifications/threads/{thread_id}/subscription"
-    ],
-    getFeeds: ["GET /feeds"],
-    getRepoSubscription: ["GET /repos/{owner}/{repo}/subscription"],
-    getThread: ["GET /notifications/threads/{thread_id}"],
-    getThreadSubscriptionForAuthenticatedUser: [
-      "GET /notifications/threads/{thread_id}/subscription"
-    ],
-    listEventsForAuthenticatedUser: ["GET /users/{username}/events"],
-    listNotificationsForAuthenticatedUser: ["GET /notifications"],
-    listOrgEventsForAuthenticatedUser: [
-      "GET /users/{username}/events/orgs/{org}"
-    ],
-    listPublicEvents: ["GET /events"],
-    listPublicEventsForRepoNetwork: ["GET /networks/{owner}/{repo}/events"],
-    listPublicEventsForUser: ["GET /users/{username}/events/public"],
-    listPublicOrgEvents: ["GET /orgs/{org}/events"],
-    listReceivedEventsForUser: ["GET /users/{username}/received_events"],
-    listReceivedPublicEventsForUser: [
-      "GET /users/{username}/received_events/public"
-    ],
-    listRepoEvents: ["GET /repos/{owner}/{repo}/events"],
-    listRepoNotificationsForAuthenticatedUser: [
-      "GET /repos/{owner}/{repo}/notifications"
-    ],
-    listReposStarredByAuthenticatedUser: ["GET /user/starred"],
-    listReposStarredByUser: ["GET /users/{username}/starred"],
-    listReposWatchedByUser: ["GET /users/{username}/subscriptions"],
-    listStargazersForRepo: ["GET /repos/{owner}/{repo}/stargazers"],
-    listWatchedReposForAuthenticatedUser: ["GET /user/subscriptions"],
-    listWatchersForRepo: ["GET /repos/{owner}/{repo}/subscribers"],
-    markNotificationsAsRead: ["PUT /notifications"],
-    markRepoNotificationsAsRead: ["PUT /repos/{owner}/{repo}/notifications"],
-    markThreadAsRead: ["PATCH /notifications/threads/{thread_id}"],
-    setRepoSubscription: ["PUT /repos/{owner}/{repo}/subscription"],
-    setThreadSubscription: [
-      "PUT /notifications/threads/{thread_id}/subscription"
-    ],
-    starRepoForAuthenticatedUser: ["PUT /user/starred/{owner}/{repo}"],
-    unstarRepoForAuthenticatedUser: ["DELETE /user/starred/{owner}/{repo}"]
-  },
-  apps: {
-    addRepoToInstallation: [
-      "PUT /user/installations/{installation_id}/repositories/{repository_id}",
-      {},
-      { renamed: ["apps", "addRepoToInstallationForAuthenticatedUser"] }
-    ],
-    addRepoToInstallationForAuthenticatedUser: [
-      "PUT /user/installations/{installation_id}/repositories/{repository_id}"
-    ],
-    checkToken: ["POST /applications/{client_id}/token"],
-    createFromManifest: ["POST /app-manifests/{code}/conversions"],
-    createInstallationAccessToken: [
-      "POST /app/installations/{installation_id}/access_tokens"
-    ],
-    deleteAuthorization: ["DELETE /applications/{client_id}/grant"],
-    deleteInstallation: ["DELETE /app/installations/{installation_id}"],
-    deleteToken: ["DELETE /applications/{client_id}/token"],
-    getAuthenticated: ["GET /app"],
-    getBySlug: ["GET /apps/{app_slug}"],
-    getInstallation: ["GET /app/installations/{installation_id}"],
-    getOrgInstallation: ["GET /orgs/{org}/installation"],
-    getRepoInstallation: ["GET /repos/{owner}/{repo}/installation"],
-    getSubscriptionPlanForAccount: [
-      "GET /marketplace_listing/accounts/{account_id}"
-    ],
-    getSubscriptionPlanForAccountStubbed: [
-      "GET /marketplace_listing/stubbed/accounts/{account_id}"
-    ],
-    getUserInstallation: ["GET /users/{username}/installation"],
-    getWebhookConfigForApp: ["GET /app/hook/config"],
-    getWebhookDelivery: ["GET /app/hook/deliveries/{delivery_id}"],
-    listAccountsForPlan: ["GET /marketplace_listing/plans/{plan_id}/accounts"],
-    listAccountsForPlanStubbed: [
-      "GET /marketplace_listing/stubbed/plans/{plan_id}/accounts"
-    ],
-    listInstallationReposForAuthenticatedUser: [
-      "GET /user/installations/{installation_id}/repositories"
-    ],
-    listInstallationRequestsForAuthenticatedApp: [
-      "GET /app/installation-requests"
-    ],
-    listInstallations: ["GET /app/installations"],
-    listInstallationsForAuthenticatedUser: ["GET /user/installations"],
-    listPlans: ["GET /marketplace_listing/plans"],
-    listPlansStubbed: ["GET /marketplace_listing/stubbed/plans"],
-    listReposAccessibleToInstallation: ["GET /installation/repositories"],
-    listSubscriptionsForAuthenticatedUser: ["GET /user/marketplace_purchases"],
-    listSubscriptionsForAuthenticatedUserStubbed: [
-      "GET /user/marketplace_purchases/stubbed"
-    ],
-    listWebhookDeliveries: ["GET /app/hook/deliveries"],
-    redeliverWebhookDelivery: [
-      "POST /app/hook/deliveries/{delivery_id}/attempts"
-    ],
-    removeRepoFromInstallation: [
-      "DELETE /user/installations/{installation_id}/repositories/{repository_id}",
-      {},
-      { renamed: ["apps", "removeRepoFromInstallationForAuthenticatedUser"] }
-    ],
-    removeRepoFromInstallationForAuthenticatedUser: [
-      "DELETE /user/installations/{installation_id}/repositories/{repository_id}"
-    ],
-    resetToken: ["PATCH /applications/{client_id}/token"],
-    revokeInstallationAccessToken: ["DELETE /installation/token"],
-    scopeToken: ["POST /applications/{client_id}/token/scoped"],
-    suspendInstallation: ["PUT /app/installations/{installation_id}/suspended"],
-    unsuspendInstallation: [
-      "DELETE /app/installations/{installation_id}/suspended"
-    ],
-    updateWebhookConfigForApp: ["PATCH /app/hook/config"]
-  },
-  billing: {
-    getGithubActionsBillingOrg: ["GET /orgs/{org}/settings/billing/actions"],
-    getGithubActionsBillingUser: [
-      "GET /users/{username}/settings/billing/actions"
-    ],
-    getGithubPackagesBillingOrg: ["GET /orgs/{org}/settings/billing/packages"],
-    getGithubPackagesBillingUser: [
-      "GET /users/{username}/settings/billing/packages"
-    ],
-    getSharedStorageBillingOrg: [
-      "GET /orgs/{org}/settings/billing/shared-storage"
-    ],
-    getSharedStorageBillingUser: [
-      "GET /users/{username}/settings/billing/shared-storage"
-    ]
-  },
-  checks: {
-    create: ["POST /repos/{owner}/{repo}/check-runs"],
-    createSuite: ["POST /repos/{owner}/{repo}/check-suites"],
-    get: ["GET /repos/{owner}/{repo}/check-runs/{check_run_id}"],
-    getSuite: ["GET /repos/{owner}/{repo}/check-suites/{check_suite_id}"],
-    listAnnotations: [
-      "GET /repos/{owner}/{repo}/check-runs/{check_run_id}/annotations"
-    ],
-    listForRef: ["GET /repos/{owner}/{repo}/commits/{ref}/check-runs"],
-    listForSuite: [
-      "GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/check-runs"
-    ],
-    listSuitesForRef: ["GET /repos/{owner}/{repo}/commits/{ref}/check-suites"],
-    rerequestRun: [
-      "POST /repos/{owner}/{repo}/check-runs/{check_run_id}/rerequest"
-    ],
-    rerequestSuite: [
-      "POST /repos/{owner}/{repo}/check-suites/{check_suite_id}/rerequest"
-    ],
-    setSuitesPreferences: [
-      "PATCH /repos/{owner}/{repo}/check-suites/preferences"
-    ],
-    update: ["PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}"]
-  },
-  codeScanning: {
-    deleteAnalysis: [
-      "DELETE /repos/{owner}/{repo}/code-scanning/analyses/{analysis_id}{?confirm_delete}"
-    ],
-    getAlert: [
-      "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}",
-      {},
-      { renamedParameters: { alert_id: "alert_number" } }
-    ],
-    getAnalysis: [
-      "GET /repos/{owner}/{repo}/code-scanning/analyses/{analysis_id}"
-    ],
-    getCodeqlDatabase: [
-      "GET /repos/{owner}/{repo}/code-scanning/codeql/databases/{language}"
-    ],
-    getDefaultSetup: ["GET /repos/{owner}/{repo}/code-scanning/default-setup"],
-    getSarif: ["GET /repos/{owner}/{repo}/code-scanning/sarifs/{sarif_id}"],
-    listAlertInstances: [
-      "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances"
-    ],
-    listAlertsForOrg: ["GET /orgs/{org}/code-scanning/alerts"],
-    listAlertsForRepo: ["GET /repos/{owner}/{repo}/code-scanning/alerts"],
-    listAlertsInstances: [
-      "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances",
-      {},
-      { renamed: ["codeScanning", "listAlertInstances"] }
-    ],
-    listCodeqlDatabases: [
-      "GET /repos/{owner}/{repo}/code-scanning/codeql/databases"
-    ],
-    listRecentAnalyses: ["GET /repos/{owner}/{repo}/code-scanning/analyses"],
-    updateAlert: [
-      "PATCH /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}"
-    ],
-    updateDefaultSetup: [
-      "PATCH /repos/{owner}/{repo}/code-scanning/default-setup"
-    ],
-    uploadSarif: ["POST /repos/{owner}/{repo}/code-scanning/sarifs"]
-  },
-  codesOfConduct: {
-    getAllCodesOfConduct: ["GET /codes_of_conduct"],
-    getConductCode: ["GET /codes_of_conduct/{key}"]
-  },
-  codespaces: {
-    addRepositoryForSecretForAuthenticatedUser: [
-      "PUT /user/codespaces/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    addSelectedRepoToOrgSecret: [
-      "PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    codespaceMachinesForAuthenticatedUser: [
-      "GET /user/codespaces/{codespace_name}/machines"
-    ],
-    createForAuthenticatedUser: ["POST /user/codespaces"],
-    createOrUpdateOrgSecret: [
-      "PUT /orgs/{org}/codespaces/secrets/{secret_name}"
-    ],
-    createOrUpdateRepoSecret: [
-      "PUT /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"
-    ],
-    createOrUpdateSecretForAuthenticatedUser: [
-      "PUT /user/codespaces/secrets/{secret_name}"
-    ],
-    createWithPrForAuthenticatedUser: [
-      "POST /repos/{owner}/{repo}/pulls/{pull_number}/codespaces"
-    ],
-    createWithRepoForAuthenticatedUser: [
-      "POST /repos/{owner}/{repo}/codespaces"
-    ],
-    deleteForAuthenticatedUser: ["DELETE /user/codespaces/{codespace_name}"],
-    deleteFromOrganization: [
-      "DELETE /orgs/{org}/members/{username}/codespaces/{codespace_name}"
-    ],
-    deleteOrgSecret: ["DELETE /orgs/{org}/codespaces/secrets/{secret_name}"],
-    deleteRepoSecret: [
-      "DELETE /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"
-    ],
-    deleteSecretForAuthenticatedUser: [
-      "DELETE /user/codespaces/secrets/{secret_name}"
-    ],
-    exportForAuthenticatedUser: [
-      "POST /user/codespaces/{codespace_name}/exports"
-    ],
-    getCodespacesForUserInOrg: [
-      "GET /orgs/{org}/members/{username}/codespaces"
-    ],
-    getExportDetailsForAuthenticatedUser: [
-      "GET /user/codespaces/{codespace_name}/exports/{export_id}"
-    ],
-    getForAuthenticatedUser: ["GET /user/codespaces/{codespace_name}"],
-    getOrgPublicKey: ["GET /orgs/{org}/codespaces/secrets/public-key"],
-    getOrgSecret: ["GET /orgs/{org}/codespaces/secrets/{secret_name}"],
-    getPublicKeyForAuthenticatedUser: [
-      "GET /user/codespaces/secrets/public-key"
-    ],
-    getRepoPublicKey: [
-      "GET /repos/{owner}/{repo}/codespaces/secrets/public-key"
-    ],
-    getRepoSecret: [
-      "GET /repos/{owner}/{repo}/codespaces/secrets/{secret_name}"
-    ],
-    getSecretForAuthenticatedUser: [
-      "GET /user/codespaces/secrets/{secret_name}"
-    ],
-    listDevcontainersInRepositoryForAuthenticatedUser: [
-      "GET /repos/{owner}/{repo}/codespaces/devcontainers"
-    ],
-    listForAuthenticatedUser: ["GET /user/codespaces"],
-    listInOrganization: [
-      "GET /orgs/{org}/codespaces",
-      {},
-      { renamedParameters: { org_id: "org" } }
-    ],
-    listInRepositoryForAuthenticatedUser: [
-      "GET /repos/{owner}/{repo}/codespaces"
-    ],
-    listOrgSecrets: ["GET /orgs/{org}/codespaces/secrets"],
-    listRepoSecrets: ["GET /repos/{owner}/{repo}/codespaces/secrets"],
-    listRepositoriesForSecretForAuthenticatedUser: [
-      "GET /user/codespaces/secrets/{secret_name}/repositories"
-    ],
-    listSecretsForAuthenticatedUser: ["GET /user/codespaces/secrets"],
-    listSelectedReposForOrgSecret: [
-      "GET /orgs/{org}/codespaces/secrets/{secret_name}/repositories"
-    ],
-    preFlightWithRepoForAuthenticatedUser: [
-      "GET /repos/{owner}/{repo}/codespaces/new"
-    ],
-    publishForAuthenticatedUser: [
-      "POST /user/codespaces/{codespace_name}/publish"
-    ],
-    removeRepositoryForSecretForAuthenticatedUser: [
-      "DELETE /user/codespaces/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    removeSelectedRepoFromOrgSecret: [
-      "DELETE /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    repoMachinesForAuthenticatedUser: [
-      "GET /repos/{owner}/{repo}/codespaces/machines"
-    ],
-    setRepositoriesForSecretForAuthenticatedUser: [
-      "PUT /user/codespaces/secrets/{secret_name}/repositories"
-    ],
-    setSelectedReposForOrgSecret: [
-      "PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories"
-    ],
-    startForAuthenticatedUser: ["POST /user/codespaces/{codespace_name}/start"],
-    stopForAuthenticatedUser: ["POST /user/codespaces/{codespace_name}/stop"],
-    stopInOrganization: [
-      "POST /orgs/{org}/members/{username}/codespaces/{codespace_name}/stop"
-    ],
-    updateForAuthenticatedUser: ["PATCH /user/codespaces/{codespace_name}"]
-  },
-  copilot: {
-    addCopilotForBusinessSeatsForTeams: [
-      "POST /orgs/{org}/copilot/billing/selected_teams"
-    ],
-    addCopilotForBusinessSeatsForUsers: [
-      "POST /orgs/{org}/copilot/billing/selected_users"
-    ],
-    cancelCopilotSeatAssignmentForTeams: [
-      "DELETE /orgs/{org}/copilot/billing/selected_teams"
-    ],
-    cancelCopilotSeatAssignmentForUsers: [
-      "DELETE /orgs/{org}/copilot/billing/selected_users"
-    ],
-    getCopilotOrganizationDetails: ["GET /orgs/{org}/copilot/billing"],
-    getCopilotSeatAssignmentDetailsForUser: [
-      "GET /orgs/{org}/members/{username}/copilot"
-    ],
-    listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"]
-  },
-  dependabot: {
-    addSelectedRepoToOrgSecret: [
-      "PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    createOrUpdateOrgSecret: [
-      "PUT /orgs/{org}/dependabot/secrets/{secret_name}"
-    ],
-    createOrUpdateRepoSecret: [
-      "PUT /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"
-    ],
-    deleteOrgSecret: ["DELETE /orgs/{org}/dependabot/secrets/{secret_name}"],
-    deleteRepoSecret: [
-      "DELETE /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"
-    ],
-    getAlert: ["GET /repos/{owner}/{repo}/dependabot/alerts/{alert_number}"],
-    getOrgPublicKey: ["GET /orgs/{org}/dependabot/secrets/public-key"],
-    getOrgSecret: ["GET /orgs/{org}/dependabot/secrets/{secret_name}"],
-    getRepoPublicKey: [
-      "GET /repos/{owner}/{repo}/dependabot/secrets/public-key"
-    ],
-    getRepoSecret: [
-      "GET /repos/{owner}/{repo}/dependabot/secrets/{secret_name}"
-    ],
-    listAlertsForEnterprise: [
-      "GET /enterprises/{enterprise}/dependabot/alerts"
-    ],
-    listAlertsForOrg: ["GET /orgs/{org}/dependabot/alerts"],
-    listAlertsForRepo: ["GET /repos/{owner}/{repo}/dependabot/alerts"],
-    listOrgSecrets: ["GET /orgs/{org}/dependabot/secrets"],
-    listRepoSecrets: ["GET /repos/{owner}/{repo}/dependabot/secrets"],
-    listSelectedReposForOrgSecret: [
-      "GET /orgs/{org}/dependabot/secrets/{secret_name}/repositories"
-    ],
-    removeSelectedRepoFromOrgSecret: [
-      "DELETE /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}"
-    ],
-    setSelectedReposForOrgSecret: [
-      "PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories"
-    ],
-    updateAlert: [
-      "PATCH /repos/{owner}/{repo}/dependabot/alerts/{alert_number}"
-    ]
-  },
-  dependencyGraph: {
-    createRepositorySnapshot: [
-      "POST /repos/{owner}/{repo}/dependency-graph/snapshots"
-    ],
-    diffRange: [
-      "GET /repos/{owner}/{repo}/dependency-graph/compare/{basehead}"
-    ],
-    exportSbom: ["GET /repos/{owner}/{repo}/dependency-graph/sbom"]
-  },
-  emojis: { get: ["GET /emojis"] },
-  gists: {
-    checkIsStarred: ["GET /gists/{gist_id}/star"],
-    create: ["POST /gists"],
-    createComment: ["POST /gists/{gist_id}/comments"],
-    delete: ["DELETE /gists/{gist_id}"],
-    deleteComment: ["DELETE /gists/{gist_id}/comments/{comment_id}"],
-    fork: ["POST /gists/{gist_id}/forks"],
-    get: ["GET /gists/{gist_id}"],
-    getComment: ["GET /gists/{gist_id}/comments/{comment_id}"],
-    getRevision: ["GET /gists/{gist_id}/{sha}"],
-    list: ["GET /gists"],
-    listComments: ["GET /gists/{gist_id}/comments"],
-    listCommits: ["GET /gists/{gist_id}/commits"],
-    listForUser: ["GET /users/{username}/gists"],
-    listForks: ["GET /gists/{gist_id}/forks"],
-    listPublic: ["GET /gists/public"],
-    listStarred: ["GET /gists/starred"],
-    star: ["PUT /gists/{gist_id}/star"],
-    unstar: ["DELETE /gists/{gist_id}/star"],
-    update: ["PATCH /gists/{gist_id}"],
-    updateComment: ["PATCH /gists/{gist_id}/comments/{comment_id}"]
-  },
-  git: {
-    createBlob: ["POST /repos/{owner}/{repo}/git/blobs"],
-    createCommit: ["POST /repos/{owner}/{repo}/git/commits"],
-    createRef: ["POST /repos/{owner}/{repo}/git/refs"],
-    createTag: ["POST /repos/{owner}/{repo}/git/tags"],
-    createTree: ["POST /repos/{owner}/{repo}/git/trees"],
-    deleteRef: ["DELETE /repos/{owner}/{repo}/git/refs/{ref}"],
-    getBlob: ["GET /repos/{owner}/{repo}/git/blobs/{file_sha}"],
-    getCommit: ["GET /repos/{owner}/{repo}/git/commits/{commit_sha}"],
-    getRef: ["GET /repos/{owner}/{repo}/git/ref/{ref}"],
-    getTag: ["GET /repos/{owner}/{repo}/git/tags/{tag_sha}"],
-    getTree: ["GET /repos/{owner}/{repo}/git/trees/{tree_sha}"],
-    listMatchingRefs: ["GET /repos/{owner}/{repo}/git/matching-refs/{ref}"],
-    updateRef: ["PATCH /repos/{owner}/{repo}/git/refs/{ref}"]
-  },
-  gitignore: {
-    getAllTemplates: ["GET /gitignore/templates"],
-    getTemplate: ["GET /gitignore/templates/{name}"]
-  },
-  interactions: {
-    getRestrictionsForAuthenticatedUser: ["GET /user/interaction-limits"],
-    getRestrictionsForOrg: ["GET /orgs/{org}/interaction-limits"],
-    getRestrictionsForRepo: ["GET /repos/{owner}/{repo}/interaction-limits"],
-    getRestrictionsForYourPublicRepos: [
-      "GET /user/interaction-limits",
-      {},
-      { renamed: ["interactions", "getRestrictionsForAuthenticatedUser"] }
-    ],
-    removeRestrictionsForAuthenticatedUser: ["DELETE /user/interaction-limits"],
-    removeRestrictionsForOrg: ["DELETE /orgs/{org}/interaction-limits"],
-    removeRestrictionsForRepo: [
-      "DELETE /repos/{owner}/{repo}/interaction-limits"
-    ],
-    removeRestrictionsForYourPublicRepos: [
-      "DELETE /user/interaction-limits",
-      {},
-      { renamed: ["interactions", "removeRestrictionsForAuthenticatedUser"] }
-    ],
-    setRestrictionsForAuthenticatedUser: ["PUT /user/interaction-limits"],
-    setRestrictionsForOrg: ["PUT /orgs/{org}/interaction-limits"],
-    setRestrictionsForRepo: ["PUT /repos/{owner}/{repo}/interaction-limits"],
-    setRestrictionsForYourPublicRepos: [
-      "PUT /user/interaction-limits",
-      {},
-      { renamed: ["interactions", "setRestrictionsForAuthenticatedUser"] }
-    ]
-  },
-  issues: {
-    addAssignees: [
-      "POST /repos/{owner}/{repo}/issues/{issue_number}/assignees"
-    ],
-    addLabels: ["POST /repos/{owner}/{repo}/issues/{issue_number}/labels"],
-    checkUserCanBeAssigned: ["GET /repos/{owner}/{repo}/assignees/{assignee}"],
-    checkUserCanBeAssignedToIssue: [
-      "GET /repos/{owner}/{repo}/issues/{issue_number}/assignees/{assignee}"
-    ],
-    create: ["POST /repos/{owner}/{repo}/issues"],
-    createComment: [
-      "POST /repos/{owner}/{repo}/issues/{issue_number}/comments"
-    ],
-    createLabel: ["POST /repos/{owner}/{repo}/labels"],
-    createMilestone: ["POST /repos/{owner}/{repo}/milestones"],
-    deleteComment: [
-      "DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}"
-    ],
-    deleteLabel: ["DELETE /repos/{owner}/{repo}/labels/{name}"],
-    deleteMilestone: [
-      "DELETE /repos/{owner}/{repo}/milestones/{milestone_number}"
-    ],
-    get: ["GET /repos/{owner}/{repo}/issues/{issue_number}"],
-    getComment: ["GET /repos/{owner}/{repo}/issues/comments/{comment_id}"],
-    getEvent: ["GET /repos/{owner}/{repo}/issues/events/{event_id}"],
-    getLabel: ["GET /repos/{owner}/{repo}/labels/{name}"],
-    getMilestone: ["GET /repos/{owner}/{repo}/milestones/{milestone_number}"],
-    list: ["GET /issues"],
-    listAssignees: ["GET /repos/{owner}/{repo}/assignees"],
-    listComments: ["GET /repos/{owner}/{repo}/issues/{issue_number}/comments"],
-    listCommentsForRepo: ["GET /repos/{owner}/{repo}/issues/comments"],
-    listEvents: ["GET /repos/{owner}/{repo}/issues/{issue_number}/events"],
-    listEventsForRepo: ["GET /repos/{owner}/{repo}/issues/events"],
-    listEventsForTimeline: [
-      "GET /repos/{owner}/{repo}/issues/{issue_number}/timeline"
-    ],
-    listForAuthenticatedUser: ["GET /user/issues"],
-    listForOrg: ["GET /orgs/{org}/issues"],
-    listForRepo: ["GET /repos/{owner}/{repo}/issues"],
-    listLabelsForMilestone: [
-      "GET /repos/{owner}/{repo}/milestones/{milestone_number}/labels"
-    ],
-    listLabelsForRepo: ["GET /repos/{owner}/{repo}/labels"],
-    listLabelsOnIssue: [
-      "GET /repos/{owner}/{repo}/issues/{issue_number}/labels"
-    ],
-    listMilestones: ["GET /repos/{owner}/{repo}/milestones"],
-    lock: ["PUT /repos/{owner}/{repo}/issues/{issue_number}/lock"],
-    removeAllLabels: [
-      "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels"
-    ],
-    removeAssignees: [
-      "DELETE /repos/{owner}/{repo}/issues/{issue_number}/assignees"
-    ],
-    removeLabel: [
-      "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels/{name}"
-    ],
-    setLabels: ["PUT /repos/{owner}/{repo}/issues/{issue_number}/labels"],
-    unlock: ["DELETE /repos/{owner}/{repo}/issues/{issue_number}/lock"],
-    update: ["PATCH /repos/{owner}/{repo}/issues/{issue_number}"],
-    updateComment: ["PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}"],
-    updateLabel: ["PATCH /repos/{owner}/{repo}/labels/{name}"],
-    updateMilestone: [
-      "PATCH /repos/{owner}/{repo}/milestones/{milestone_number}"
-    ]
-  },
-  licenses: {
-    get: ["GET /licenses/{license}"],
-    getAllCommonlyUsed: ["GET /licenses"],
-    getForRepo: ["GET /repos/{owner}/{repo}/license"]
-  },
-  markdown: {
-    render: ["POST /markdown"],
-    renderRaw: [
-      "POST /markdown/raw",
-      { headers: { "content-type": "text/plain; charset=utf-8" } }
-    ]
-  },
-  meta: {
-    get: ["GET /meta"],
-    getAllVersions: ["GET /versions"],
-    getOctocat: ["GET /octocat"],
-    getZen: ["GET /zen"],
-    root: ["GET /"]
-  },
-  migrations: {
-    cancelImport: ["DELETE /repos/{owner}/{repo}/import"],
-    deleteArchiveForAuthenticatedUser: [
-      "DELETE /user/migrations/{migration_id}/archive"
-    ],
-    deleteArchiveForOrg: [
-      "DELETE /orgs/{org}/migrations/{migration_id}/archive"
-    ],
-    downloadArchiveForOrg: [
-      "GET /orgs/{org}/migrations/{migration_id}/archive"
-    ],
-    getArchiveForAuthenticatedUser: [
-      "GET /user/migrations/{migration_id}/archive"
-    ],
-    getCommitAuthors: ["GET /repos/{owner}/{repo}/import/authors"],
-    getImportStatus: ["GET /repos/{owner}/{repo}/import"],
-    getLargeFiles: ["GET /repos/{owner}/{repo}/import/large_files"],
-    getStatusForAuthenticatedUser: ["GET /user/migrations/{migration_id}"],
-    getStatusForOrg: ["GET /orgs/{org}/migrations/{migration_id}"],
-    listForAuthenticatedUser: ["GET /user/migrations"],
-    listForOrg: ["GET /orgs/{org}/migrations"],
-    listReposForAuthenticatedUser: [
-      "GET /user/migrations/{migration_id}/repositories"
-    ],
-    listReposForOrg: ["GET /orgs/{org}/migrations/{migration_id}/repositories"],
-    listReposForUser: [
-      "GET /user/migrations/{migration_id}/repositories",
-      {},
-      { renamed: ["migrations", "listReposForAuthenticatedUser"] }
-    ],
-    mapCommitAuthor: ["PATCH /repos/{owner}/{repo}/import/authors/{author_id}"],
-    setLfsPreference: ["PATCH /repos/{owner}/{repo}/import/lfs"],
-    startForAuthenticatedUser: ["POST /user/migrations"],
-    startForOrg: ["POST /orgs/{org}/migrations"],
-    startImport: ["PUT /repos/{owner}/{repo}/import"],
-    unlockRepoForAuthenticatedUser: [
-      "DELETE /user/migrations/{migration_id}/repos/{repo_name}/lock"
-    ],
-    unlockRepoForOrg: [
-      "DELETE /orgs/{org}/migrations/{migration_id}/repos/{repo_name}/lock"
-    ],
-    updateImport: ["PATCH /repos/{owner}/{repo}/import"]
-  },
-  orgs: {
-    addSecurityManagerTeam: [
-      "PUT /orgs/{org}/security-managers/teams/{team_slug}"
-    ],
-    blockUser: ["PUT /orgs/{org}/blocks/{username}"],
-    cancelInvitation: ["DELETE /orgs/{org}/invitations/{invitation_id}"],
-    checkBlockedUser: ["GET /orgs/{org}/blocks/{username}"],
-    checkMembershipForUser: ["GET /orgs/{org}/members/{username}"],
-    checkPublicMembershipForUser: ["GET /orgs/{org}/public_members/{username}"],
-    convertMemberToOutsideCollaborator: [
-      "PUT /orgs/{org}/outside_collaborators/{username}"
-    ],
-    createInvitation: ["POST /orgs/{org}/invitations"],
-    createWebhook: ["POST /orgs/{org}/hooks"],
-    delete: ["DELETE /orgs/{org}"],
-    deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
-    enableOrDisableSecurityProductOnAllOrgRepos: [
-      "POST /orgs/{org}/{security_product}/{enablement}"
-    ],
-    get: ["GET /orgs/{org}"],
-    getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
-    getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
-    getWebhook: ["GET /orgs/{org}/hooks/{hook_id}"],
-    getWebhookConfigForOrg: ["GET /orgs/{org}/hooks/{hook_id}/config"],
-    getWebhookDelivery: [
-      "GET /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}"
-    ],
-    list: ["GET /organizations"],
-    listAppInstallations: ["GET /orgs/{org}/installations"],
-    listBlockedUsers: ["GET /orgs/{org}/blocks"],
-    listFailedInvitations: ["GET /orgs/{org}/failed_invitations"],
-    listForAuthenticatedUser: ["GET /user/orgs"],
-    listForUser: ["GET /users/{username}/orgs"],
-    listInvitationTeams: ["GET /orgs/{org}/invitations/{invitation_id}/teams"],
-    listMembers: ["GET /orgs/{org}/members"],
-    listMembershipsForAuthenticatedUser: ["GET /user/memberships/orgs"],
-    listOutsideCollaborators: ["GET /orgs/{org}/outside_collaborators"],
-    listPatGrantRepositories: [
-      "GET /orgs/{org}/personal-access-tokens/{pat_id}/repositories"
-    ],
-    listPatGrantRequestRepositories: [
-      "GET /orgs/{org}/personal-access-token-requests/{pat_request_id}/repositories"
-    ],
-    listPatGrantRequests: ["GET /orgs/{org}/personal-access-token-requests"],
-    listPatGrants: ["GET /orgs/{org}/personal-access-tokens"],
-    listPendingInvitations: ["GET /orgs/{org}/invitations"],
-    listPublicMembers: ["GET /orgs/{org}/public_members"],
-    listSecurityManagerTeams: ["GET /orgs/{org}/security-managers"],
-    listWebhookDeliveries: ["GET /orgs/{org}/hooks/{hook_id}/deliveries"],
-    listWebhooks: ["GET /orgs/{org}/hooks"],
-    pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
-    redeliverWebhookDelivery: [
-      "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
-    ],
-    removeMember: ["DELETE /orgs/{org}/members/{username}"],
-    removeMembershipForUser: ["DELETE /orgs/{org}/memberships/{username}"],
-    removeOutsideCollaborator: [
-      "DELETE /orgs/{org}/outside_collaborators/{username}"
-    ],
-    removePublicMembershipForAuthenticatedUser: [
-      "DELETE /orgs/{org}/public_members/{username}"
-    ],
-    removeSecurityManagerTeam: [
-      "DELETE /orgs/{org}/security-managers/teams/{team_slug}"
-    ],
-    reviewPatGrantRequest: [
-      "POST /orgs/{org}/personal-access-token-requests/{pat_request_id}"
-    ],
-    reviewPatGrantRequestsInBulk: [
-      "POST /orgs/{org}/personal-access-token-requests"
-    ],
-    setMembershipForUser: ["PUT /orgs/{org}/memberships/{username}"],
-    setPublicMembershipForAuthenticatedUser: [
-      "PUT /orgs/{org}/public_members/{username}"
-    ],
-    unblockUser: ["DELETE /orgs/{org}/blocks/{username}"],
-    update: ["PATCH /orgs/{org}"],
-    updateMembershipForAuthenticatedUser: [
-      "PATCH /user/memberships/orgs/{org}"
-    ],
-    updatePatAccess: ["POST /orgs/{org}/personal-access-tokens/{pat_id}"],
-    updatePatAccesses: ["POST /orgs/{org}/personal-access-tokens"],
-    updateWebhook: ["PATCH /orgs/{org}/hooks/{hook_id}"],
-    updateWebhookConfigForOrg: ["PATCH /orgs/{org}/hooks/{hook_id}/config"]
-  },
-  packages: {
-    deletePackageForAuthenticatedUser: [
-      "DELETE /user/packages/{package_type}/{package_name}"
-    ],
-    deletePackageForOrg: [
-      "DELETE /orgs/{org}/packages/{package_type}/{package_name}"
-    ],
-    deletePackageForUser: [
-      "DELETE /users/{username}/packages/{package_type}/{package_name}"
-    ],
-    deletePackageVersionForAuthenticatedUser: [
-      "DELETE /user/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    deletePackageVersionForOrg: [
-      "DELETE /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    deletePackageVersionForUser: [
-      "DELETE /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    getAllPackageVersionsForAPackageOwnedByAnOrg: [
-      "GET /orgs/{org}/packages/{package_type}/{package_name}/versions",
-      {},
-      { renamed: ["packages", "getAllPackageVersionsForPackageOwnedByOrg"] }
-    ],
-    getAllPackageVersionsForAPackageOwnedByTheAuthenticatedUser: [
-      "GET /user/packages/{package_type}/{package_name}/versions",
-      {},
-      {
-        renamed: [
-          "packages",
-          "getAllPackageVersionsForPackageOwnedByAuthenticatedUser"
-        ]
-      }
-    ],
-    getAllPackageVersionsForPackageOwnedByAuthenticatedUser: [
-      "GET /user/packages/{package_type}/{package_name}/versions"
-    ],
-    getAllPackageVersionsForPackageOwnedByOrg: [
-      "GET /orgs/{org}/packages/{package_type}/{package_name}/versions"
-    ],
-    getAllPackageVersionsForPackageOwnedByUser: [
-      "GET /users/{username}/packages/{package_type}/{package_name}/versions"
-    ],
-    getPackageForAuthenticatedUser: [
-      "GET /user/packages/{package_type}/{package_name}"
-    ],
-    getPackageForOrganization: [
-      "GET /orgs/{org}/packages/{package_type}/{package_name}"
-    ],
-    getPackageForUser: [
-      "GET /users/{username}/packages/{package_type}/{package_name}"
-    ],
-    getPackageVersionForAuthenticatedUser: [
-      "GET /user/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    getPackageVersionForOrganization: [
-      "GET /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    getPackageVersionForUser: [
-      "GET /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}"
-    ],
-    listDockerMigrationConflictingPackagesForAuthenticatedUser: [
-      "GET /user/docker/conflicts"
-    ],
-    listDockerMigrationConflictingPackagesForOrganization: [
-      "GET /orgs/{org}/docker/conflicts"
-    ],
-    listDockerMigrationConflictingPackagesForUser: [
-      "GET /users/{username}/docker/conflicts"
-    ],
-    listPackagesForAuthenticatedUser: ["GET /user/packages"],
-    listPackagesForOrganization: ["GET /orgs/{org}/packages"],
-    listPackagesForUser: ["GET /users/{username}/packages"],
-    restorePackageForAuthenticatedUser: [
-      "POST /user/packages/{package_type}/{package_name}/restore{?token}"
-    ],
-    restorePackageForOrg: [
-      "POST /orgs/{org}/packages/{package_type}/{package_name}/restore{?token}"
-    ],
-    restorePackageForUser: [
-      "POST /users/{username}/packages/{package_type}/{package_name}/restore{?token}"
-    ],
-    restorePackageVersionForAuthenticatedUser: [
-      "POST /user/packages/{package_type}/{package_name}/versions/{package_version_id}/restore"
-    ],
-    restorePackageVersionForOrg: [
-      "POST /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore"
-    ],
-    restorePackageVersionForUser: [
-      "POST /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore"
-    ]
-  },
-  projects: {
-    addCollaborator: ["PUT /projects/{project_id}/collaborators/{username}"],
-    createCard: ["POST /projects/columns/{column_id}/cards"],
-    createColumn: ["POST /projects/{project_id}/columns"],
-    createForAuthenticatedUser: ["POST /user/projects"],
-    createForOrg: ["POST /orgs/{org}/projects"],
-    createForRepo: ["POST /repos/{owner}/{repo}/projects"],
-    delete: ["DELETE /projects/{project_id}"],
-    deleteCard: ["DELETE /projects/columns/cards/{card_id}"],
-    deleteColumn: ["DELETE /projects/columns/{column_id}"],
-    get: ["GET /projects/{project_id}"],
-    getCard: ["GET /projects/columns/cards/{card_id}"],
-    getColumn: ["GET /projects/columns/{column_id}"],
-    getPermissionForUser: [
-      "GET /projects/{project_id}/collaborators/{username}/permission"
-    ],
-    listCards: ["GET /projects/columns/{column_id}/cards"],
-    listCollaborators: ["GET /projects/{project_id}/collaborators"],
-    listColumns: ["GET /projects/{project_id}/columns"],
-    listForOrg: ["GET /orgs/{org}/projects"],
-    listForRepo: ["GET /repos/{owner}/{repo}/projects"],
-    listForUser: ["GET /users/{username}/projects"],
-    moveCard: ["POST /projects/columns/cards/{card_id}/moves"],
-    moveColumn: ["POST /projects/columns/{column_id}/moves"],
-    removeCollaborator: [
-      "DELETE /projects/{project_id}/collaborators/{username}"
-    ],
-    update: ["PATCH /projects/{project_id}"],
-    updateCard: ["PATCH /projects/columns/cards/{card_id}"],
-    updateColumn: ["PATCH /projects/columns/{column_id}"]
-  },
-  pulls: {
-    checkIfMerged: ["GET /repos/{owner}/{repo}/pulls/{pull_number}/merge"],
-    create: ["POST /repos/{owner}/{repo}/pulls"],
-    createReplyForReviewComment: [
-      "POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies"
-    ],
-    createReview: ["POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews"],
-    createReviewComment: [
-      "POST /repos/{owner}/{repo}/pulls/{pull_number}/comments"
-    ],
-    deletePendingReview: [
-      "DELETE /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}"
-    ],
-    deleteReviewComment: [
-      "DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}"
-    ],
-    dismissReview: [
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals"
-    ],
-    get: ["GET /repos/{owner}/{repo}/pulls/{pull_number}"],
-    getReview: [
-      "GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}"
-    ],
-    getReviewComment: ["GET /repos/{owner}/{repo}/pulls/comments/{comment_id}"],
-    list: ["GET /repos/{owner}/{repo}/pulls"],
-    listCommentsForReview: [
-      "GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/comments"
-    ],
-    listCommits: ["GET /repos/{owner}/{repo}/pulls/{pull_number}/commits"],
-    listFiles: ["GET /repos/{owner}/{repo}/pulls/{pull_number}/files"],
-    listRequestedReviewers: [
-      "GET /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers"
-    ],
-    listReviewComments: [
-      "GET /repos/{owner}/{repo}/pulls/{pull_number}/comments"
-    ],
-    listReviewCommentsForRepo: ["GET /repos/{owner}/{repo}/pulls/comments"],
-    listReviews: ["GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews"],
-    merge: ["PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge"],
-    removeRequestedReviewers: [
-      "DELETE /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers"
-    ],
-    requestReviewers: [
-      "POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers"
-    ],
-    submitReview: [
-      "POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/events"
-    ],
-    update: ["PATCH /repos/{owner}/{repo}/pulls/{pull_number}"],
-    updateBranch: [
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/update-branch"
-    ],
-    updateReview: [
-      "PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}"
-    ],
-    updateReviewComment: [
-      "PATCH /repos/{owner}/{repo}/pulls/comments/{comment_id}"
-    ]
-  },
-  rateLimit: { get: ["GET /rate_limit"] },
-  reactions: {
-    createForCommitComment: [
-      "POST /repos/{owner}/{repo}/comments/{comment_id}/reactions"
-    ],
-    createForIssue: [
-      "POST /repos/{owner}/{repo}/issues/{issue_number}/reactions"
-    ],
-    createForIssueComment: [
-      "POST /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
-    ],
-    createForPullRequestReviewComment: [
-      "POST /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions"
-    ],
-    createForRelease: [
-      "POST /repos/{owner}/{repo}/releases/{release_id}/reactions"
-    ],
-    createForTeamDiscussionCommentInOrg: [
-      "POST /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions"
-    ],
-    createForTeamDiscussionInOrg: [
-      "POST /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions"
-    ],
-    deleteForCommitComment: [
-      "DELETE /repos/{owner}/{repo}/comments/{comment_id}/reactions/{reaction_id}"
-    ],
-    deleteForIssue: [
-      "DELETE /repos/{owner}/{repo}/issues/{issue_number}/reactions/{reaction_id}"
-    ],
-    deleteForIssueComment: [
-      "DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions/{reaction_id}"
-    ],
-    deleteForPullRequestComment: [
-      "DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions/{reaction_id}"
-    ],
-    deleteForRelease: [
-      "DELETE /repos/{owner}/{repo}/releases/{release_id}/reactions/{reaction_id}"
-    ],
-    deleteForTeamDiscussion: [
-      "DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions/{reaction_id}"
-    ],
-    deleteForTeamDiscussionComment: [
-      "DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions/{reaction_id}"
-    ],
-    listForCommitComment: [
-      "GET /repos/{owner}/{repo}/comments/{comment_id}/reactions"
-    ],
-    listForIssue: ["GET /repos/{owner}/{repo}/issues/{issue_number}/reactions"],
-    listForIssueComment: [
-      "GET /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions"
-    ],
-    listForPullRequestReviewComment: [
-      "GET /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions"
-    ],
-    listForRelease: [
-      "GET /repos/{owner}/{repo}/releases/{release_id}/reactions"
-    ],
-    listForTeamDiscussionCommentInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}/reactions"
-    ],
-    listForTeamDiscussionInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/reactions"
-    ]
-  },
-  repos: {
-    acceptInvitation: [
-      "PATCH /user/repository_invitations/{invitation_id}",
-      {},
-      { renamed: ["repos", "acceptInvitationForAuthenticatedUser"] }
-    ],
-    acceptInvitationForAuthenticatedUser: [
-      "PATCH /user/repository_invitations/{invitation_id}"
-    ],
-    addAppAccessRestrictions: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps",
-      {},
-      { mapToData: "apps" }
-    ],
-    addCollaborator: ["PUT /repos/{owner}/{repo}/collaborators/{username}"],
-    addStatusCheckContexts: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts",
-      {},
-      { mapToData: "contexts" }
-    ],
-    addTeamAccessRestrictions: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams",
-      {},
-      { mapToData: "teams" }
-    ],
-    addUserAccessRestrictions: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users",
-      {},
-      { mapToData: "users" }
-    ],
-    checkAutomatedSecurityFixes: [
-      "GET /repos/{owner}/{repo}/automated-security-fixes"
-    ],
-    checkCollaborator: ["GET /repos/{owner}/{repo}/collaborators/{username}"],
-    checkVulnerabilityAlerts: [
-      "GET /repos/{owner}/{repo}/vulnerability-alerts"
-    ],
-    codeownersErrors: ["GET /repos/{owner}/{repo}/codeowners/errors"],
-    compareCommits: ["GET /repos/{owner}/{repo}/compare/{base}...{head}"],
-    compareCommitsWithBasehead: [
-      "GET /repos/{owner}/{repo}/compare/{basehead}"
-    ],
-    createAutolink: ["POST /repos/{owner}/{repo}/autolinks"],
-    createCommitComment: [
-      "POST /repos/{owner}/{repo}/commits/{commit_sha}/comments"
-    ],
-    createCommitSignatureProtection: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures"
-    ],
-    createCommitStatus: ["POST /repos/{owner}/{repo}/statuses/{sha}"],
-    createDeployKey: ["POST /repos/{owner}/{repo}/keys"],
-    createDeployment: ["POST /repos/{owner}/{repo}/deployments"],
-    createDeploymentBranchPolicy: [
-      "POST /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies"
-    ],
-    createDeploymentProtectionRule: [
-      "POST /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules"
-    ],
-    createDeploymentStatus: [
-      "POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses"
-    ],
-    createDispatchEvent: ["POST /repos/{owner}/{repo}/dispatches"],
-    createForAuthenticatedUser: ["POST /user/repos"],
-    createFork: ["POST /repos/{owner}/{repo}/forks"],
-    createInOrg: ["POST /orgs/{org}/repos"],
-    createOrUpdateEnvironment: [
-      "PUT /repos/{owner}/{repo}/environments/{environment_name}"
-    ],
-    createOrUpdateFileContents: ["PUT /repos/{owner}/{repo}/contents/{path}"],
-    createOrgRuleset: ["POST /orgs/{org}/rulesets"],
-    createPagesDeployment: ["POST /repos/{owner}/{repo}/pages/deployment"],
-    createPagesSite: ["POST /repos/{owner}/{repo}/pages"],
-    createRelease: ["POST /repos/{owner}/{repo}/releases"],
-    createRepoRuleset: ["POST /repos/{owner}/{repo}/rulesets"],
-    createTagProtection: ["POST /repos/{owner}/{repo}/tags/protection"],
-    createUsingTemplate: [
-      "POST /repos/{template_owner}/{template_repo}/generate"
-    ],
-    createWebhook: ["POST /repos/{owner}/{repo}/hooks"],
-    declineInvitation: [
-      "DELETE /user/repository_invitations/{invitation_id}",
-      {},
-      { renamed: ["repos", "declineInvitationForAuthenticatedUser"] }
-    ],
-    declineInvitationForAuthenticatedUser: [
-      "DELETE /user/repository_invitations/{invitation_id}"
-    ],
-    delete: ["DELETE /repos/{owner}/{repo}"],
-    deleteAccessRestrictions: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions"
-    ],
-    deleteAdminBranchProtection: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins"
-    ],
-    deleteAnEnvironment: [
-      "DELETE /repos/{owner}/{repo}/environments/{environment_name}"
-    ],
-    deleteAutolink: ["DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}"],
-    deleteBranchProtection: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection"
-    ],
-    deleteCommitComment: ["DELETE /repos/{owner}/{repo}/comments/{comment_id}"],
-    deleteCommitSignatureProtection: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures"
-    ],
-    deleteDeployKey: ["DELETE /repos/{owner}/{repo}/keys/{key_id}"],
-    deleteDeployment: [
-      "DELETE /repos/{owner}/{repo}/deployments/{deployment_id}"
-    ],
-    deleteDeploymentBranchPolicy: [
-      "DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"
-    ],
-    deleteFile: ["DELETE /repos/{owner}/{repo}/contents/{path}"],
-    deleteInvitation: [
-      "DELETE /repos/{owner}/{repo}/invitations/{invitation_id}"
-    ],
-    deleteOrgRuleset: ["DELETE /orgs/{org}/rulesets/{ruleset_id}"],
-    deletePagesSite: ["DELETE /repos/{owner}/{repo}/pages"],
-    deletePullRequestReviewProtection: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews"
-    ],
-    deleteRelease: ["DELETE /repos/{owner}/{repo}/releases/{release_id}"],
-    deleteReleaseAsset: [
-      "DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}"
-    ],
-    deleteRepoRuleset: ["DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
-    deleteTagProtection: [
-      "DELETE /repos/{owner}/{repo}/tags/protection/{tag_protection_id}"
-    ],
-    deleteWebhook: ["DELETE /repos/{owner}/{repo}/hooks/{hook_id}"],
-    disableAutomatedSecurityFixes: [
-      "DELETE /repos/{owner}/{repo}/automated-security-fixes"
-    ],
-    disableDeploymentProtectionRule: [
-      "DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}"
-    ],
-    disablePrivateVulnerabilityReporting: [
-      "DELETE /repos/{owner}/{repo}/private-vulnerability-reporting"
-    ],
-    disableVulnerabilityAlerts: [
-      "DELETE /repos/{owner}/{repo}/vulnerability-alerts"
-    ],
-    downloadArchive: [
-      "GET /repos/{owner}/{repo}/zipball/{ref}",
-      {},
-      { renamed: ["repos", "downloadZipballArchive"] }
-    ],
-    downloadTarballArchive: ["GET /repos/{owner}/{repo}/tarball/{ref}"],
-    downloadZipballArchive: ["GET /repos/{owner}/{repo}/zipball/{ref}"],
-    enableAutomatedSecurityFixes: [
-      "PUT /repos/{owner}/{repo}/automated-security-fixes"
-    ],
-    enablePrivateVulnerabilityReporting: [
-      "PUT /repos/{owner}/{repo}/private-vulnerability-reporting"
-    ],
-    enableVulnerabilityAlerts: [
-      "PUT /repos/{owner}/{repo}/vulnerability-alerts"
-    ],
-    generateReleaseNotes: [
-      "POST /repos/{owner}/{repo}/releases/generate-notes"
-    ],
-    get: ["GET /repos/{owner}/{repo}"],
-    getAccessRestrictions: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions"
-    ],
-    getAdminBranchProtection: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins"
-    ],
-    getAllDeploymentProtectionRules: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules"
-    ],
-    getAllEnvironments: ["GET /repos/{owner}/{repo}/environments"],
-    getAllStatusCheckContexts: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts"
-    ],
-    getAllTopics: ["GET /repos/{owner}/{repo}/topics"],
-    getAppsWithAccessToProtectedBranch: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps"
-    ],
-    getAutolink: ["GET /repos/{owner}/{repo}/autolinks/{autolink_id}"],
-    getBranch: ["GET /repos/{owner}/{repo}/branches/{branch}"],
-    getBranchProtection: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection"
-    ],
-    getBranchRules: ["GET /repos/{owner}/{repo}/rules/branches/{branch}"],
-    getClones: ["GET /repos/{owner}/{repo}/traffic/clones"],
-    getCodeFrequencyStats: ["GET /repos/{owner}/{repo}/stats/code_frequency"],
-    getCollaboratorPermissionLevel: [
-      "GET /repos/{owner}/{repo}/collaborators/{username}/permission"
-    ],
-    getCombinedStatusForRef: ["GET /repos/{owner}/{repo}/commits/{ref}/status"],
-    getCommit: ["GET /repos/{owner}/{repo}/commits/{ref}"],
-    getCommitActivityStats: ["GET /repos/{owner}/{repo}/stats/commit_activity"],
-    getCommitComment: ["GET /repos/{owner}/{repo}/comments/{comment_id}"],
-    getCommitSignatureProtection: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures"
-    ],
-    getCommunityProfileMetrics: ["GET /repos/{owner}/{repo}/community/profile"],
-    getContent: ["GET /repos/{owner}/{repo}/contents/{path}"],
-    getContributorsStats: ["GET /repos/{owner}/{repo}/stats/contributors"],
-    getCustomDeploymentProtectionRule: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}"
-    ],
-    getDeployKey: ["GET /repos/{owner}/{repo}/keys/{key_id}"],
-    getDeployment: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}"],
-    getDeploymentBranchPolicy: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"
-    ],
-    getDeploymentStatus: [
-      "GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses/{status_id}"
-    ],
-    getEnvironment: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}"
-    ],
-    getLatestPagesBuild: ["GET /repos/{owner}/{repo}/pages/builds/latest"],
-    getLatestRelease: ["GET /repos/{owner}/{repo}/releases/latest"],
-    getOrgRuleset: ["GET /orgs/{org}/rulesets/{ruleset_id}"],
-    getOrgRulesets: ["GET /orgs/{org}/rulesets"],
-    getPages: ["GET /repos/{owner}/{repo}/pages"],
-    getPagesBuild: ["GET /repos/{owner}/{repo}/pages/builds/{build_id}"],
-    getPagesHealthCheck: ["GET /repos/{owner}/{repo}/pages/health"],
-    getParticipationStats: ["GET /repos/{owner}/{repo}/stats/participation"],
-    getPullRequestReviewProtection: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews"
-    ],
-    getPunchCardStats: ["GET /repos/{owner}/{repo}/stats/punch_card"],
-    getReadme: ["GET /repos/{owner}/{repo}/readme"],
-    getReadmeInDirectory: ["GET /repos/{owner}/{repo}/readme/{dir}"],
-    getRelease: ["GET /repos/{owner}/{repo}/releases/{release_id}"],
-    getReleaseAsset: ["GET /repos/{owner}/{repo}/releases/assets/{asset_id}"],
-    getReleaseByTag: ["GET /repos/{owner}/{repo}/releases/tags/{tag}"],
-    getRepoRuleset: ["GET /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
-    getRepoRulesets: ["GET /repos/{owner}/{repo}/rulesets"],
-    getStatusChecksProtection: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks"
-    ],
-    getTeamsWithAccessToProtectedBranch: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams"
-    ],
-    getTopPaths: ["GET /repos/{owner}/{repo}/traffic/popular/paths"],
-    getTopReferrers: ["GET /repos/{owner}/{repo}/traffic/popular/referrers"],
-    getUsersWithAccessToProtectedBranch: [
-      "GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users"
-    ],
-    getViews: ["GET /repos/{owner}/{repo}/traffic/views"],
-    getWebhook: ["GET /repos/{owner}/{repo}/hooks/{hook_id}"],
-    getWebhookConfigForRepo: [
-      "GET /repos/{owner}/{repo}/hooks/{hook_id}/config"
-    ],
-    getWebhookDelivery: [
-      "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}"
-    ],
-    listActivities: ["GET /repos/{owner}/{repo}/activity"],
-    listAutolinks: ["GET /repos/{owner}/{repo}/autolinks"],
-    listBranches: ["GET /repos/{owner}/{repo}/branches"],
-    listBranchesForHeadCommit: [
-      "GET /repos/{owner}/{repo}/commits/{commit_sha}/branches-where-head"
-    ],
-    listCollaborators: ["GET /repos/{owner}/{repo}/collaborators"],
-    listCommentsForCommit: [
-      "GET /repos/{owner}/{repo}/commits/{commit_sha}/comments"
-    ],
-    listCommitCommentsForRepo: ["GET /repos/{owner}/{repo}/comments"],
-    listCommitStatusesForRef: [
-      "GET /repos/{owner}/{repo}/commits/{ref}/statuses"
-    ],
-    listCommits: ["GET /repos/{owner}/{repo}/commits"],
-    listContributors: ["GET /repos/{owner}/{repo}/contributors"],
-    listCustomDeploymentRuleIntegrations: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/apps"
-    ],
-    listDeployKeys: ["GET /repos/{owner}/{repo}/keys"],
-    listDeploymentBranchPolicies: [
-      "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies"
-    ],
-    listDeploymentStatuses: [
-      "GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses"
-    ],
-    listDeployments: ["GET /repos/{owner}/{repo}/deployments"],
-    listForAuthenticatedUser: ["GET /user/repos"],
-    listForOrg: ["GET /orgs/{org}/repos"],
-    listForUser: ["GET /users/{username}/repos"],
-    listForks: ["GET /repos/{owner}/{repo}/forks"],
-    listInvitations: ["GET /repos/{owner}/{repo}/invitations"],
-    listInvitationsForAuthenticatedUser: ["GET /user/repository_invitations"],
-    listLanguages: ["GET /repos/{owner}/{repo}/languages"],
-    listPagesBuilds: ["GET /repos/{owner}/{repo}/pages/builds"],
-    listPublic: ["GET /repositories"],
-    listPullRequestsAssociatedWithCommit: [
-      "GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls"
-    ],
-    listReleaseAssets: [
-      "GET /repos/{owner}/{repo}/releases/{release_id}/assets"
-    ],
-    listReleases: ["GET /repos/{owner}/{repo}/releases"],
-    listTagProtection: ["GET /repos/{owner}/{repo}/tags/protection"],
-    listTags: ["GET /repos/{owner}/{repo}/tags"],
-    listTeams: ["GET /repos/{owner}/{repo}/teams"],
-    listWebhookDeliveries: [
-      "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries"
-    ],
-    listWebhooks: ["GET /repos/{owner}/{repo}/hooks"],
-    merge: ["POST /repos/{owner}/{repo}/merges"],
-    mergeUpstream: ["POST /repos/{owner}/{repo}/merge-upstream"],
-    pingWebhook: ["POST /repos/{owner}/{repo}/hooks/{hook_id}/pings"],
-    redeliverWebhookDelivery: [
-      "POST /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
-    ],
-    removeAppAccessRestrictions: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps",
-      {},
-      { mapToData: "apps" }
-    ],
-    removeCollaborator: [
-      "DELETE /repos/{owner}/{repo}/collaborators/{username}"
-    ],
-    removeStatusCheckContexts: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts",
-      {},
-      { mapToData: "contexts" }
-    ],
-    removeStatusCheckProtection: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks"
-    ],
-    removeTeamAccessRestrictions: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams",
-      {},
-      { mapToData: "teams" }
-    ],
-    removeUserAccessRestrictions: [
-      "DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users",
-      {},
-      { mapToData: "users" }
-    ],
-    renameBranch: ["POST /repos/{owner}/{repo}/branches/{branch}/rename"],
-    replaceAllTopics: ["PUT /repos/{owner}/{repo}/topics"],
-    requestPagesBuild: ["POST /repos/{owner}/{repo}/pages/builds"],
-    setAdminBranchProtection: [
-      "POST /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins"
-    ],
-    setAppAccessRestrictions: [
-      "PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps",
-      {},
-      { mapToData: "apps" }
-    ],
-    setStatusCheckContexts: [
-      "PUT /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts",
-      {},
-      { mapToData: "contexts" }
-    ],
-    setTeamAccessRestrictions: [
-      "PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams",
-      {},
-      { mapToData: "teams" }
-    ],
-    setUserAccessRestrictions: [
-      "PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users",
-      {},
-      { mapToData: "users" }
-    ],
-    testPushWebhook: ["POST /repos/{owner}/{repo}/hooks/{hook_id}/tests"],
-    transfer: ["POST /repos/{owner}/{repo}/transfer"],
-    update: ["PATCH /repos/{owner}/{repo}"],
-    updateBranchProtection: [
-      "PUT /repos/{owner}/{repo}/branches/{branch}/protection"
-    ],
-    updateCommitComment: ["PATCH /repos/{owner}/{repo}/comments/{comment_id}"],
-    updateDeploymentBranchPolicy: [
-      "PUT /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}"
-    ],
-    updateInformationAboutPagesSite: ["PUT /repos/{owner}/{repo}/pages"],
-    updateInvitation: [
-      "PATCH /repos/{owner}/{repo}/invitations/{invitation_id}"
-    ],
-    updateOrgRuleset: ["PUT /orgs/{org}/rulesets/{ruleset_id}"],
-    updatePullRequestReviewProtection: [
-      "PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews"
-    ],
-    updateRelease: ["PATCH /repos/{owner}/{repo}/releases/{release_id}"],
-    updateReleaseAsset: [
-      "PATCH /repos/{owner}/{repo}/releases/assets/{asset_id}"
-    ],
-    updateRepoRuleset: ["PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
-    updateStatusCheckPotection: [
-      "PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks",
-      {},
-      { renamed: ["repos", "updateStatusCheckProtection"] }
-    ],
-    updateStatusCheckProtection: [
-      "PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks"
-    ],
-    updateWebhook: ["PATCH /repos/{owner}/{repo}/hooks/{hook_id}"],
-    updateWebhookConfigForRepo: [
-      "PATCH /repos/{owner}/{repo}/hooks/{hook_id}/config"
-    ],
-    uploadReleaseAsset: [
-      "POST /repos/{owner}/{repo}/releases/{release_id}/assets{?name,label}",
-      { baseUrl: "https://uploads.github.com" }
-    ]
-  },
-  search: {
-    code: ["GET /search/code"],
-    commits: ["GET /search/commits"],
-    issuesAndPullRequests: ["GET /search/issues"],
-    labels: ["GET /search/labels"],
-    repos: ["GET /search/repositories"],
-    topics: ["GET /search/topics"],
-    users: ["GET /search/users"]
-  },
-  secretScanning: {
-    getAlert: [
-      "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"
-    ],
-    listAlertsForEnterprise: [
-      "GET /enterprises/{enterprise}/secret-scanning/alerts"
-    ],
-    listAlertsForOrg: ["GET /orgs/{org}/secret-scanning/alerts"],
-    listAlertsForRepo: ["GET /repos/{owner}/{repo}/secret-scanning/alerts"],
-    listLocationsForAlert: [
-      "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}/locations"
-    ],
-    updateAlert: [
-      "PATCH /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"
-    ]
-  },
-  securityAdvisories: {
-    createPrivateVulnerabilityReport: [
-      "POST /repos/{owner}/{repo}/security-advisories/reports"
-    ],
-    createRepositoryAdvisory: [
-      "POST /repos/{owner}/{repo}/security-advisories"
-    ],
-    createRepositoryAdvisoryCveRequest: [
-      "POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/cve"
-    ],
-    getGlobalAdvisory: ["GET /advisories/{ghsa_id}"],
-    getRepositoryAdvisory: [
-      "GET /repos/{owner}/{repo}/security-advisories/{ghsa_id}"
-    ],
-    listGlobalAdvisories: ["GET /advisories"],
-    listOrgRepositoryAdvisories: ["GET /orgs/{org}/security-advisories"],
-    listRepositoryAdvisories: ["GET /repos/{owner}/{repo}/security-advisories"],
-    updateRepositoryAdvisory: [
-      "PATCH /repos/{owner}/{repo}/security-advisories/{ghsa_id}"
-    ]
-  },
-  teams: {
-    addOrUpdateMembershipForUserInOrg: [
-      "PUT /orgs/{org}/teams/{team_slug}/memberships/{username}"
-    ],
-    addOrUpdateProjectPermissionsInOrg: [
-      "PUT /orgs/{org}/teams/{team_slug}/projects/{project_id}"
-    ],
-    addOrUpdateRepoPermissionsInOrg: [
-      "PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
-    ],
-    checkPermissionsForProjectInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/projects/{project_id}"
-    ],
-    checkPermissionsForRepoInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
-    ],
-    create: ["POST /orgs/{org}/teams"],
-    createDiscussionCommentInOrg: [
-      "POST /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments"
-    ],
-    createDiscussionInOrg: ["POST /orgs/{org}/teams/{team_slug}/discussions"],
-    deleteDiscussionCommentInOrg: [
-      "DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}"
-    ],
-    deleteDiscussionInOrg: [
-      "DELETE /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}"
-    ],
-    deleteInOrg: ["DELETE /orgs/{org}/teams/{team_slug}"],
-    getByName: ["GET /orgs/{org}/teams/{team_slug}"],
-    getDiscussionCommentInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}"
-    ],
-    getDiscussionInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}"
-    ],
-    getMembershipForUserInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/memberships/{username}"
-    ],
-    list: ["GET /orgs/{org}/teams"],
-    listChildInOrg: ["GET /orgs/{org}/teams/{team_slug}/teams"],
-    listDiscussionCommentsInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments"
-    ],
-    listDiscussionsInOrg: ["GET /orgs/{org}/teams/{team_slug}/discussions"],
-    listForAuthenticatedUser: ["GET /user/teams"],
-    listMembersInOrg: ["GET /orgs/{org}/teams/{team_slug}/members"],
-    listPendingInvitationsInOrg: [
-      "GET /orgs/{org}/teams/{team_slug}/invitations"
-    ],
-    listProjectsInOrg: ["GET /orgs/{org}/teams/{team_slug}/projects"],
-    listReposInOrg: ["GET /orgs/{org}/teams/{team_slug}/repos"],
-    removeMembershipForUserInOrg: [
-      "DELETE /orgs/{org}/teams/{team_slug}/memberships/{username}"
-    ],
-    removeProjectInOrg: [
-      "DELETE /orgs/{org}/teams/{team_slug}/projects/{project_id}"
-    ],
-    removeRepoInOrg: [
-      "DELETE /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
-    ],
-    updateDiscussionCommentInOrg: [
-      "PATCH /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}/comments/{comment_number}"
-    ],
-    updateDiscussionInOrg: [
-      "PATCH /orgs/{org}/teams/{team_slug}/discussions/{discussion_number}"
-    ],
-    updateInOrg: ["PATCH /orgs/{org}/teams/{team_slug}"]
-  },
-  users: {
-    addEmailForAuthenticated: [
-      "POST /user/emails",
-      {},
-      { renamed: ["users", "addEmailForAuthenticatedUser"] }
-    ],
-    addEmailForAuthenticatedUser: ["POST /user/emails"],
-    addSocialAccountForAuthenticatedUser: ["POST /user/social_accounts"],
-    block: ["PUT /user/blocks/{username}"],
-    checkBlocked: ["GET /user/blocks/{username}"],
-    checkFollowingForUser: ["GET /users/{username}/following/{target_user}"],
-    checkPersonIsFollowedByAuthenticated: ["GET /user/following/{username}"],
-    createGpgKeyForAuthenticated: [
-      "POST /user/gpg_keys",
-      {},
-      { renamed: ["users", "createGpgKeyForAuthenticatedUser"] }
-    ],
-    createGpgKeyForAuthenticatedUser: ["POST /user/gpg_keys"],
-    createPublicSshKeyForAuthenticated: [
-      "POST /user/keys",
-      {},
-      { renamed: ["users", "createPublicSshKeyForAuthenticatedUser"] }
-    ],
-    createPublicSshKeyForAuthenticatedUser: ["POST /user/keys"],
-    createSshSigningKeyForAuthenticatedUser: ["POST /user/ssh_signing_keys"],
-    deleteEmailForAuthenticated: [
-      "DELETE /user/emails",
-      {},
-      { renamed: ["users", "deleteEmailForAuthenticatedUser"] }
-    ],
-    deleteEmailForAuthenticatedUser: ["DELETE /user/emails"],
-    deleteGpgKeyForAuthenticated: [
-      "DELETE /user/gpg_keys/{gpg_key_id}",
-      {},
-      { renamed: ["users", "deleteGpgKeyForAuthenticatedUser"] }
-    ],
-    deleteGpgKeyForAuthenticatedUser: ["DELETE /user/gpg_keys/{gpg_key_id}"],
-    deletePublicSshKeyForAuthenticated: [
-      "DELETE /user/keys/{key_id}",
-      {},
-      { renamed: ["users", "deletePublicSshKeyForAuthenticatedUser"] }
-    ],
-    deletePublicSshKeyForAuthenticatedUser: ["DELETE /user/keys/{key_id}"],
-    deleteSocialAccountForAuthenticatedUser: ["DELETE /user/social_accounts"],
-    deleteSshSigningKeyForAuthenticatedUser: [
-      "DELETE /user/ssh_signing_keys/{ssh_signing_key_id}"
-    ],
-    follow: ["PUT /user/following/{username}"],
-    getAuthenticated: ["GET /user"],
-    getByUsername: ["GET /users/{username}"],
-    getContextForUser: ["GET /users/{username}/hovercard"],
-    getGpgKeyForAuthenticated: [
-      "GET /user/gpg_keys/{gpg_key_id}",
-      {},
-      { renamed: ["users", "getGpgKeyForAuthenticatedUser"] }
-    ],
-    getGpgKeyForAuthenticatedUser: ["GET /user/gpg_keys/{gpg_key_id}"],
-    getPublicSshKeyForAuthenticated: [
-      "GET /user/keys/{key_id}",
-      {},
-      { renamed: ["users", "getPublicSshKeyForAuthenticatedUser"] }
-    ],
-    getPublicSshKeyForAuthenticatedUser: ["GET /user/keys/{key_id}"],
-    getSshSigningKeyForAuthenticatedUser: [
-      "GET /user/ssh_signing_keys/{ssh_signing_key_id}"
-    ],
-    list: ["GET /users"],
-    listBlockedByAuthenticated: [
-      "GET /user/blocks",
-      {},
-      { renamed: ["users", "listBlockedByAuthenticatedUser"] }
-    ],
-    listBlockedByAuthenticatedUser: ["GET /user/blocks"],
-    listEmailsForAuthenticated: [
-      "GET /user/emails",
-      {},
-      { renamed: ["users", "listEmailsForAuthenticatedUser"] }
-    ],
-    listEmailsForAuthenticatedUser: ["GET /user/emails"],
-    listFollowedByAuthenticated: [
-      "GET /user/following",
-      {},
-      { renamed: ["users", "listFollowedByAuthenticatedUser"] }
-    ],
-    listFollowedByAuthenticatedUser: ["GET /user/following"],
-    listFollowersForAuthenticatedUser: ["GET /user/followers"],
-    listFollowersForUser: ["GET /users/{username}/followers"],
-    listFollowingForUser: ["GET /users/{username}/following"],
-    listGpgKeysForAuthenticated: [
-      "GET /user/gpg_keys",
-      {},
-      { renamed: ["users", "listGpgKeysForAuthenticatedUser"] }
-    ],
-    listGpgKeysForAuthenticatedUser: ["GET /user/gpg_keys"],
-    listGpgKeysForUser: ["GET /users/{username}/gpg_keys"],
-    listPublicEmailsForAuthenticated: [
-      "GET /user/public_emails",
-      {},
-      { renamed: ["users", "listPublicEmailsForAuthenticatedUser"] }
-    ],
-    listPublicEmailsForAuthenticatedUser: ["GET /user/public_emails"],
-    listPublicKeysForUser: ["GET /users/{username}/keys"],
-    listPublicSshKeysForAuthenticated: [
-      "GET /user/keys",
-      {},
-      { renamed: ["users", "listPublicSshKeysForAuthenticatedUser"] }
-    ],
-    listPublicSshKeysForAuthenticatedUser: ["GET /user/keys"],
-    listSocialAccountsForAuthenticatedUser: ["GET /user/social_accounts"],
-    listSocialAccountsForUser: ["GET /users/{username}/social_accounts"],
-    listSshSigningKeysForAuthenticatedUser: ["GET /user/ssh_signing_keys"],
-    listSshSigningKeysForUser: ["GET /users/{username}/ssh_signing_keys"],
-    setPrimaryEmailVisibilityForAuthenticated: [
-      "PATCH /user/email/visibility",
-      {},
-      { renamed: ["users", "setPrimaryEmailVisibilityForAuthenticatedUser"] }
-    ],
-    setPrimaryEmailVisibilityForAuthenticatedUser: [
-      "PATCH /user/email/visibility"
-    ],
-    unblock: ["DELETE /user/blocks/{username}"],
-    unfollow: ["DELETE /user/following/{username}"],
-    updateAuthenticated: ["PATCH /user"]
-  }
-};
-var endpoints_default = Endpoints;
-
-// pkg/dist-src/endpoints-to-methods.js
-var endpointMethodsMap = /* @__PURE__ */ new Map();
-for (const [scope, endpoints] of Object.entries(endpoints_default)) {
-  for (const [methodName, endpoint] of Object.entries(endpoints)) {
-    const [route, defaults, decorations] = endpoint;
-    const [method, url] = route.split(/ /);
-    const endpointDefaults = Object.assign(
-      {
-        method,
-        url
-      },
-      defaults
-    );
-    if (!endpointMethodsMap.has(scope)) {
-      endpointMethodsMap.set(scope, /* @__PURE__ */ new Map());
-    }
-    endpointMethodsMap.get(scope).set(methodName, {
-      scope,
-      methodName,
-      endpointDefaults,
-      decorations
-    });
-  }
-}
-var handler = {
-  has({ scope }, methodName) {
-    return endpointMethodsMap.get(scope).has(methodName);
-  },
-  getOwnPropertyDescriptor(target, methodName) {
-    return {
-      value: this.get(target, methodName),
-      // ensures method is in the cache
-      configurable: true,
-      writable: true,
-      enumerable: true
-    };
-  },
-  defineProperty(target, methodName, descriptor) {
-    Object.defineProperty(target.cache, methodName, descriptor);
-    return true;
-  },
-  deleteProperty(target, methodName) {
-    delete target.cache[methodName];
-    return true;
-  },
-  ownKeys({ scope }) {
-    return [...endpointMethodsMap.get(scope).keys()];
-  },
-  set(target, methodName, value) {
-    return target.cache[methodName] = value;
-  },
-  get({ octokit, scope, cache }, methodName) {
-    if (cache[methodName]) {
-      return cache[methodName];
-    }
-    const method = endpointMethodsMap.get(scope).get(methodName);
-    if (!method) {
-      return void 0;
-    }
-    const { endpointDefaults, decorations } = method;
-    if (decorations) {
-      cache[methodName] = decorate(
-        octokit,
-        scope,
-        methodName,
-        endpointDefaults,
-        decorations
-      );
-    } else {
-      cache[methodName] = octokit.request.defaults(endpointDefaults);
-    }
-    return cache[methodName];
-  }
-};
-function endpointsToMethods(octokit) {
-  const newMethods = {};
-  for (const scope of endpointMethodsMap.keys()) {
-    newMethods[scope] = new Proxy({ octokit, scope, cache: {} }, handler);
-  }
-  return newMethods;
-}
-function decorate(octokit, scope, methodName, defaults, decorations) {
-  const requestWithDefaults = octokit.request.defaults(defaults);
-  function withDecorations(...args) {
-    let options = requestWithDefaults.endpoint.merge(...args);
-    if (decorations.mapToData) {
-      options = Object.assign({}, options, {
-        data: options[decorations.mapToData],
-        [decorations.mapToData]: void 0
-      });
-      return requestWithDefaults(options);
-    }
-    if (decorations.renamed) {
-      const [newScope, newMethodName] = decorations.renamed;
-      octokit.log.warn(
-        `octokit.${scope}.${methodName}() has been renamed to octokit.${newScope}.${newMethodName}()`
-      );
-    }
-    if (decorations.deprecated) {
-      octokit.log.warn(decorations.deprecated);
-    }
-    if (decorations.renamedParameters) {
-      const options2 = requestWithDefaults.endpoint.merge(...args);
-      for (const [name, alias] of Object.entries(
-        decorations.renamedParameters
-      )) {
-        if (name in options2) {
-          octokit.log.warn(
-            `"${name}" parameter is deprecated for "octokit.${scope}.${methodName}()". Use "${alias}" instead`
-          );
-          if (!(alias in options2)) {
-            options2[alias] = options2[name];
-          }
-          delete options2[name];
-        }
-      }
-      return requestWithDefaults(options2);
-    }
-    return requestWithDefaults(...args);
-  }
-  return Object.assign(withDecorations, requestWithDefaults);
-}
-
-// pkg/dist-src/index.js
-function restEndpointMethods(octokit) {
-  const api = endpointsToMethods(octokit);
-  return {
-    rest: api
-  };
-}
-restEndpointMethods.VERSION = VERSION;
-function legacyRestEndpointMethods(octokit) {
-  const api = endpointsToMethods(octokit);
-  return {
-    ...api,
-    rest: api
-  };
-}
-legacyRestEndpointMethods.VERSION = VERSION;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 6298:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  VERSION: () => VERSION,
-  retry: () => retry
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_core = __nccwpck_require__(6762);
-
-// pkg/dist-src/error-request.js
-async function errorRequest(state, octokit, error, options) {
-  if (!error.request || !error.request.request) {
-    throw error;
-  }
-  if (error.status >= 400 && !state.doNotRetry.includes(error.status)) {
-    const retries = options.request.retries != null ? options.request.retries : state.retries;
-    const retryAfter = Math.pow((options.request.retryCount || 0) + 1, 2);
-    throw octokit.retry.retryRequest(error, retries, retryAfter);
-  }
-  throw error;
-}
-
-// pkg/dist-src/wrap-request.js
-var import_light = __toESM(__nccwpck_require__(1174));
-var import_request_error = __nccwpck_require__(537);
-async function wrapRequest(state, octokit, request, options) {
-  const limiter = new import_light.default();
-  limiter.on("failed", function(error, info) {
-    const maxRetries = ~~error.request.request.retries;
-    const after = ~~error.request.request.retryAfter;
-    options.request.retryCount = info.retryCount + 1;
-    if (maxRetries > info.retryCount) {
-      return after * state.retryAfterBaseValue;
-    }
-  });
-  return limiter.schedule(
-    requestWithGraphqlErrorHandling.bind(null, state, octokit, request),
-    options
-  );
-}
-async function requestWithGraphqlErrorHandling(state, octokit, request, options) {
-  const response = await request(request, options);
-  if (response.data && response.data.errors && /Something went wrong while executing your query/.test(
-    response.data.errors[0].message
-  )) {
-    const error = new import_request_error.RequestError(response.data.errors[0].message, 500, {
-      request: options,
-      response
-    });
-    return errorRequest(state, octokit, error, options);
-  }
-  return response;
-}
-
-// pkg/dist-src/index.js
-var VERSION = "6.0.1";
-function retry(octokit, octokitOptions) {
-  const state = Object.assign(
-    {
-      enabled: true,
-      retryAfterBaseValue: 1e3,
-      doNotRetry: [400, 401, 403, 404, 422, 451],
-      retries: 3
-    },
-    octokitOptions.retry
-  );
-  if (state.enabled) {
-    octokit.hook.error("request", errorRequest.bind(null, state, octokit));
-    octokit.hook.wrap("request", wrapRequest.bind(null, state, octokit));
-  }
-  return {
-    retry: {
-      retryRequest: (error, retries, retryAfter) => {
-        error.request.request = Object.assign({}, error.request.request, {
-          retries,
-          retryAfter
-        });
-        return error;
-      }
-    }
-  };
-}
-retry.VERSION = VERSION;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 537:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __create = Object.create;
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  RequestError: () => RequestError
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_deprecation = __nccwpck_require__(8932);
-var import_once = __toESM(__nccwpck_require__(1223));
-var logOnceCode = (0, import_once.default)((deprecation) => console.warn(deprecation));
-var logOnceHeaders = (0, import_once.default)((deprecation) => console.warn(deprecation));
-var RequestError = class extends Error {
-  constructor(message, statusCode, options) {
-    super(message);
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-    this.name = "HttpError";
-    this.status = statusCode;
-    let headers;
-    if ("headers" in options && typeof options.headers !== "undefined") {
-      headers = options.headers;
-    }
-    if ("response" in options) {
-      this.response = options.response;
-      headers = options.response.headers;
-    }
-    const requestCopy = Object.assign({}, options.request);
-    if (options.request.headers.authorization) {
-      requestCopy.headers = Object.assign({}, options.request.headers, {
-        authorization: options.request.headers.authorization.replace(
-          / .*$/,
-          " [REDACTED]"
-        )
-      });
-    }
-    requestCopy.url = requestCopy.url.replace(/\bclient_secret=\w+/g, "client_secret=[REDACTED]").replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
-    this.request = requestCopy;
-    Object.defineProperty(this, "code", {
-      get() {
-        logOnceCode(
-          new import_deprecation.Deprecation(
-            "[@octokit/request-error] `error.code` is deprecated, use `error.status`."
-          )
-        );
-        return statusCode;
-      }
-    });
-    Object.defineProperty(this, "headers", {
-      get() {
-        logOnceHeaders(
-          new import_deprecation.Deprecation(
-            "[@octokit/request-error] `error.headers` is deprecated, use `error.response.headers`."
-          )
-        );
-        return headers || {};
-      }
-    });
-  }
-};
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
-/***/ 6234:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  request: () => request
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_endpoint = __nccwpck_require__(9440);
-var import_universal_user_agent = __nccwpck_require__(5030);
-
-// pkg/dist-src/version.js
-var VERSION = "8.1.1";
-
-// pkg/dist-src/fetch-wrapper.js
-var import_is_plain_object = __nccwpck_require__(3287);
-var import_request_error = __nccwpck_require__(537);
-
-// pkg/dist-src/get-buffer-response.js
-function getBufferResponse(response) {
-  return response.arrayBuffer();
-}
-
-// pkg/dist-src/fetch-wrapper.js
-function fetchWrapper(requestOptions) {
-  var _a, _b, _c;
-  const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
-  const parseSuccessResponseBody = ((_a = requestOptions.request) == null ? void 0 : _a.parseSuccessResponseBody) !== false;
-  if ((0, import_is_plain_object.isPlainObject)(requestOptions.body) || Array.isArray(requestOptions.body)) {
-    requestOptions.body = JSON.stringify(requestOptions.body);
-  }
-  let headers = {};
-  let status;
-  let url;
-  let { fetch } = globalThis;
-  if ((_b = requestOptions.request) == null ? void 0 : _b.fetch) {
-    fetch = requestOptions.request.fetch;
-  }
-  if (!fetch) {
-    throw new Error(
-      "fetch is not set. Please pass a fetch implementation as new Octokit({ request: { fetch }}). Learn more at https://github.com/octokit/octokit.js/#fetch-missing"
-    );
-  }
-  return fetch(requestOptions.url, {
-    method: requestOptions.method,
-    body: requestOptions.body,
-    headers: requestOptions.headers,
-    signal: (_c = requestOptions.request) == null ? void 0 : _c.signal,
-    // duplex must be set if request.body is ReadableStream or Async Iterables.
-    // See https://fetch.spec.whatwg.org/#dom-requestinit-duplex.
-    ...requestOptions.body && { duplex: "half" }
-  }).then(async (response) => {
-    url = response.url;
-    status = response.status;
-    for (const keyAndValue of response.headers) {
-      headers[keyAndValue[0]] = keyAndValue[1];
-    }
-    if ("deprecation" in headers) {
-      const matches = headers.link && headers.link.match(/<([^>]+)>; rel="deprecation"/);
-      const deprecationLink = matches && matches.pop();
-      log.warn(
-        `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
-      );
-    }
-    if (status === 204 || status === 205) {
-      return;
-    }
-    if (requestOptions.method === "HEAD") {
-      if (status < 400) {
-        return;
-      }
-      throw new import_request_error.RequestError(response.statusText, status, {
-        response: {
-          url,
-          status,
-          headers,
-          data: void 0
-        },
-        request: requestOptions
-      });
-    }
-    if (status === 304) {
-      throw new import_request_error.RequestError("Not modified", status, {
-        response: {
-          url,
-          status,
-          headers,
-          data: await getResponseData(response)
-        },
-        request: requestOptions
-      });
-    }
-    if (status >= 400) {
-      const data = await getResponseData(response);
-      const error = new import_request_error.RequestError(toErrorMessage(data), status, {
-        response: {
-          url,
-          status,
-          headers,
-          data
-        },
-        request: requestOptions
-      });
-      throw error;
-    }
-    return parseSuccessResponseBody ? await getResponseData(response) : response.body;
-  }).then((data) => {
-    return {
-      status,
-      url,
-      headers,
-      data
-    };
-  }).catch((error) => {
-    if (error instanceof import_request_error.RequestError)
-      throw error;
-    else if (error.name === "AbortError")
-      throw error;
-    throw new import_request_error.RequestError(error.message, 500, {
-      request: requestOptions
-    });
-  });
-}
-async function getResponseData(response) {
-  const contentType = response.headers.get("content-type");
-  if (/application\/json/.test(contentType)) {
-    return response.json();
-  }
-  if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
-    return response.text();
-  }
-  return getBufferResponse(response);
-}
-function toErrorMessage(data) {
-  if (typeof data === "string")
-    return data;
-  if ("message" in data) {
-    if (Array.isArray(data.errors)) {
-      return `${data.message}: ${data.errors.map(JSON.stringify).join(", ")}`;
-    }
-    return data.message;
-  }
-  return `Unknown error: ${JSON.stringify(data)}`;
-}
-
-// pkg/dist-src/with-defaults.js
-function withDefaults(oldEndpoint, newDefaults) {
-  const endpoint2 = oldEndpoint.defaults(newDefaults);
-  const newApi = function(route, parameters) {
-    const endpointOptions = endpoint2.merge(route, parameters);
-    if (!endpointOptions.request || !endpointOptions.request.hook) {
-      return fetchWrapper(endpoint2.parse(endpointOptions));
-    }
-    const request2 = (route2, parameters2) => {
-      return fetchWrapper(
-        endpoint2.parse(endpoint2.merge(route2, parameters2))
-      );
-    };
-    Object.assign(request2, {
-      endpoint: endpoint2,
-      defaults: withDefaults.bind(null, endpoint2)
-    });
-    return endpointOptions.request.hook(request2, endpointOptions);
-  };
-  return Object.assign(newApi, {
-    endpoint: endpoint2,
-    defaults: withDefaults.bind(null, endpoint2)
-  });
-}
-
-// pkg/dist-src/index.js
-var request = withDefaults(import_endpoint.endpoint, {
-  headers: {
-    "user-agent": `octokit-request.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`
-  }
-});
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
 /***/ 9417:
 /***/ ((module) => {
 
@@ -9685,1713 +5742,6 @@ function range(a, b, str) {
 
   return result;
 }
-
-
-/***/ }),
-
-/***/ 3682:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-var register = __nccwpck_require__(4670)
-var addHook = __nccwpck_require__(5549)
-var removeHook = __nccwpck_require__(6819)
-
-// bind with array of arguments: https://stackoverflow.com/a/21792913
-var bind = Function.bind
-var bindable = bind.bind(bind)
-
-function bindApi (hook, state, name) {
-  var removeHookRef = bindable(removeHook, null).apply(null, name ? [state, name] : [state])
-  hook.api = { remove: removeHookRef }
-  hook.remove = removeHookRef
-
-  ;['before', 'error', 'after', 'wrap'].forEach(function (kind) {
-    var args = name ? [state, kind, name] : [state, kind]
-    hook[kind] = hook.api[kind] = bindable(addHook, null).apply(null, args)
-  })
-}
-
-function HookSingular () {
-  var singularHookName = 'h'
-  var singularHookState = {
-    registry: {}
-  }
-  var singularHook = register.bind(null, singularHookState, singularHookName)
-  bindApi(singularHook, singularHookState, singularHookName)
-  return singularHook
-}
-
-function HookCollection () {
-  var state = {
-    registry: {}
-  }
-
-  var hook = register.bind(null, state)
-  bindApi(hook, state)
-
-  return hook
-}
-
-var collectionHookDeprecationMessageDisplayed = false
-function Hook () {
-  if (!collectionHookDeprecationMessageDisplayed) {
-    console.warn('[before-after-hook]: "Hook()" repurposing warning, use "Hook.Collection()". Read more: https://git.io/upgrade-before-after-hook-to-1.4')
-    collectionHookDeprecationMessageDisplayed = true
-  }
-  return HookCollection()
-}
-
-Hook.Singular = HookSingular.bind()
-Hook.Collection = HookCollection.bind()
-
-module.exports = Hook
-// expose constructors as a named property for TypeScript
-module.exports.Hook = Hook
-module.exports.Singular = Hook.Singular
-module.exports.Collection = Hook.Collection
-
-
-/***/ }),
-
-/***/ 5549:
-/***/ ((module) => {
-
-module.exports = addHook;
-
-function addHook(state, kind, name, hook) {
-  var orig = hook;
-  if (!state.registry[name]) {
-    state.registry[name] = [];
-  }
-
-  if (kind === "before") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(orig.bind(null, options))
-        .then(method.bind(null, options));
-    };
-  }
-
-  if (kind === "after") {
-    hook = function (method, options) {
-      var result;
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .then(function (result_) {
-          result = result_;
-          return orig(result, options);
-        })
-        .then(function () {
-          return result;
-        });
-    };
-  }
-
-  if (kind === "error") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .catch(function (error) {
-          return orig(error, options);
-        });
-    };
-  }
-
-  state.registry[name].push({
-    hook: hook,
-    orig: orig,
-  });
-}
-
-
-/***/ }),
-
-/***/ 4670:
-/***/ ((module) => {
-
-module.exports = register;
-
-function register(state, name, method, options) {
-  if (typeof method !== "function") {
-    throw new Error("method for before hook must be a function");
-  }
-
-  if (!options) {
-    options = {};
-  }
-
-  if (Array.isArray(name)) {
-    return name.reverse().reduce(function (callback, name) {
-      return register.bind(null, state, name, callback, options);
-    }, method)();
-  }
-
-  return Promise.resolve().then(function () {
-    if (!state.registry[name]) {
-      return method(options);
-    }
-
-    return state.registry[name].reduce(function (method, registered) {
-      return registered.hook.bind(null, method, options);
-    }, method)();
-  });
-}
-
-
-/***/ }),
-
-/***/ 6819:
-/***/ ((module) => {
-
-module.exports = removeHook;
-
-function removeHook(state, name, method) {
-  if (!state.registry[name]) {
-    return;
-  }
-
-  var index = state.registry[name]
-    .map(function (registered) {
-      return registered.orig;
-    })
-    .indexOf(method);
-
-  if (index === -1) {
-    return;
-  }
-
-  state.registry[name].splice(index, 1);
-}
-
-
-/***/ }),
-
-/***/ 1174:
-/***/ (function(module) {
-
-/**
-  * This file contains the Bottleneck library (MIT), compiled to ES2017, and without Clustering support.
-  * https://github.com/SGrondin/bottleneck
-  */
-(function (global, factory) {
-	 true ? module.exports = factory() :
-	0;
-}(this, (function () { 'use strict';
-
-	var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-	function getCjsExportFromNamespace (n) {
-		return n && n['default'] || n;
-	}
-
-	var load = function(received, defaults, onto = {}) {
-	  var k, ref, v;
-	  for (k in defaults) {
-	    v = defaults[k];
-	    onto[k] = (ref = received[k]) != null ? ref : v;
-	  }
-	  return onto;
-	};
-
-	var overwrite = function(received, defaults, onto = {}) {
-	  var k, v;
-	  for (k in received) {
-	    v = received[k];
-	    if (defaults[k] !== void 0) {
-	      onto[k] = v;
-	    }
-	  }
-	  return onto;
-	};
-
-	var parser = {
-		load: load,
-		overwrite: overwrite
-	};
-
-	var DLList;
-
-	DLList = class DLList {
-	  constructor(incr, decr) {
-	    this.incr = incr;
-	    this.decr = decr;
-	    this._first = null;
-	    this._last = null;
-	    this.length = 0;
-	  }
-
-	  push(value) {
-	    var node;
-	    this.length++;
-	    if (typeof this.incr === "function") {
-	      this.incr();
-	    }
-	    node = {
-	      value,
-	      prev: this._last,
-	      next: null
-	    };
-	    if (this._last != null) {
-	      this._last.next = node;
-	      this._last = node;
-	    } else {
-	      this._first = this._last = node;
-	    }
-	    return void 0;
-	  }
-
-	  shift() {
-	    var value;
-	    if (this._first == null) {
-	      return;
-	    } else {
-	      this.length--;
-	      if (typeof this.decr === "function") {
-	        this.decr();
-	      }
-	    }
-	    value = this._first.value;
-	    if ((this._first = this._first.next) != null) {
-	      this._first.prev = null;
-	    } else {
-	      this._last = null;
-	    }
-	    return value;
-	  }
-
-	  first() {
-	    if (this._first != null) {
-	      return this._first.value;
-	    }
-	  }
-
-	  getArray() {
-	    var node, ref, results;
-	    node = this._first;
-	    results = [];
-	    while (node != null) {
-	      results.push((ref = node, node = node.next, ref.value));
-	    }
-	    return results;
-	  }
-
-	  forEachShift(cb) {
-	    var node;
-	    node = this.shift();
-	    while (node != null) {
-	      (cb(node), node = this.shift());
-	    }
-	    return void 0;
-	  }
-
-	  debug() {
-	    var node, ref, ref1, ref2, results;
-	    node = this._first;
-	    results = [];
-	    while (node != null) {
-	      results.push((ref = node, node = node.next, {
-	        value: ref.value,
-	        prev: (ref1 = ref.prev) != null ? ref1.value : void 0,
-	        next: (ref2 = ref.next) != null ? ref2.value : void 0
-	      }));
-	    }
-	    return results;
-	  }
-
-	};
-
-	var DLList_1 = DLList;
-
-	var Events;
-
-	Events = class Events {
-	  constructor(instance) {
-	    this.instance = instance;
-	    this._events = {};
-	    if ((this.instance.on != null) || (this.instance.once != null) || (this.instance.removeAllListeners != null)) {
-	      throw new Error("An Emitter already exists for this object");
-	    }
-	    this.instance.on = (name, cb) => {
-	      return this._addListener(name, "many", cb);
-	    };
-	    this.instance.once = (name, cb) => {
-	      return this._addListener(name, "once", cb);
-	    };
-	    this.instance.removeAllListeners = (name = null) => {
-	      if (name != null) {
-	        return delete this._events[name];
-	      } else {
-	        return this._events = {};
-	      }
-	    };
-	  }
-
-	  _addListener(name, status, cb) {
-	    var base;
-	    if ((base = this._events)[name] == null) {
-	      base[name] = [];
-	    }
-	    this._events[name].push({cb, status});
-	    return this.instance;
-	  }
-
-	  listenerCount(name) {
-	    if (this._events[name] != null) {
-	      return this._events[name].length;
-	    } else {
-	      return 0;
-	    }
-	  }
-
-	  async trigger(name, ...args) {
-	    var e, promises;
-	    try {
-	      if (name !== "debug") {
-	        this.trigger("debug", `Event triggered: ${name}`, args);
-	      }
-	      if (this._events[name] == null) {
-	        return;
-	      }
-	      this._events[name] = this._events[name].filter(function(listener) {
-	        return listener.status !== "none";
-	      });
-	      promises = this._events[name].map(async(listener) => {
-	        var e, returned;
-	        if (listener.status === "none") {
-	          return;
-	        }
-	        if (listener.status === "once") {
-	          listener.status = "none";
-	        }
-	        try {
-	          returned = typeof listener.cb === "function" ? listener.cb(...args) : void 0;
-	          if (typeof (returned != null ? returned.then : void 0) === "function") {
-	            return (await returned);
-	          } else {
-	            return returned;
-	          }
-	        } catch (error) {
-	          e = error;
-	          {
-	            this.trigger("error", e);
-	          }
-	          return null;
-	        }
-	      });
-	      return ((await Promise.all(promises))).find(function(x) {
-	        return x != null;
-	      });
-	    } catch (error) {
-	      e = error;
-	      {
-	        this.trigger("error", e);
-	      }
-	      return null;
-	    }
-	  }
-
-	};
-
-	var Events_1 = Events;
-
-	var DLList$1, Events$1, Queues;
-
-	DLList$1 = DLList_1;
-
-	Events$1 = Events_1;
-
-	Queues = class Queues {
-	  constructor(num_priorities) {
-	    var i;
-	    this.Events = new Events$1(this);
-	    this._length = 0;
-	    this._lists = (function() {
-	      var j, ref, results;
-	      results = [];
-	      for (i = j = 1, ref = num_priorities; (1 <= ref ? j <= ref : j >= ref); i = 1 <= ref ? ++j : --j) {
-	        results.push(new DLList$1((() => {
-	          return this.incr();
-	        }), (() => {
-	          return this.decr();
-	        })));
-	      }
-	      return results;
-	    }).call(this);
-	  }
-
-	  incr() {
-	    if (this._length++ === 0) {
-	      return this.Events.trigger("leftzero");
-	    }
-	  }
-
-	  decr() {
-	    if (--this._length === 0) {
-	      return this.Events.trigger("zero");
-	    }
-	  }
-
-	  push(job) {
-	    return this._lists[job.options.priority].push(job);
-	  }
-
-	  queued(priority) {
-	    if (priority != null) {
-	      return this._lists[priority].length;
-	    } else {
-	      return this._length;
-	    }
-	  }
-
-	  shiftAll(fn) {
-	    return this._lists.forEach(function(list) {
-	      return list.forEachShift(fn);
-	    });
-	  }
-
-	  getFirst(arr = this._lists) {
-	    var j, len, list;
-	    for (j = 0, len = arr.length; j < len; j++) {
-	      list = arr[j];
-	      if (list.length > 0) {
-	        return list;
-	      }
-	    }
-	    return [];
-	  }
-
-	  shiftLastFrom(priority) {
-	    return this.getFirst(this._lists.slice(priority).reverse()).shift();
-	  }
-
-	};
-
-	var Queues_1 = Queues;
-
-	var BottleneckError;
-
-	BottleneckError = class BottleneckError extends Error {};
-
-	var BottleneckError_1 = BottleneckError;
-
-	var BottleneckError$1, DEFAULT_PRIORITY, Job, NUM_PRIORITIES, parser$1;
-
-	NUM_PRIORITIES = 10;
-
-	DEFAULT_PRIORITY = 5;
-
-	parser$1 = parser;
-
-	BottleneckError$1 = BottleneckError_1;
-
-	Job = class Job {
-	  constructor(task, args, options, jobDefaults, rejectOnDrop, Events, _states, Promise) {
-	    this.task = task;
-	    this.args = args;
-	    this.rejectOnDrop = rejectOnDrop;
-	    this.Events = Events;
-	    this._states = _states;
-	    this.Promise = Promise;
-	    this.options = parser$1.load(options, jobDefaults);
-	    this.options.priority = this._sanitizePriority(this.options.priority);
-	    if (this.options.id === jobDefaults.id) {
-	      this.options.id = `${this.options.id}-${this._randomIndex()}`;
-	    }
-	    this.promise = new this.Promise((_resolve, _reject) => {
-	      this._resolve = _resolve;
-	      this._reject = _reject;
-	    });
-	    this.retryCount = 0;
-	  }
-
-	  _sanitizePriority(priority) {
-	    var sProperty;
-	    sProperty = ~~priority !== priority ? DEFAULT_PRIORITY : priority;
-	    if (sProperty < 0) {
-	      return 0;
-	    } else if (sProperty > NUM_PRIORITIES - 1) {
-	      return NUM_PRIORITIES - 1;
-	    } else {
-	      return sProperty;
-	    }
-	  }
-
-	  _randomIndex() {
-	    return Math.random().toString(36).slice(2);
-	  }
-
-	  doDrop({error, message = "This job has been dropped by Bottleneck"} = {}) {
-	    if (this._states.remove(this.options.id)) {
-	      if (this.rejectOnDrop) {
-	        this._reject(error != null ? error : new BottleneckError$1(message));
-	      }
-	      this.Events.trigger("dropped", {args: this.args, options: this.options, task: this.task, promise: this.promise});
-	      return true;
-	    } else {
-	      return false;
-	    }
-	  }
-
-	  _assertStatus(expected) {
-	    var status;
-	    status = this._states.jobStatus(this.options.id);
-	    if (!(status === expected || (expected === "DONE" && status === null))) {
-	      throw new BottleneckError$1(`Invalid job status ${status}, expected ${expected}. Please open an issue at https://github.com/SGrondin/bottleneck/issues`);
-	    }
-	  }
-
-	  doReceive() {
-	    this._states.start(this.options.id);
-	    return this.Events.trigger("received", {args: this.args, options: this.options});
-	  }
-
-	  doQueue(reachedHWM, blocked) {
-	    this._assertStatus("RECEIVED");
-	    this._states.next(this.options.id);
-	    return this.Events.trigger("queued", {args: this.args, options: this.options, reachedHWM, blocked});
-	  }
-
-	  doRun() {
-	    if (this.retryCount === 0) {
-	      this._assertStatus("QUEUED");
-	      this._states.next(this.options.id);
-	    } else {
-	      this._assertStatus("EXECUTING");
-	    }
-	    return this.Events.trigger("scheduled", {args: this.args, options: this.options});
-	  }
-
-	  async doExecute(chained, clearGlobalState, run, free) {
-	    var error, eventInfo, passed;
-	    if (this.retryCount === 0) {
-	      this._assertStatus("RUNNING");
-	      this._states.next(this.options.id);
-	    } else {
-	      this._assertStatus("EXECUTING");
-	    }
-	    eventInfo = {args: this.args, options: this.options, retryCount: this.retryCount};
-	    this.Events.trigger("executing", eventInfo);
-	    try {
-	      passed = (await (chained != null ? chained.schedule(this.options, this.task, ...this.args) : this.task(...this.args)));
-	      if (clearGlobalState()) {
-	        this.doDone(eventInfo);
-	        await free(this.options, eventInfo);
-	        this._assertStatus("DONE");
-	        return this._resolve(passed);
-	      }
-	    } catch (error1) {
-	      error = error1;
-	      return this._onFailure(error, eventInfo, clearGlobalState, run, free);
-	    }
-	  }
-
-	  doExpire(clearGlobalState, run, free) {
-	    var error, eventInfo;
-	    if (this._states.jobStatus(this.options.id === "RUNNING")) {
-	      this._states.next(this.options.id);
-	    }
-	    this._assertStatus("EXECUTING");
-	    eventInfo = {args: this.args, options: this.options, retryCount: this.retryCount};
-	    error = new BottleneckError$1(`This job timed out after ${this.options.expiration} ms.`);
-	    return this._onFailure(error, eventInfo, clearGlobalState, run, free);
-	  }
-
-	  async _onFailure(error, eventInfo, clearGlobalState, run, free) {
-	    var retry, retryAfter;
-	    if (clearGlobalState()) {
-	      retry = (await this.Events.trigger("failed", error, eventInfo));
-	      if (retry != null) {
-	        retryAfter = ~~retry;
-	        this.Events.trigger("retry", `Retrying ${this.options.id} after ${retryAfter} ms`, eventInfo);
-	        this.retryCount++;
-	        return run(retryAfter);
-	      } else {
-	        this.doDone(eventInfo);
-	        await free(this.options, eventInfo);
-	        this._assertStatus("DONE");
-	        return this._reject(error);
-	      }
-	    }
-	  }
-
-	  doDone(eventInfo) {
-	    this._assertStatus("EXECUTING");
-	    this._states.next(this.options.id);
-	    return this.Events.trigger("done", eventInfo);
-	  }
-
-	};
-
-	var Job_1 = Job;
-
-	var BottleneckError$2, LocalDatastore, parser$2;
-
-	parser$2 = parser;
-
-	BottleneckError$2 = BottleneckError_1;
-
-	LocalDatastore = class LocalDatastore {
-	  constructor(instance, storeOptions, storeInstanceOptions) {
-	    this.instance = instance;
-	    this.storeOptions = storeOptions;
-	    this.clientId = this.instance._randomIndex();
-	    parser$2.load(storeInstanceOptions, storeInstanceOptions, this);
-	    this._nextRequest = this._lastReservoirRefresh = this._lastReservoirIncrease = Date.now();
-	    this._running = 0;
-	    this._done = 0;
-	    this._unblockTime = 0;
-	    this.ready = this.Promise.resolve();
-	    this.clients = {};
-	    this._startHeartbeat();
-	  }
-
-	  _startHeartbeat() {
-	    var base;
-	    if ((this.heartbeat == null) && (((this.storeOptions.reservoirRefreshInterval != null) && (this.storeOptions.reservoirRefreshAmount != null)) || ((this.storeOptions.reservoirIncreaseInterval != null) && (this.storeOptions.reservoirIncreaseAmount != null)))) {
-	      return typeof (base = (this.heartbeat = setInterval(() => {
-	        var amount, incr, maximum, now, reservoir;
-	        now = Date.now();
-	        if ((this.storeOptions.reservoirRefreshInterval != null) && now >= this._lastReservoirRefresh + this.storeOptions.reservoirRefreshInterval) {
-	          this._lastReservoirRefresh = now;
-	          this.storeOptions.reservoir = this.storeOptions.reservoirRefreshAmount;
-	          this.instance._drainAll(this.computeCapacity());
-	        }
-	        if ((this.storeOptions.reservoirIncreaseInterval != null) && now >= this._lastReservoirIncrease + this.storeOptions.reservoirIncreaseInterval) {
-	          ({
-	            reservoirIncreaseAmount: amount,
-	            reservoirIncreaseMaximum: maximum,
-	            reservoir
-	          } = this.storeOptions);
-	          this._lastReservoirIncrease = now;
-	          incr = maximum != null ? Math.min(amount, maximum - reservoir) : amount;
-	          if (incr > 0) {
-	            this.storeOptions.reservoir += incr;
-	            return this.instance._drainAll(this.computeCapacity());
-	          }
-	        }
-	      }, this.heartbeatInterval))).unref === "function" ? base.unref() : void 0;
-	    } else {
-	      return clearInterval(this.heartbeat);
-	    }
-	  }
-
-	  async __publish__(message) {
-	    await this.yieldLoop();
-	    return this.instance.Events.trigger("message", message.toString());
-	  }
-
-	  async __disconnect__(flush) {
-	    await this.yieldLoop();
-	    clearInterval(this.heartbeat);
-	    return this.Promise.resolve();
-	  }
-
-	  yieldLoop(t = 0) {
-	    return new this.Promise(function(resolve, reject) {
-	      return setTimeout(resolve, t);
-	    });
-	  }
-
-	  computePenalty() {
-	    var ref;
-	    return (ref = this.storeOptions.penalty) != null ? ref : (15 * this.storeOptions.minTime) || 5000;
-	  }
-
-	  async __updateSettings__(options) {
-	    await this.yieldLoop();
-	    parser$2.overwrite(options, options, this.storeOptions);
-	    this._startHeartbeat();
-	    this.instance._drainAll(this.computeCapacity());
-	    return true;
-	  }
-
-	  async __running__() {
-	    await this.yieldLoop();
-	    return this._running;
-	  }
-
-	  async __queued__() {
-	    await this.yieldLoop();
-	    return this.instance.queued();
-	  }
-
-	  async __done__() {
-	    await this.yieldLoop();
-	    return this._done;
-	  }
-
-	  async __groupCheck__(time) {
-	    await this.yieldLoop();
-	    return (this._nextRequest + this.timeout) < time;
-	  }
-
-	  computeCapacity() {
-	    var maxConcurrent, reservoir;
-	    ({maxConcurrent, reservoir} = this.storeOptions);
-	    if ((maxConcurrent != null) && (reservoir != null)) {
-	      return Math.min(maxConcurrent - this._running, reservoir);
-	    } else if (maxConcurrent != null) {
-	      return maxConcurrent - this._running;
-	    } else if (reservoir != null) {
-	      return reservoir;
-	    } else {
-	      return null;
-	    }
-	  }
-
-	  conditionsCheck(weight) {
-	    var capacity;
-	    capacity = this.computeCapacity();
-	    return (capacity == null) || weight <= capacity;
-	  }
-
-	  async __incrementReservoir__(incr) {
-	    var reservoir;
-	    await this.yieldLoop();
-	    reservoir = this.storeOptions.reservoir += incr;
-	    this.instance._drainAll(this.computeCapacity());
-	    return reservoir;
-	  }
-
-	  async __currentReservoir__() {
-	    await this.yieldLoop();
-	    return this.storeOptions.reservoir;
-	  }
-
-	  isBlocked(now) {
-	    return this._unblockTime >= now;
-	  }
-
-	  check(weight, now) {
-	    return this.conditionsCheck(weight) && (this._nextRequest - now) <= 0;
-	  }
-
-	  async __check__(weight) {
-	    var now;
-	    await this.yieldLoop();
-	    now = Date.now();
-	    return this.check(weight, now);
-	  }
-
-	  async __register__(index, weight, expiration) {
-	    var now, wait;
-	    await this.yieldLoop();
-	    now = Date.now();
-	    if (this.conditionsCheck(weight)) {
-	      this._running += weight;
-	      if (this.storeOptions.reservoir != null) {
-	        this.storeOptions.reservoir -= weight;
-	      }
-	      wait = Math.max(this._nextRequest - now, 0);
-	      this._nextRequest = now + wait + this.storeOptions.minTime;
-	      return {
-	        success: true,
-	        wait,
-	        reservoir: this.storeOptions.reservoir
-	      };
-	    } else {
-	      return {
-	        success: false
-	      };
-	    }
-	  }
-
-	  strategyIsBlock() {
-	    return this.storeOptions.strategy === 3;
-	  }
-
-	  async __submit__(queueLength, weight) {
-	    var blocked, now, reachedHWM;
-	    await this.yieldLoop();
-	    if ((this.storeOptions.maxConcurrent != null) && weight > this.storeOptions.maxConcurrent) {
-	      throw new BottleneckError$2(`Impossible to add a job having a weight of ${weight} to a limiter having a maxConcurrent setting of ${this.storeOptions.maxConcurrent}`);
-	    }
-	    now = Date.now();
-	    reachedHWM = (this.storeOptions.highWater != null) && queueLength === this.storeOptions.highWater && !this.check(weight, now);
-	    blocked = this.strategyIsBlock() && (reachedHWM || this.isBlocked(now));
-	    if (blocked) {
-	      this._unblockTime = now + this.computePenalty();
-	      this._nextRequest = this._unblockTime + this.storeOptions.minTime;
-	      this.instance._dropAllQueued();
-	    }
-	    return {
-	      reachedHWM,
-	      blocked,
-	      strategy: this.storeOptions.strategy
-	    };
-	  }
-
-	  async __free__(index, weight) {
-	    await this.yieldLoop();
-	    this._running -= weight;
-	    this._done += weight;
-	    this.instance._drainAll(this.computeCapacity());
-	    return {
-	      running: this._running
-	    };
-	  }
-
-	};
-
-	var LocalDatastore_1 = LocalDatastore;
-
-	var BottleneckError$3, States;
-
-	BottleneckError$3 = BottleneckError_1;
-
-	States = class States {
-	  constructor(status1) {
-	    this.status = status1;
-	    this._jobs = {};
-	    this.counts = this.status.map(function() {
-	      return 0;
-	    });
-	  }
-
-	  next(id) {
-	    var current, next;
-	    current = this._jobs[id];
-	    next = current + 1;
-	    if ((current != null) && next < this.status.length) {
-	      this.counts[current]--;
-	      this.counts[next]++;
-	      return this._jobs[id]++;
-	    } else if (current != null) {
-	      this.counts[current]--;
-	      return delete this._jobs[id];
-	    }
-	  }
-
-	  start(id) {
-	    var initial;
-	    initial = 0;
-	    this._jobs[id] = initial;
-	    return this.counts[initial]++;
-	  }
-
-	  remove(id) {
-	    var current;
-	    current = this._jobs[id];
-	    if (current != null) {
-	      this.counts[current]--;
-	      delete this._jobs[id];
-	    }
-	    return current != null;
-	  }
-
-	  jobStatus(id) {
-	    var ref;
-	    return (ref = this.status[this._jobs[id]]) != null ? ref : null;
-	  }
-
-	  statusJobs(status) {
-	    var k, pos, ref, results, v;
-	    if (status != null) {
-	      pos = this.status.indexOf(status);
-	      if (pos < 0) {
-	        throw new BottleneckError$3(`status must be one of ${this.status.join(', ')}`);
-	      }
-	      ref = this._jobs;
-	      results = [];
-	      for (k in ref) {
-	        v = ref[k];
-	        if (v === pos) {
-	          results.push(k);
-	        }
-	      }
-	      return results;
-	    } else {
-	      return Object.keys(this._jobs);
-	    }
-	  }
-
-	  statusCounts() {
-	    return this.counts.reduce(((acc, v, i) => {
-	      acc[this.status[i]] = v;
-	      return acc;
-	    }), {});
-	  }
-
-	};
-
-	var States_1 = States;
-
-	var DLList$2, Sync;
-
-	DLList$2 = DLList_1;
-
-	Sync = class Sync {
-	  constructor(name, Promise) {
-	    this.schedule = this.schedule.bind(this);
-	    this.name = name;
-	    this.Promise = Promise;
-	    this._running = 0;
-	    this._queue = new DLList$2();
-	  }
-
-	  isEmpty() {
-	    return this._queue.length === 0;
-	  }
-
-	  async _tryToRun() {
-	    var args, cb, error, reject, resolve, returned, task;
-	    if ((this._running < 1) && this._queue.length > 0) {
-	      this._running++;
-	      ({task, args, resolve, reject} = this._queue.shift());
-	      cb = (await (async function() {
-	        try {
-	          returned = (await task(...args));
-	          return function() {
-	            return resolve(returned);
-	          };
-	        } catch (error1) {
-	          error = error1;
-	          return function() {
-	            return reject(error);
-	          };
-	        }
-	      })());
-	      this._running--;
-	      this._tryToRun();
-	      return cb();
-	    }
-	  }
-
-	  schedule(task, ...args) {
-	    var promise, reject, resolve;
-	    resolve = reject = null;
-	    promise = new this.Promise(function(_resolve, _reject) {
-	      resolve = _resolve;
-	      return reject = _reject;
-	    });
-	    this._queue.push({task, args, resolve, reject});
-	    this._tryToRun();
-	    return promise;
-	  }
-
-	};
-
-	var Sync_1 = Sync;
-
-	var version = "2.19.5";
-	var version$1 = {
-		version: version
-	};
-
-	var version$2 = /*#__PURE__*/Object.freeze({
-		version: version,
-		default: version$1
-	});
-
-	var require$$2 = () => console.log('You must import the full version of Bottleneck in order to use this feature.');
-
-	var require$$3 = () => console.log('You must import the full version of Bottleneck in order to use this feature.');
-
-	var require$$4 = () => console.log('You must import the full version of Bottleneck in order to use this feature.');
-
-	var Events$2, Group, IORedisConnection$1, RedisConnection$1, Scripts$1, parser$3;
-
-	parser$3 = parser;
-
-	Events$2 = Events_1;
-
-	RedisConnection$1 = require$$2;
-
-	IORedisConnection$1 = require$$3;
-
-	Scripts$1 = require$$4;
-
-	Group = (function() {
-	  class Group {
-	    constructor(limiterOptions = {}) {
-	      this.deleteKey = this.deleteKey.bind(this);
-	      this.limiterOptions = limiterOptions;
-	      parser$3.load(this.limiterOptions, this.defaults, this);
-	      this.Events = new Events$2(this);
-	      this.instances = {};
-	      this.Bottleneck = Bottleneck_1;
-	      this._startAutoCleanup();
-	      this.sharedConnection = this.connection != null;
-	      if (this.connection == null) {
-	        if (this.limiterOptions.datastore === "redis") {
-	          this.connection = new RedisConnection$1(Object.assign({}, this.limiterOptions, {Events: this.Events}));
-	        } else if (this.limiterOptions.datastore === "ioredis") {
-	          this.connection = new IORedisConnection$1(Object.assign({}, this.limiterOptions, {Events: this.Events}));
-	        }
-	      }
-	    }
-
-	    key(key = "") {
-	      var ref;
-	      return (ref = this.instances[key]) != null ? ref : (() => {
-	        var limiter;
-	        limiter = this.instances[key] = new this.Bottleneck(Object.assign(this.limiterOptions, {
-	          id: `${this.id}-${key}`,
-	          timeout: this.timeout,
-	          connection: this.connection
-	        }));
-	        this.Events.trigger("created", limiter, key);
-	        return limiter;
-	      })();
-	    }
-
-	    async deleteKey(key = "") {
-	      var deleted, instance;
-	      instance = this.instances[key];
-	      if (this.connection) {
-	        deleted = (await this.connection.__runCommand__(['del', ...Scripts$1.allKeys(`${this.id}-${key}`)]));
-	      }
-	      if (instance != null) {
-	        delete this.instances[key];
-	        await instance.disconnect();
-	      }
-	      return (instance != null) || deleted > 0;
-	    }
-
-	    limiters() {
-	      var k, ref, results, v;
-	      ref = this.instances;
-	      results = [];
-	      for (k in ref) {
-	        v = ref[k];
-	        results.push({
-	          key: k,
-	          limiter: v
-	        });
-	      }
-	      return results;
-	    }
-
-	    keys() {
-	      return Object.keys(this.instances);
-	    }
-
-	    async clusterKeys() {
-	      var cursor, end, found, i, k, keys, len, next, start;
-	      if (this.connection == null) {
-	        return this.Promise.resolve(this.keys());
-	      }
-	      keys = [];
-	      cursor = null;
-	      start = `b_${this.id}-`.length;
-	      end = "_settings".length;
-	      while (cursor !== 0) {
-	        [next, found] = (await this.connection.__runCommand__(["scan", cursor != null ? cursor : 0, "match", `b_${this.id}-*_settings`, "count", 10000]));
-	        cursor = ~~next;
-	        for (i = 0, len = found.length; i < len; i++) {
-	          k = found[i];
-	          keys.push(k.slice(start, -end));
-	        }
-	      }
-	      return keys;
-	    }
-
-	    _startAutoCleanup() {
-	      var base;
-	      clearInterval(this.interval);
-	      return typeof (base = (this.interval = setInterval(async() => {
-	        var e, k, ref, results, time, v;
-	        time = Date.now();
-	        ref = this.instances;
-	        results = [];
-	        for (k in ref) {
-	          v = ref[k];
-	          try {
-	            if ((await v._store.__groupCheck__(time))) {
-	              results.push(this.deleteKey(k));
-	            } else {
-	              results.push(void 0);
-	            }
-	          } catch (error) {
-	            e = error;
-	            results.push(v.Events.trigger("error", e));
-	          }
-	        }
-	        return results;
-	      }, this.timeout / 2))).unref === "function" ? base.unref() : void 0;
-	    }
-
-	    updateSettings(options = {}) {
-	      parser$3.overwrite(options, this.defaults, this);
-	      parser$3.overwrite(options, options, this.limiterOptions);
-	      if (options.timeout != null) {
-	        return this._startAutoCleanup();
-	      }
-	    }
-
-	    disconnect(flush = true) {
-	      var ref;
-	      if (!this.sharedConnection) {
-	        return (ref = this.connection) != null ? ref.disconnect(flush) : void 0;
-	      }
-	    }
-
-	  }
-	  Group.prototype.defaults = {
-	    timeout: 1000 * 60 * 5,
-	    connection: null,
-	    Promise: Promise,
-	    id: "group-key"
-	  };
-
-	  return Group;
-
-	}).call(commonjsGlobal);
-
-	var Group_1 = Group;
-
-	var Batcher, Events$3, parser$4;
-
-	parser$4 = parser;
-
-	Events$3 = Events_1;
-
-	Batcher = (function() {
-	  class Batcher {
-	    constructor(options = {}) {
-	      this.options = options;
-	      parser$4.load(this.options, this.defaults, this);
-	      this.Events = new Events$3(this);
-	      this._arr = [];
-	      this._resetPromise();
-	      this._lastFlush = Date.now();
-	    }
-
-	    _resetPromise() {
-	      return this._promise = new this.Promise((res, rej) => {
-	        return this._resolve = res;
-	      });
-	    }
-
-	    _flush() {
-	      clearTimeout(this._timeout);
-	      this._lastFlush = Date.now();
-	      this._resolve();
-	      this.Events.trigger("batch", this._arr);
-	      this._arr = [];
-	      return this._resetPromise();
-	    }
-
-	    add(data) {
-	      var ret;
-	      this._arr.push(data);
-	      ret = this._promise;
-	      if (this._arr.length === this.maxSize) {
-	        this._flush();
-	      } else if ((this.maxTime != null) && this._arr.length === 1) {
-	        this._timeout = setTimeout(() => {
-	          return this._flush();
-	        }, this.maxTime);
-	      }
-	      return ret;
-	    }
-
-	  }
-	  Batcher.prototype.defaults = {
-	    maxTime: null,
-	    maxSize: null,
-	    Promise: Promise
-	  };
-
-	  return Batcher;
-
-	}).call(commonjsGlobal);
-
-	var Batcher_1 = Batcher;
-
-	var require$$4$1 = () => console.log('You must import the full version of Bottleneck in order to use this feature.');
-
-	var require$$8 = getCjsExportFromNamespace(version$2);
-
-	var Bottleneck, DEFAULT_PRIORITY$1, Events$4, Job$1, LocalDatastore$1, NUM_PRIORITIES$1, Queues$1, RedisDatastore$1, States$1, Sync$1, parser$5,
-	  splice = [].splice;
-
-	NUM_PRIORITIES$1 = 10;
-
-	DEFAULT_PRIORITY$1 = 5;
-
-	parser$5 = parser;
-
-	Queues$1 = Queues_1;
-
-	Job$1 = Job_1;
-
-	LocalDatastore$1 = LocalDatastore_1;
-
-	RedisDatastore$1 = require$$4$1;
-
-	Events$4 = Events_1;
-
-	States$1 = States_1;
-
-	Sync$1 = Sync_1;
-
-	Bottleneck = (function() {
-	  class Bottleneck {
-	    constructor(options = {}, ...invalid) {
-	      var storeInstanceOptions, storeOptions;
-	      this._addToQueue = this._addToQueue.bind(this);
-	      this._validateOptions(options, invalid);
-	      parser$5.load(options, this.instanceDefaults, this);
-	      this._queues = new Queues$1(NUM_PRIORITIES$1);
-	      this._scheduled = {};
-	      this._states = new States$1(["RECEIVED", "QUEUED", "RUNNING", "EXECUTING"].concat(this.trackDoneStatus ? ["DONE"] : []));
-	      this._limiter = null;
-	      this.Events = new Events$4(this);
-	      this._submitLock = new Sync$1("submit", this.Promise);
-	      this._registerLock = new Sync$1("register", this.Promise);
-	      storeOptions = parser$5.load(options, this.storeDefaults, {});
-	      this._store = (function() {
-	        if (this.datastore === "redis" || this.datastore === "ioredis" || (this.connection != null)) {
-	          storeInstanceOptions = parser$5.load(options, this.redisStoreDefaults, {});
-	          return new RedisDatastore$1(this, storeOptions, storeInstanceOptions);
-	        } else if (this.datastore === "local") {
-	          storeInstanceOptions = parser$5.load(options, this.localStoreDefaults, {});
-	          return new LocalDatastore$1(this, storeOptions, storeInstanceOptions);
-	        } else {
-	          throw new Bottleneck.prototype.BottleneckError(`Invalid datastore type: ${this.datastore}`);
-	        }
-	      }).call(this);
-	      this._queues.on("leftzero", () => {
-	        var ref;
-	        return (ref = this._store.heartbeat) != null ? typeof ref.ref === "function" ? ref.ref() : void 0 : void 0;
-	      });
-	      this._queues.on("zero", () => {
-	        var ref;
-	        return (ref = this._store.heartbeat) != null ? typeof ref.unref === "function" ? ref.unref() : void 0 : void 0;
-	      });
-	    }
-
-	    _validateOptions(options, invalid) {
-	      if (!((options != null) && typeof options === "object" && invalid.length === 0)) {
-	        throw new Bottleneck.prototype.BottleneckError("Bottleneck v2 takes a single object argument. Refer to https://github.com/SGrondin/bottleneck#upgrading-to-v2 if you're upgrading from Bottleneck v1.");
-	      }
-	    }
-
-	    ready() {
-	      return this._store.ready;
-	    }
-
-	    clients() {
-	      return this._store.clients;
-	    }
-
-	    channel() {
-	      return `b_${this.id}`;
-	    }
-
-	    channel_client() {
-	      return `b_${this.id}_${this._store.clientId}`;
-	    }
-
-	    publish(message) {
-	      return this._store.__publish__(message);
-	    }
-
-	    disconnect(flush = true) {
-	      return this._store.__disconnect__(flush);
-	    }
-
-	    chain(_limiter) {
-	      this._limiter = _limiter;
-	      return this;
-	    }
-
-	    queued(priority) {
-	      return this._queues.queued(priority);
-	    }
-
-	    clusterQueued() {
-	      return this._store.__queued__();
-	    }
-
-	    empty() {
-	      return this.queued() === 0 && this._submitLock.isEmpty();
-	    }
-
-	    running() {
-	      return this._store.__running__();
-	    }
-
-	    done() {
-	      return this._store.__done__();
-	    }
-
-	    jobStatus(id) {
-	      return this._states.jobStatus(id);
-	    }
-
-	    jobs(status) {
-	      return this._states.statusJobs(status);
-	    }
-
-	    counts() {
-	      return this._states.statusCounts();
-	    }
-
-	    _randomIndex() {
-	      return Math.random().toString(36).slice(2);
-	    }
-
-	    check(weight = 1) {
-	      return this._store.__check__(weight);
-	    }
-
-	    _clearGlobalState(index) {
-	      if (this._scheduled[index] != null) {
-	        clearTimeout(this._scheduled[index].expiration);
-	        delete this._scheduled[index];
-	        return true;
-	      } else {
-	        return false;
-	      }
-	    }
-
-	    async _free(index, job, options, eventInfo) {
-	      var e, running;
-	      try {
-	        ({running} = (await this._store.__free__(index, options.weight)));
-	        this.Events.trigger("debug", `Freed ${options.id}`, eventInfo);
-	        if (running === 0 && this.empty()) {
-	          return this.Events.trigger("idle");
-	        }
-	      } catch (error1) {
-	        e = error1;
-	        return this.Events.trigger("error", e);
-	      }
-	    }
-
-	    _run(index, job, wait) {
-	      var clearGlobalState, free, run;
-	      job.doRun();
-	      clearGlobalState = this._clearGlobalState.bind(this, index);
-	      run = this._run.bind(this, index, job);
-	      free = this._free.bind(this, index, job);
-	      return this._scheduled[index] = {
-	        timeout: setTimeout(() => {
-	          return job.doExecute(this._limiter, clearGlobalState, run, free);
-	        }, wait),
-	        expiration: job.options.expiration != null ? setTimeout(function() {
-	          return job.doExpire(clearGlobalState, run, free);
-	        }, wait + job.options.expiration) : void 0,
-	        job: job
-	      };
-	    }
-
-	    _drainOne(capacity) {
-	      return this._registerLock.schedule(() => {
-	        var args, index, next, options, queue;
-	        if (this.queued() === 0) {
-	          return this.Promise.resolve(null);
-	        }
-	        queue = this._queues.getFirst();
-	        ({options, args} = next = queue.first());
-	        if ((capacity != null) && options.weight > capacity) {
-	          return this.Promise.resolve(null);
-	        }
-	        this.Events.trigger("debug", `Draining ${options.id}`, {args, options});
-	        index = this._randomIndex();
-	        return this._store.__register__(index, options.weight, options.expiration).then(({success, wait, reservoir}) => {
-	          var empty;
-	          this.Events.trigger("debug", `Drained ${options.id}`, {success, args, options});
-	          if (success) {
-	            queue.shift();
-	            empty = this.empty();
-	            if (empty) {
-	              this.Events.trigger("empty");
-	            }
-	            if (reservoir === 0) {
-	              this.Events.trigger("depleted", empty);
-	            }
-	            this._run(index, next, wait);
-	            return this.Promise.resolve(options.weight);
-	          } else {
-	            return this.Promise.resolve(null);
-	          }
-	        });
-	      });
-	    }
-
-	    _drainAll(capacity, total = 0) {
-	      return this._drainOne(capacity).then((drained) => {
-	        var newCapacity;
-	        if (drained != null) {
-	          newCapacity = capacity != null ? capacity - drained : capacity;
-	          return this._drainAll(newCapacity, total + drained);
-	        } else {
-	          return this.Promise.resolve(total);
-	        }
-	      }).catch((e) => {
-	        return this.Events.trigger("error", e);
-	      });
-	    }
-
-	    _dropAllQueued(message) {
-	      return this._queues.shiftAll(function(job) {
-	        return job.doDrop({message});
-	      });
-	    }
-
-	    stop(options = {}) {
-	      var done, waitForExecuting;
-	      options = parser$5.load(options, this.stopDefaults);
-	      waitForExecuting = (at) => {
-	        var finished;
-	        finished = () => {
-	          var counts;
-	          counts = this._states.counts;
-	          return (counts[0] + counts[1] + counts[2] + counts[3]) === at;
-	        };
-	        return new this.Promise((resolve, reject) => {
-	          if (finished()) {
-	            return resolve();
-	          } else {
-	            return this.on("done", () => {
-	              if (finished()) {
-	                this.removeAllListeners("done");
-	                return resolve();
-	              }
-	            });
-	          }
-	        });
-	      };
-	      done = options.dropWaitingJobs ? (this._run = function(index, next) {
-	        return next.doDrop({
-	          message: options.dropErrorMessage
-	        });
-	      }, this._drainOne = () => {
-	        return this.Promise.resolve(null);
-	      }, this._registerLock.schedule(() => {
-	        return this._submitLock.schedule(() => {
-	          var k, ref, v;
-	          ref = this._scheduled;
-	          for (k in ref) {
-	            v = ref[k];
-	            if (this.jobStatus(v.job.options.id) === "RUNNING") {
-	              clearTimeout(v.timeout);
-	              clearTimeout(v.expiration);
-	              v.job.doDrop({
-	                message: options.dropErrorMessage
-	              });
-	            }
-	          }
-	          this._dropAllQueued(options.dropErrorMessage);
-	          return waitForExecuting(0);
-	        });
-	      })) : this.schedule({
-	        priority: NUM_PRIORITIES$1 - 1,
-	        weight: 0
-	      }, () => {
-	        return waitForExecuting(1);
-	      });
-	      this._receive = function(job) {
-	        return job._reject(new Bottleneck.prototype.BottleneckError(options.enqueueErrorMessage));
-	      };
-	      this.stop = () => {
-	        return this.Promise.reject(new Bottleneck.prototype.BottleneckError("stop() has already been called"));
-	      };
-	      return done;
-	    }
-
-	    async _addToQueue(job) {
-	      var args, blocked, error, options, reachedHWM, shifted, strategy;
-	      ({args, options} = job);
-	      try {
-	        ({reachedHWM, blocked, strategy} = (await this._store.__submit__(this.queued(), options.weight)));
-	      } catch (error1) {
-	        error = error1;
-	        this.Events.trigger("debug", `Could not queue ${options.id}`, {args, options, error});
-	        job.doDrop({error});
-	        return false;
-	      }
-	      if (blocked) {
-	        job.doDrop();
-	        return true;
-	      } else if (reachedHWM) {
-	        shifted = strategy === Bottleneck.prototype.strategy.LEAK ? this._queues.shiftLastFrom(options.priority) : strategy === Bottleneck.prototype.strategy.OVERFLOW_PRIORITY ? this._queues.shiftLastFrom(options.priority + 1) : strategy === Bottleneck.prototype.strategy.OVERFLOW ? job : void 0;
-	        if (shifted != null) {
-	          shifted.doDrop();
-	        }
-	        if ((shifted == null) || strategy === Bottleneck.prototype.strategy.OVERFLOW) {
-	          if (shifted == null) {
-	            job.doDrop();
-	          }
-	          return reachedHWM;
-	        }
-	      }
-	      job.doQueue(reachedHWM, blocked);
-	      this._queues.push(job);
-	      await this._drainAll();
-	      return reachedHWM;
-	    }
-
-	    _receive(job) {
-	      if (this._states.jobStatus(job.options.id) != null) {
-	        job._reject(new Bottleneck.prototype.BottleneckError(`A job with the same id already exists (id=${job.options.id})`));
-	        return false;
-	      } else {
-	        job.doReceive();
-	        return this._submitLock.schedule(this._addToQueue, job);
-	      }
-	    }
-
-	    submit(...args) {
-	      var cb, fn, job, options, ref, ref1, task;
-	      if (typeof args[0] === "function") {
-	        ref = args, [fn, ...args] = ref, [cb] = splice.call(args, -1);
-	        options = parser$5.load({}, this.jobDefaults);
-	      } else {
-	        ref1 = args, [options, fn, ...args] = ref1, [cb] = splice.call(args, -1);
-	        options = parser$5.load(options, this.jobDefaults);
-	      }
-	      task = (...args) => {
-	        return new this.Promise(function(resolve, reject) {
-	          return fn(...args, function(...args) {
-	            return (args[0] != null ? reject : resolve)(args);
-	          });
-	        });
-	      };
-	      job = new Job$1(task, args, options, this.jobDefaults, this.rejectOnDrop, this.Events, this._states, this.Promise);
-	      job.promise.then(function(args) {
-	        return typeof cb === "function" ? cb(...args) : void 0;
-	      }).catch(function(args) {
-	        if (Array.isArray(args)) {
-	          return typeof cb === "function" ? cb(...args) : void 0;
-	        } else {
-	          return typeof cb === "function" ? cb(args) : void 0;
-	        }
-	      });
-	      return this._receive(job);
-	    }
-
-	    schedule(...args) {
-	      var job, options, task;
-	      if (typeof args[0] === "function") {
-	        [task, ...args] = args;
-	        options = {};
-	      } else {
-	        [options, task, ...args] = args;
-	      }
-	      job = new Job$1(task, args, options, this.jobDefaults, this.rejectOnDrop, this.Events, this._states, this.Promise);
-	      this._receive(job);
-	      return job.promise;
-	    }
-
-	    wrap(fn) {
-	      var schedule, wrapped;
-	      schedule = this.schedule.bind(this);
-	      wrapped = function(...args) {
-	        return schedule(fn.bind(this), ...args);
-	      };
-	      wrapped.withOptions = function(options, ...args) {
-	        return schedule(options, fn, ...args);
-	      };
-	      return wrapped;
-	    }
-
-	    async updateSettings(options = {}) {
-	      await this._store.__updateSettings__(parser$5.overwrite(options, this.storeDefaults));
-	      parser$5.overwrite(options, this.instanceDefaults, this);
-	      return this;
-	    }
-
-	    currentReservoir() {
-	      return this._store.__currentReservoir__();
-	    }
-
-	    incrementReservoir(incr = 0) {
-	      return this._store.__incrementReservoir__(incr);
-	    }
-
-	  }
-	  Bottleneck.default = Bottleneck;
-
-	  Bottleneck.Events = Events$4;
-
-	  Bottleneck.version = Bottleneck.prototype.version = require$$8.version;
-
-	  Bottleneck.strategy = Bottleneck.prototype.strategy = {
-	    LEAK: 1,
-	    OVERFLOW: 2,
-	    OVERFLOW_PRIORITY: 4,
-	    BLOCK: 3
-	  };
-
-	  Bottleneck.BottleneckError = Bottleneck.prototype.BottleneckError = BottleneckError_1;
-
-	  Bottleneck.Group = Bottleneck.prototype.Group = Group_1;
-
-	  Bottleneck.RedisConnection = Bottleneck.prototype.RedisConnection = require$$2;
-
-	  Bottleneck.IORedisConnection = Bottleneck.prototype.IORedisConnection = require$$3;
-
-	  Bottleneck.Batcher = Bottleneck.prototype.Batcher = Batcher_1;
-
-	  Bottleneck.prototype.jobDefaults = {
-	    priority: DEFAULT_PRIORITY$1,
-	    weight: 1,
-	    expiration: null,
-	    id: "<no-id>"
-	  };
-
-	  Bottleneck.prototype.storeDefaults = {
-	    maxConcurrent: null,
-	    minTime: 0,
-	    highWater: null,
-	    strategy: Bottleneck.prototype.strategy.LEAK,
-	    penalty: null,
-	    reservoir: null,
-	    reservoirRefreshInterval: null,
-	    reservoirRefreshAmount: null,
-	    reservoirIncreaseInterval: null,
-	    reservoirIncreaseAmount: null,
-	    reservoirIncreaseMaximum: null
-	  };
-
-	  Bottleneck.prototype.localStoreDefaults = {
-	    Promise: Promise,
-	    timeout: null,
-	    heartbeatInterval: 250
-	  };
-
-	  Bottleneck.prototype.redisStoreDefaults = {
-	    Promise: Promise,
-	    timeout: null,
-	    heartbeatInterval: 5000,
-	    clientTimeout: 10000,
-	    Redis: null,
-	    clientOptions: {},
-	    clusterNodes: null,
-	    clearDatastore: false,
-	    connection: null
-	  };
-
-	  Bottleneck.prototype.instanceDefaults = {
-	    datastore: "local",
-	    connection: null,
-	    id: "<no-id>",
-	    rejectOnDrop: true,
-	    trackDoneStatus: false,
-	    Promise: Promise
-	  };
-
-	  Bottleneck.prototype.stopDefaults = {
-	    enqueueErrorMessage: "This limiter has been stopped and cannot accept new jobs.",
-	    dropWaitingJobs: true,
-	    dropErrorMessage: "This limiter has been stopped."
-	  };
-
-	  return Bottleneck;
-
-	}).call(commonjsGlobal);
-
-	var Bottleneck_1 = Bottleneck;
-
-	var lib = Bottleneck_1;
-
-	return lib;
-
-})));
 
 
 /***/ }),
@@ -11620,80 +5970,6 @@ module.exports = function (xs, fn) {
 var isArray = Array.isArray || function (xs) {
     return Object.prototype.toString.call(xs) === '[object Array]';
 };
-
-
-/***/ }),
-
-/***/ 8932:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-class Deprecation extends Error {
-  constructor(message) {
-    super(message); // Maintains proper stack trace (only available on V8)
-
-    /* istanbul ignore next */
-
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-
-    this.name = 'Deprecation';
-  }
-
-}
-
-exports.Deprecation = Deprecation;
-
-
-/***/ }),
-
-/***/ 3287:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-/*!
- * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
-function isObject(o) {
-  return Object.prototype.toString.call(o) === '[object Object]';
-}
-
-function isPlainObject(o) {
-  var ctor,prot;
-
-  if (isObject(o) === false) return false;
-
-  // If has modified constructor
-  ctor = o.constructor;
-  if (ctor === undefined) return true;
-
-  // If has modified prototype
-  prot = ctor.prototype;
-  if (isObject(prot) === false) return false;
-
-  // If constructor does not have an Object-specific method
-  if (prot.hasOwnProperty('isPrototypeOf') === false) {
-    return false;
-  }
-
-  // Most likely a plain Object
-  return true;
-}
-
-exports.isPlainObject = isPlainObject;
 
 
 /***/ }),
@@ -12647,55 +6923,6 @@ function globUnescape (s) {
 
 function regExpEscape (s) {
   return s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
-
-
-/***/ }),
-
-/***/ 1223:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-var wrappy = __nccwpck_require__(2940)
-module.exports = wrappy(once)
-module.exports.strict = wrappy(onceStrict)
-
-once.proto = once(function () {
-  Object.defineProperty(Function.prototype, 'once', {
-    value: function () {
-      return once(this)
-    },
-    configurable: true
-  })
-
-  Object.defineProperty(Function.prototype, 'onceStrict', {
-    value: function () {
-      return onceStrict(this)
-    },
-    configurable: true
-  })
-})
-
-function once (fn) {
-  var f = function () {
-    if (f.called) return f.value
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  f.called = false
-  return f
-}
-
-function onceStrict (fn) {
-  var f = function () {
-    if (f.called)
-      throw new Error(f.onceError)
-    f.called = true
-    return f.value = fn.apply(this, arguments)
-  }
-  var name = fn.name || 'Function wrapped with `once`'
-  f.onceError = name + " shouldn't be called more than once"
-  f.called = false
-  return f
 }
 
 
@@ -35149,32 +29376,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ 5030:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-
-function getUserAgent() {
-  if (typeof navigator === "object" && "userAgent" in navigator) {
-    return navigator.userAgent;
-  }
-
-  if (typeof process === "object" && "version" in process) {
-    return `Node.js/${process.version.substr(1)} (${process.platform}; ${process.arch})`;
-  }
-
-  return "<environment undetectable>";
-}
-
-exports.getUserAgent = getUserAgent;
-//# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
 /***/ 5840:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -35821,46 +30022,6 @@ exports["default"] = _default;
 
 /***/ }),
 
-/***/ 2940:
-/***/ ((module) => {
-
-// Returns a wrapper function that returns a wrapped callback
-// The wrapper function should do some stuff, and return a
-// presumably different callback function.
-// This makes sure that own properties are retained, so that
-// decorations and such are not lost along the way.
-module.exports = wrappy
-function wrappy (fn, cb) {
-  if (fn && cb) return wrappy(fn)(cb)
-
-  if (typeof fn !== 'function')
-    throw new TypeError('need wrapper function')
-
-  Object.keys(fn).forEach(function (k) {
-    wrapper[k] = fn[k]
-  })
-
-  return wrapper
-
-  function wrapper() {
-    var args = new Array(arguments.length)
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i]
-    }
-    var ret = fn.apply(this, args)
-    var cb = args[args.length-1]
-    if (typeof ret === 'function' && ret !== cb) {
-      Object.keys(cb).forEach(function (k) {
-        ret[k] = cb[k]
-      })
-    }
-    return ret
-  }
-}
-
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
@@ -36169,54 +30330,7405 @@ __nccwpck_require__.r(__webpack_exports__);
 var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
 var exec = __nccwpck_require__(1514);
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __nccwpck_require__(5438);
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/utils.js
-var utils = __nccwpck_require__(3030);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(7147);
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(2037);
+;// CONCATENATED MODULE: ./node_modules/@greem/forgejo-actions/lib/context.js
+
+
+class Context {
+    /**
+     * Hydrate the context from the environment
+     */
+    constructor() {
+        this.payload = {};
+        if (process.env.FORGEJO_EVENT_PATH) {
+            if ((0,external_fs_.existsSync)(process.env.FORGEJO_EVENT_PATH)) {
+                this.payload = JSON.parse((0,external_fs_.readFileSync)(process.env.FORGEJO_EVENT_PATH, { encoding: 'utf8' }));
+            }
+            else {
+                const path = process.env.FORGEJO_EVENT_PATH;
+                process.stdout.write(`FORGEJO_EVENT_PATH ${path} does not exist${external_os_.EOL}`);
+            }
+        }
+        this.eventName = process.env.FORGEJO_EVENT_NAME;
+        this.sha = process.env.FORGEJO_SHA;
+        this.ref = process.env.FORGEJO_REF;
+        this.workflow = process.env.FORGEJO_WORKFLOW;
+        this.action = process.env.FORGEJO_ACTION;
+        this.actor = process.env.FORGEJO_ACTOR;
+        this.job = process.env.FORGEJO_JOB;
+        this.runAttempt = parseInt(process.env.FORGEJO_RUN_ATTEMPT, 10);
+        this.runNumber = parseInt(process.env.FORGEJO_RUN_NUMBER, 10);
+        this.runId = parseInt(process.env.FORGEJO_RUN_ID, 10);
+        this.apiUrl = process.env.FORGEJO_API_URL;
+        this.serverUrl = process.env.FORGEJO_SERVER_URL;
+    }
+    get issue() {
+        const payload = this.payload;
+        return {
+            ...this.repo,
+            number: (payload.issue || payload.pull_request || payload).number
+        };
+    }
+    get repo() {
+        if (process.env.FORGEJO_REPOSITORY) {
+            const [owner, repo] = process.env.FORGEJO_REPOSITORY.split('/');
+            return { owner, repo };
+        }
+        if (this.payload.repository) {
+            return {
+                owner: this.payload.repository.owner.login,
+                repo: this.payload.repository.name
+            };
+        }
+        throw new Error("context.repo requires a FORGEJO_REPOSITORY environment variable like 'owner/repo'");
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/@greem/forgejo-js/dist/index.mjs
+var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var __objRest = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+
+// src/api.ts
+var ContentType = /* @__PURE__ */ ((ContentType2) => {
+  ContentType2["Json"] = "application/json";
+  ContentType2["JsonApi"] = "application/vnd.api+json";
+  ContentType2["FormData"] = "multipart/form-data";
+  ContentType2["UrlEncoded"] = "application/x-www-form-urlencoded";
+  ContentType2["Text"] = "text/plain";
+  return ContentType2;
+})(ContentType || {});
+var HttpClient = class {
+  constructor(apiConfig = {}) {
+    this.baseUrl = "/api/v1";
+    this.securityData = null;
+    this.abortControllers = /* @__PURE__ */ new Map();
+    this.customFetch = (...fetchParams) => fetch(...fetchParams);
+    this.baseApiParams = {
+      credentials: "same-origin",
+      headers: {},
+      redirect: "follow",
+      referrerPolicy: "no-referrer"
+    };
+    this.setSecurityData = (data) => {
+      this.securityData = data;
+    };
+    this.contentFormatters = {
+      ["application/json" /* Json */]: (input) => input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
+      ["application/vnd.api+json" /* JsonApi */]: (input) => input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
+      ["text/plain" /* Text */]: (input) => input !== null && typeof input !== "string" ? JSON.stringify(input) : input,
+      ["multipart/form-data" /* FormData */]: (input) => {
+        if (input instanceof FormData) {
+          return input;
+        }
+        return Object.keys(input || {}).reduce((formData, key) => {
+          const property = input[key];
+          formData.append(
+            key,
+            property instanceof Blob ? property : typeof property === "object" && property !== null ? JSON.stringify(property) : `${property}`
+          );
+          return formData;
+        }, new FormData());
+      },
+      ["application/x-www-form-urlencoded" /* UrlEncoded */]: (input) => this.toQueryString(input)
+    };
+    this.createAbortSignal = (cancelToken) => {
+      if (this.abortControllers.has(cancelToken)) {
+        const abortController2 = this.abortControllers.get(cancelToken);
+        if (abortController2) {
+          return abortController2.signal;
+        }
+        return void 0;
+      }
+      const abortController = new AbortController();
+      this.abortControllers.set(cancelToken, abortController);
+      return abortController.signal;
+    };
+    this.abortRequest = (cancelToken) => {
+      const abortController = this.abortControllers.get(cancelToken);
+      if (abortController) {
+        abortController.abort();
+        this.abortControllers.delete(cancelToken);
+      }
+    };
+    this.request = async (_a) => {
+      var _b = _a, {
+        body,
+        secure,
+        path,
+        type,
+        query,
+        format,
+        baseUrl,
+        cancelToken
+      } = _b, params = __objRest(_b, [
+        "body",
+        "secure",
+        "path",
+        "type",
+        "query",
+        "format",
+        "baseUrl",
+        "cancelToken"
+      ]);
+      const secureParams = (typeof secure === "boolean" ? secure : this.baseApiParams.secure) && this.securityWorker && await this.securityWorker(this.securityData) || {};
+      const requestParams = this.mergeRequestParams(params, secureParams);
+      const queryString = query && this.toQueryString(query);
+      const payloadFormatter = this.contentFormatters[type || "application/json" /* Json */];
+      const responseFormat = format || requestParams.format;
+      return this.customFetch(
+        `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`,
+        __spreadProps(__spreadValues({}, requestParams), {
+          headers: __spreadValues(__spreadValues({}, requestParams.headers || {}), type && type !== "multipart/form-data" /* FormData */ ? { "Content-Type": type } : {}),
+          signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
+          body: typeof body === "undefined" || body === null ? null : payloadFormatter(body)
+        })
+      ).then(async (response) => {
+        const r = response;
+        r.data = null;
+        r.error = null;
+        const responseToParse = responseFormat ? response.clone() : response;
+        const data = !responseFormat ? r : await responseToParse[responseFormat]().then((data2) => {
+          if (r.ok) {
+            r.data = data2;
+          } else {
+            r.error = data2;
+          }
+          return r;
+        }).catch((e) => {
+          r.error = e;
+          return r;
+        });
+        if (cancelToken) {
+          this.abortControllers.delete(cancelToken);
+        }
+        if (!response.ok)
+          throw data;
+        return data;
+      });
+    };
+    Object.assign(this, apiConfig);
+  }
+  encodeQueryParam(key, value) {
+    const encodedKey = encodeURIComponent(key);
+    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
+  }
+  addQueryParam(query, key) {
+    return this.encodeQueryParam(key, query[key]);
+  }
+  addArrayQueryParam(query, key) {
+    const value = query[key];
+    return value.map((v) => this.encodeQueryParam(key, v)).join("&");
+  }
+  toQueryString(rawQuery) {
+    const query = rawQuery || {};
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key]
+    );
+    return keys.map(
+      (key) => Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)
+    ).join("&");
+  }
+  addQueryParams(rawQuery) {
+    const queryString = this.toQueryString(rawQuery);
+    return queryString ? `?${queryString}` : "";
+  }
+  mergeRequestParams(params1, params2) {
+    return __spreadProps(__spreadValues(__spreadValues(__spreadValues({}, this.baseApiParams), params1), params2 || {}), {
+      headers: __spreadValues(__spreadValues(__spreadValues({}, this.baseApiParams.headers || {}), params1.headers || {}), params2 && params2.headers || {})
+    });
+  }
+};
+var Api = class extends HttpClient {
+  constructor() {
+    super(...arguments);
+    this.activitypub = {
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubInstanceActor
+       * @summary Returns the instance's Actor
+       * @request GET:/activitypub/actor
+       * @secure
+       */
+      activitypubInstanceActor: (params = {}) => this.request(__spreadValues({
+        path: `/activitypub/actor`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubInstanceActorInbox
+       * @summary Send to the inbox
+       * @request POST:/activitypub/actor/inbox
+       * @secure
+       */
+      activitypubInstanceActorInbox: (params = {}) => this.request(__spreadValues({
+        path: `/activitypub/actor/inbox`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubInstanceActorOutbox
+       * @summary Display the outbox (always empty)
+       * @request POST:/activitypub/actor/outbox
+       * @secure
+       */
+      activitypubInstanceActorOutbox: (params = {}) => this.request(__spreadValues({
+        path: `/activitypub/actor/outbox`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubRepository
+       * @summary Returns the Repository actor for a repo
+       * @request GET:/activitypub/repository-id/{repository-id}
+       * @secure
+       */
+      activitypubRepository: (repositoryId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/repository-id/${repositoryId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubRepositoryInbox
+       * @summary Send to the inbox
+       * @request POST:/activitypub/repository-id/{repository-id}/inbox
+       * @secure
+       */
+      activitypubRepositoryInbox: (repositoryId, body, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/repository-id/${repositoryId}/inbox`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubRepositoryOutbox
+       * @summary Display the outbox
+       * @request POST:/activitypub/repository-id/{repository-id}/outbox
+       * @secure
+       */
+      activitypubRepositoryOutbox: (repositoryId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/repository-id/${repositoryId}/outbox`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubPerson
+       * @summary Returns the Person actor for a user
+       * @request GET:/activitypub/user-id/{user-id}
+       * @secure
+       */
+      activitypubPerson: (userId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/user-id/${userId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubPersonActivityNote
+       * @summary Get a specific activity object of the user
+       * @request GET:/activitypub/user-id/{user-id}/activities/{activity-id}
+       * @secure
+       */
+      activitypubPersonActivityNote: (userId, activityId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/user-id/${userId}/activities/${activityId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubPersonActivity
+       * @summary Get a specific activity of the user
+       * @request GET:/activitypub/user-id/{user-id}/activities/{activity-id}/activity
+       * @secure
+       */
+      activitypubPersonActivity: (userId, activityId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/user-id/${userId}/activities/${activityId}/activity`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubPersonInbox
+       * @summary Send to the inbox
+       * @request POST:/activitypub/user-id/{user-id}/inbox
+       * @secure
+       */
+      activitypubPersonInbox: (userId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/user-id/${userId}/inbox`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags activitypub
+       * @name ActivitypubPersonFeed
+       * @summary List the user's recorded activity
+       * @request GET:/activitypub/user-id/{user-id}/outbox
+       * @secure
+       */
+      activitypubPersonFeed: (userId, params = {}) => this.request(__spreadValues({
+        path: `/activitypub/user-id/${userId}/outbox`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.admin = {
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCronList
+       * @summary List cron tasks
+       * @request GET:/admin/cron
+       * @secure
+       */
+      adminCronList: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/cron`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCronRun
+       * @summary Run cron task
+       * @request POST:/admin/cron/{task}
+       * @secure
+       */
+      adminCronRun: (task, params = {}) => this.request(__spreadValues({
+        path: `/admin/cron/${task}`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetAllEmails
+       * @summary List all users' email addresses
+       * @request GET:/admin/emails
+       * @secure
+       */
+      adminGetAllEmails: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/emails`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminSearchEmails
+       * @summary Search users' email addresses
+       * @request GET:/admin/emails/search
+       * @secure
+       */
+      adminSearchEmails: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/emails/search`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminListHooks
+       * @summary List global (system) webhooks
+       * @request GET:/admin/hooks
+       * @secure
+       */
+      adminListHooks: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/hooks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateHook
+       * @summary Create a hook
+       * @request POST:/admin/hooks
+       * @secure
+       */
+      adminCreateHook: (body, params = {}) => this.request(__spreadValues({
+        path: `/admin/hooks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetHook
+       * @summary Get a hook
+       * @request GET:/admin/hooks/{id}
+       * @secure
+       */
+      adminGetHook: (id, params = {}) => this.request(__spreadValues({
+        path: `/admin/hooks/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteHook
+       * @summary Delete a hook
+       * @request DELETE:/admin/hooks/{id}
+       * @secure
+       */
+      adminDeleteHook: (id, params = {}) => this.request(__spreadValues({
+        path: `/admin/hooks/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminEditHook
+       * @summary Update a hook
+       * @request PATCH:/admin/hooks/{id}
+       * @secure
+       */
+      adminEditHook: (id, body, params = {}) => this.request(__spreadValues({
+        path: `/admin/hooks/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetAllOrgs
+       * @summary List all organizations
+       * @request GET:/admin/orgs
+       * @secure
+       */
+      adminGetAllOrgs: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/orgs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminListQuotaGroups
+       * @summary List the available quota groups
+       * @request GET:/admin/quota/groups
+       * @secure
+       */
+      adminListQuotaGroups: (params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateQuotaGroup
+       * @summary Create a new quota group
+       * @request POST:/admin/quota/groups
+       * @secure
+       */
+      adminCreateQuotaGroup: (group, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups`,
+        method: "POST",
+        body: group,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetQuotaGroup
+       * @summary Get information about the quota group
+       * @request GET:/admin/quota/groups/{quotagroup}
+       * @secure
+       */
+      adminGetQuotaGroup: (quotagroup, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteQuotaGroup
+       * @summary Delete a quota group
+       * @request DELETE:/admin/quota/groups/{quotagroup}
+       * @secure
+       */
+      adminDeleteQuotaGroup: (quotagroup, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminAddRuleToQuotaGroup
+       * @summary Adds a rule to a quota group
+       * @request PUT:/admin/quota/groups/{quotagroup}/rules/{quotarule}
+       * @secure
+       */
+      adminAddRuleToQuotaGroup: (quotagroup, quotarule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}/rules/${quotarule}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminRemoveRuleFromQuotaGroup
+       * @summary Removes a rule from a quota group
+       * @request DELETE:/admin/quota/groups/{quotagroup}/rules/{quotarule}
+       * @secure
+       */
+      adminRemoveRuleFromQuotaGroup: (quotagroup, quotarule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}/rules/${quotarule}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminListUsersInQuotaGroup
+       * @summary List users in a quota group
+       * @request GET:/admin/quota/groups/{quotagroup}/users
+       * @secure
+       */
+      adminListUsersInQuotaGroup: (quotagroup, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}/users`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminAddUserToQuotaGroup
+       * @summary Add a user to a quota group
+       * @request PUT:/admin/quota/groups/{quotagroup}/users/{username}
+       * @secure
+       */
+      adminAddUserToQuotaGroup: (quotagroup, username, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}/users/${username}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminRemoveUserFromQuotaGroup
+       * @summary Remove a user from a quota group
+       * @request DELETE:/admin/quota/groups/{quotagroup}/users/{username}
+       * @secure
+       */
+      adminRemoveUserFromQuotaGroup: (quotagroup, username, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/groups/${quotagroup}/users/${username}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminListQuotaRules
+       * @summary List the available quota rules
+       * @request GET:/admin/quota/rules
+       * @secure
+       */
+      adminListQuotaRules: (params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/rules`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateQuotaRule
+       * @summary Create a new quota rule
+       * @request POST:/admin/quota/rules
+       * @secure
+       */
+      adminCreateQuotaRule: (rule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/rules`,
+        method: "POST",
+        body: rule,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetQuotaRule
+       * @summary Get information about a quota rule
+       * @request GET:/admin/quota/rules/{quotarule}
+       * @secure
+       */
+      adminGetQuotaRule: (quotarule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/rules/${quotarule}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteQuotaRule
+       * @summary Deletes a quota rule
+       * @request DELETE:/admin/quota/rules/{quotarule}
+       * @secure
+       */
+      adminDeleteQuotaRule: (quotarule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/rules/${quotarule}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminEditQuotaRule
+       * @summary Change an existing quota rule
+       * @request PATCH:/admin/quota/rules/{quotarule}
+       * @secure
+       */
+      adminEditQuotaRule: (quotarule, rule, params = {}) => this.request(__spreadValues({
+        path: `/admin/quota/rules/${quotarule}`,
+        method: "PATCH",
+        body: rule,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminSearchRunJobs
+       * @summary Search action jobs according filter conditions
+       * @request GET:/admin/runners/jobs
+       * @secure
+       */
+      adminSearchRunJobs: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/runners/jobs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetRunnerRegistrationToken
+       * @summary Get an global actions runner registration token
+       * @request GET:/admin/runners/registration-token
+       * @secure
+       */
+      adminGetRunnerRegistrationToken: (params = {}) => this.request(__spreadValues({
+        path: `/admin/runners/registration-token`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminUnadoptedList
+       * @summary List unadopted repositories
+       * @request GET:/admin/unadopted
+       * @secure
+       */
+      adminUnadoptedList: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/unadopted`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminAdoptRepository
+       * @summary Adopt unadopted files as a repository
+       * @request POST:/admin/unadopted/{owner}/{repo}
+       * @secure
+       */
+      adminAdoptRepository: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/admin/unadopted/${owner}/${repo}`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteUnadoptedRepository
+       * @summary Delete unadopted files
+       * @request DELETE:/admin/unadopted/{owner}/{repo}
+       * @secure
+       */
+      adminDeleteUnadoptedRepository: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/admin/unadopted/${owner}/${repo}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminSearchUsers
+       * @summary Search users according filter conditions
+       * @request GET:/admin/users
+       * @secure
+       */
+      adminSearchUsers: (query, params = {}) => this.request(__spreadValues({
+        path: `/admin/users`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateUser
+       * @summary Create a user account
+       * @request POST:/admin/users
+       * @secure
+       */
+      adminCreateUser: (body, params = {}) => this.request(__spreadValues({
+        path: `/admin/users`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteUser
+       * @summary Delete user account
+       * @request DELETE:/admin/users/{username}
+       * @secure
+       */
+      adminDeleteUser: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}`,
+        method: "DELETE",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminEditUser
+       * @summary Edit an existing user
+       * @request PATCH:/admin/users/{username}
+       * @secure
+       */
+      adminEditUser: (username, body, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminListUserEmails
+       * @summary List all email addresses for a user
+       * @request GET:/admin/users/{username}/emails
+       * @secure
+       */
+      adminListUserEmails: (username, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/emails`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteUserEmails
+       * @summary Delete email addresses from a user's account
+       * @request DELETE:/admin/users/{username}/emails
+       * @secure
+       */
+      adminDeleteUserEmails: (username, body, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/emails`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreatePublicKey
+       * @summary Add an SSH public key to user's account
+       * @request POST:/admin/users/{username}/keys
+       * @secure
+       */
+      adminCreatePublicKey: (username, key, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/keys`,
+        method: "POST",
+        body: key,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminDeleteUserPublicKey
+       * @summary Remove a public key from user's account
+       * @request DELETE:/admin/users/{username}/keys/{id}
+       * @secure
+       */
+      adminDeleteUserPublicKey: (username, id, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/keys/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateOrg
+       * @summary Create an organization
+       * @request POST:/admin/users/{username}/orgs
+       * @secure
+       */
+      adminCreateOrg: (username, organization, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/orgs`,
+        method: "POST",
+        body: organization,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminGetUserQuota
+       * @summary Get the user's quota info
+       * @request GET:/admin/users/{username}/quota
+       * @secure
+       */
+      adminGetUserQuota: (username, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/quota`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminSetUserQuotaGroups
+       * @summary Set the user's quota groups to a given list.
+       * @request POST:/admin/users/{username}/quota/groups
+       * @secure
+       */
+      adminSetUserQuotaGroups: (username, groups, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/quota/groups`,
+        method: "POST",
+        body: groups,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminRenameUser
+       * @summary Rename a user
+       * @request POST:/admin/users/{username}/rename
+       * @secure
+       */
+      adminRenameUser: (username, body, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/rename`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags admin
+       * @name AdminCreateRepo
+       * @summary Create a repository on behalf of a user
+       * @request POST:/admin/users/{username}/repos
+       * @secure
+       */
+      adminCreateRepo: (username, repository, params = {}) => this.request(__spreadValues({
+        path: `/admin/users/${username}/repos`,
+        method: "POST",
+        body: repository,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params))
+    };
+    this.gitignore = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name ListGitignoresTemplates
+       * @summary Returns a list of all gitignore templates
+       * @request GET:/gitignore/templates
+       * @secure
+       */
+      listGitignoresTemplates: (params = {}) => this.request(__spreadValues({
+        path: `/gitignore/templates`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetGitignoreTemplateInfo
+       * @summary Returns information about a gitignore template
+       * @request GET:/gitignore/templates/{name}
+       * @secure
+       */
+      getGitignoreTemplateInfo: (name, params = {}) => this.request(__spreadValues({
+        path: `/gitignore/templates/${name}`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.label = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name ListLabelTemplates
+       * @summary Returns a list of all label templates
+       * @request GET:/label/templates
+       * @secure
+       */
+      listLabelTemplates: (params = {}) => this.request(__spreadValues({
+        path: `/label/templates`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetLabelTemplateInfo
+       * @summary Returns all labels in a template
+       * @request GET:/label/templates/{name}
+       * @secure
+       */
+      getLabelTemplateInfo: (name, params = {}) => this.request(__spreadValues({
+        path: `/label/templates/${name}`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.licenses = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name ListLicenseTemplates
+       * @summary Returns a list of all license templates
+       * @request GET:/licenses
+       * @secure
+       */
+      listLicenseTemplates: (params = {}) => this.request(__spreadValues({
+        path: `/licenses`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetLicenseTemplateInfo
+       * @summary Returns information about a license template
+       * @request GET:/licenses/{name}
+       * @secure
+       */
+      getLicenseTemplateInfo: (name, params = {}) => this.request(__spreadValues({
+        path: `/licenses/${name}`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.markdown = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name RenderMarkdown
+       * @summary Render a markdown document as HTML
+       * @request POST:/markdown
+       * @secure
+       */
+      renderMarkdown: (body, params = {}) => this.request(__spreadValues({
+        path: `/markdown`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name RenderMarkdownRaw
+       * @summary Render raw markdown as HTML
+       * @request POST:/markdown/raw
+       * @secure
+       */
+      renderMarkdownRaw: (body, params = {}) => this.request(__spreadValues({
+        path: `/markdown/raw`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "text/plain" /* Text */
+      }, params))
+    };
+    this.markup = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name RenderMarkup
+       * @summary Render a markup document as HTML
+       * @request POST:/markup
+       * @secure
+       */
+      renderMarkup: (body, params = {}) => this.request(__spreadValues({
+        path: `/markup`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params))
+    };
+    this.nodeinfo = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetNodeInfo
+       * @summary Returns the nodeinfo of the Forgejo application
+       * @request GET:/nodeinfo
+       * @secure
+       */
+      getNodeInfo: (params = {}) => this.request(__spreadValues({
+        path: `/nodeinfo`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.notifications = {
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyGetList
+       * @summary List users's notification threads
+       * @request GET:/notifications
+       * @secure
+       */
+      notifyGetList: (query, params = {}) => this.request(__spreadValues({
+        path: `/notifications`,
+        method: "GET",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyReadList
+       * @summary Mark notification threads as read, pinned or unread
+       * @request PUT:/notifications
+       * @secure
+       */
+      notifyReadList: (query, params = {}) => this.request(__spreadValues({
+        path: `/notifications`,
+        method: "PUT",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyNewAvailable
+       * @summary Check if unread notifications exist
+       * @request GET:/notifications/new
+       * @secure
+       */
+      notifyNewAvailable: (params = {}) => this.request(__spreadValues({
+        path: `/notifications/new`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyGetThread
+       * @summary Get notification thread by ID
+       * @request GET:/notifications/threads/{id}
+       * @secure
+       */
+      notifyGetThread: (id, params = {}) => this.request(__spreadValues({
+        path: `/notifications/threads/${id}`,
+        method: "GET",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyReadThread
+       * @summary Mark notification thread as read by ID
+       * @request PATCH:/notifications/threads/{id}
+       * @secure
+       */
+      notifyReadThread: (id, query, params = {}) => this.request(__spreadValues({
+        path: `/notifications/threads/${id}`,
+        method: "PATCH",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params))
+    };
+    this.org = {
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name CreateOrgRepoDeprecated
+       * @summary Create a repository in an organization
+       * @request POST:/org/{org}/repos
+       * @deprecated
+       * @secure
+       */
+      createOrgRepoDeprecated: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/org/${org}/repos`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params))
+    };
+    this.orgs = {
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetAll
+       * @summary List all organizations
+       * @request GET:/orgs
+       * @secure
+       */
+      orgGetAll: (query, params = {}) => this.request(__spreadValues({
+        path: `/orgs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgCreate
+       * @summary Create an organization
+       * @request POST:/orgs
+       * @secure
+       */
+      orgCreate: (organization, params = {}) => this.request(__spreadValues({
+        path: `/orgs`,
+        method: "POST",
+        body: organization,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGet
+       * @summary Get an organization
+       * @request GET:/orgs/{org}
+       * @secure
+       */
+      orgGet: (org, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDelete
+       * @summary Delete an organization
+       * @request DELETE:/orgs/{org}
+       * @secure
+       */
+      orgDelete: (org, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgEdit
+       * @summary Edit an organization
+       * @request PATCH:/orgs/{org}
+       * @secure
+       */
+      orgEdit: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgSearchRunJobs
+       * @summary Search for organization's action jobs according filter conditions
+       * @request GET:/orgs/{org}/actions/runners/jobs
+       * @secure
+       */
+      orgSearchRunJobs: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/runners/jobs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetRunnerRegistrationToken
+       * @summary Get an organization's actions runner registration token
+       * @request GET:/orgs/{org}/actions/runners/registration-token
+       * @secure
+       */
+      orgGetRunnerRegistrationToken: (org, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/runners/registration-token`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListActionsSecrets
+       * @summary List actions secrets of an organization
+       * @request GET:/orgs/{org}/actions/secrets
+       * @secure
+       */
+      orgListActionsSecrets: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/secrets`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name UpdateOrgSecret
+       * @summary Create or Update a secret value in an organization
+       * @request PUT:/orgs/{org}/actions/secrets/{secretname}
+       * @secure
+       */
+      updateOrgSecret: (org, secretname, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/secrets/${secretname}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name DeleteOrgSecret
+       * @summary Delete a secret in an organization
+       * @request DELETE:/orgs/{org}/actions/secrets/{secretname}
+       * @secure
+       */
+      deleteOrgSecret: (org, secretname, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/secrets/${secretname}`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name GetOrgVariablesList
+       * @summary List variables of an organization
+       * @request GET:/orgs/{org}/actions/variables
+       * @secure
+       */
+      getOrgVariablesList: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/variables`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name GetOrgVariable
+       * @summary Get organization's variable by name
+       * @request GET:/orgs/{org}/actions/variables/{variablename}
+       * @secure
+       */
+      getOrgVariable: (org, variablename, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/variables/${variablename}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name UpdateOrgVariable
+       * @summary Update variable in organization
+       * @request PUT:/orgs/{org}/actions/variables/{variablename}
+       * @secure
+       */
+      updateOrgVariable: (org, variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/variables/${variablename}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name CreateOrgVariable
+       * @summary Create a new variable in organization
+       * @request POST:/orgs/{org}/actions/variables/{variablename}
+       * @secure
+       */
+      createOrgVariable: (org, variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/variables/${variablename}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name DeleteOrgVariable
+       * @summary Delete organization's variable by name
+       * @request DELETE:/orgs/{org}/actions/variables/{variablename}
+       * @secure
+       */
+      deleteOrgVariable: (org, variablename, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/actions/variables/${variablename}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListActivityFeeds
+       * @summary List an organization's activity feeds
+       * @request GET:/orgs/{org}/activities/feeds
+       * @secure
+       */
+      orgListActivityFeeds: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/activities/feeds`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgUpdateAvatar
+       * @summary Update an organization's avatar
+       * @request POST:/orgs/{org}/avatar
+       * @secure
+       */
+      orgUpdateAvatar: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/avatar`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDeleteAvatar
+       * @summary Delete an organization's avatar. It will be replaced by a default one
+       * @request DELETE:/orgs/{org}/avatar
+       * @secure
+       */
+      orgDeleteAvatar: (org, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/avatar`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgBlockUser
+       * @summary Blocks a user from the organization
+       * @request PUT:/orgs/{org}/block/{username}
+       * @secure
+       */
+      orgBlockUser: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/block/${username}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListHooks
+       * @summary List an organization's webhooks
+       * @request GET:/orgs/{org}/hooks
+       * @secure
+       */
+      orgListHooks: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/hooks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgCreateHook
+       * @summary Create a hook
+       * @request POST:/orgs/{org}/hooks
+       * @secure
+       */
+      orgCreateHook: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/hooks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetHook
+       * @summary Get a hook
+       * @request GET:/orgs/{org}/hooks/{id}
+       * @secure
+       */
+      orgGetHook: (org, id, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/hooks/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDeleteHook
+       * @summary Delete a hook
+       * @request DELETE:/orgs/{org}/hooks/{id}
+       * @secure
+       */
+      orgDeleteHook: (org, id, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/hooks/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgEditHook
+       * @summary Update a hook
+       * @request PATCH:/orgs/{org}/hooks/{id}
+       * @secure
+       */
+      orgEditHook: (org, id, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/hooks/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListLabels
+       * @summary List an organization's labels
+       * @request GET:/orgs/{org}/labels
+       * @secure
+       */
+      orgListLabels: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/labels`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgCreateLabel
+       * @summary Create a label for an organization
+       * @request POST:/orgs/{org}/labels
+       * @secure
+       */
+      orgCreateLabel: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/labels`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetLabel
+       * @summary Get a single label
+       * @request GET:/orgs/{org}/labels/{id}
+       * @secure
+       */
+      orgGetLabel: (org, id, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/labels/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDeleteLabel
+       * @summary Delete a label
+       * @request DELETE:/orgs/{org}/labels/{id}
+       * @secure
+       */
+      orgDeleteLabel: (org, id, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/labels/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgEditLabel
+       * @summary Update a label
+       * @request PATCH:/orgs/{org}/labels/{id}
+       * @secure
+       */
+      orgEditLabel: (org, id, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/labels/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListBlockedUsers
+       * @summary List the organization's blocked users
+       * @request GET:/orgs/{org}/list_blocked
+       * @secure
+       */
+      orgListBlockedUsers: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/list_blocked`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListMembers
+       * @summary List an organization's members
+       * @request GET:/orgs/{org}/members
+       * @secure
+       */
+      orgListMembers: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/members`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgIsMember
+       * @summary Check if a user is a member of an organization
+       * @request GET:/orgs/{org}/members/{username}
+       * @secure
+       */
+      orgIsMember: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/members/${username}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDeleteMember
+       * @summary Remove a member from an organization
+       * @request DELETE:/orgs/{org}/members/{username}
+       * @secure
+       */
+      orgDeleteMember: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/members/${username}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListPublicMembers
+       * @summary List an organization's public members
+       * @request GET:/orgs/{org}/public_members
+       * @secure
+       */
+      orgListPublicMembers: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/public_members`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgIsPublicMember
+       * @summary Check if a user is a public member of an organization
+       * @request GET:/orgs/{org}/public_members/{username}
+       * @secure
+       */
+      orgIsPublicMember: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/public_members/${username}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgPublicizeMember
+       * @summary Publicize a user's membership
+       * @request PUT:/orgs/{org}/public_members/{username}
+       * @secure
+       */
+      orgPublicizeMember: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/public_members/${username}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgConcealMember
+       * @summary Conceal a user's membership
+       * @request DELETE:/orgs/{org}/public_members/{username}
+       * @secure
+       */
+      orgConcealMember: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/public_members/${username}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetQuota
+       * @summary Get quota information for an organization
+       * @request GET:/orgs/{org}/quota
+       * @secure
+       */
+      orgGetQuota: (org, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/quota`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListQuotaArtifacts
+       * @summary List the artifacts affecting the organization's quota
+       * @request GET:/orgs/{org}/quota/artifacts
+       * @secure
+       */
+      orgListQuotaArtifacts: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/quota/artifacts`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListQuotaAttachments
+       * @summary List the attachments affecting the organization's quota
+       * @request GET:/orgs/{org}/quota/attachments
+       * @secure
+       */
+      orgListQuotaAttachments: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/quota/attachments`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgCheckQuota
+       * @summary Check if the organization is over quota for a given subject
+       * @request GET:/orgs/{org}/quota/check
+       * @secure
+       */
+      orgCheckQuota: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/quota/check`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListQuotaPackages
+       * @summary List the packages affecting the organization's quota
+       * @request GET:/orgs/{org}/quota/packages
+       * @secure
+       */
+      orgListQuotaPackages: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/quota/packages`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name RenameOrg
+       * @summary Rename an organization
+       * @request POST:/orgs/{org}/rename
+       * @secure
+       */
+      renameOrg: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/rename`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListRepos
+       * @summary List an organization's repos
+       * @request GET:/orgs/{org}/repos
+       * @secure
+       */
+      orgListRepos: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/repos`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name CreateOrgRepo
+       * @summary Create a repository in an organization
+       * @request POST:/orgs/{org}/repos
+       * @secure
+       */
+      createOrgRepo: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/repos`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeams
+       * @summary List an organization's teams
+       * @request GET:/orgs/{org}/teams
+       * @secure
+       */
+      orgListTeams: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/teams`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgCreateTeam
+       * @summary Create a team
+       * @request POST:/orgs/{org}/teams
+       * @secure
+       */
+      orgCreateTeam: (org, body, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/teams`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name TeamSearch
+       * @summary Search for teams within an organization
+       * @request GET:/orgs/{org}/teams/search
+       * @secure
+       */
+      teamSearch: (org, query, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/teams/search`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgUnblockUser
+       * @summary Unblock a user from the organization
+       * @request PUT:/orgs/{org}/unblock/{username}
+       * @secure
+       */
+      orgUnblockUser: (org, username, params = {}) => this.request(__spreadValues({
+        path: `/orgs/${org}/unblock/${username}`,
+        method: "PUT",
+        secure: true
+      }, params))
+    };
+    this.packages = {
+      /**
+       * No description
+       *
+       * @tags package
+       * @name ListPackages
+       * @summary Gets all packages of an owner
+       * @request GET:/packages/{owner}
+       * @secure
+       */
+      listPackages: (owner, query, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags package
+       * @name LinkPackage
+       * @summary Link a package to a repository
+       * @request POST:/packages/{owner}/{type}/{name}/-/link/{repo_name}
+       * @secure
+       */
+      linkPackage: (owner, type, name, repoName, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}/${type}/${name}/-/link/${repoName}`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags package
+       * @name UnlinkPackage
+       * @summary Unlink a package from a repository
+       * @request POST:/packages/{owner}/{type}/{name}/-/unlink
+       * @secure
+       */
+      unlinkPackage: (owner, type, name, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}/${type}/${name}/-/unlink`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags package
+       * @name GetPackage
+       * @summary Gets a package
+       * @request GET:/packages/{owner}/{type}/{name}/{version}
+       * @secure
+       */
+      getPackage: (owner, type, name, version, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}/${type}/${name}/${version}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags package
+       * @name DeletePackage
+       * @summary Delete a package
+       * @request DELETE:/packages/{owner}/{type}/{name}/{version}
+       * @secure
+       */
+      deletePackage: (owner, type, name, version, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}/${type}/${name}/${version}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags package
+       * @name ListPackageFiles
+       * @summary Gets all files of a package
+       * @request GET:/packages/{owner}/{type}/{name}/{version}/files
+       * @secure
+       */
+      listPackageFiles: (owner, type, name, version, params = {}) => this.request(__spreadValues({
+        path: `/packages/${owner}/${type}/${name}/${version}/files`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.repos = {
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueSearchIssues
+       * @summary Search for issues across the repositories that the user has access to
+       * @request GET:/repos/issues/search
+       * @secure
+       */
+      issueSearchIssues: (query, params = {}) => this.request(__spreadValues({
+        path: `/repos/issues/search`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoMigrate
+       * @summary Migrate a remote git repository
+       * @request POST:/repos/migrate
+       * @secure
+       */
+      repoMigrate: (body, params = {}) => this.request(__spreadValues({
+        path: `/repos/migrate`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSearch
+       * @summary Search for repositories
+       * @request GET:/repos/search
+       * @secure
+       */
+      repoSearch: (query, params = {}) => this.request(__spreadValues({
+        path: `/repos/search`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGet
+       * @summary Get a repository
+       * @request GET:/repos/{owner}/{repo}
+       * @secure
+       */
+      repoGet: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDelete
+       * @summary Delete a repository
+       * @request DELETE:/repos/{owner}/{repo}
+       * @secure
+       */
+      repoDelete: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEdit
+       * @summary Edit a repository's properties. Only fields that are set will be changed.
+       * @request PATCH:/repos/{owner}/{repo}
+       * @secure
+       */
+      repoEdit: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSearchRunJobs
+       * @summary Search for repository's action jobs according filter conditions
+       * @request GET:/repos/{owner}/{repo}/actions/runners/jobs
+       * @secure
+       */
+      repoSearchRunJobs: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/runners/jobs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetRunnerRegistrationToken
+       * @summary Get a repository's actions runner registration token
+       * @request GET:/repos/{owner}/{repo}/actions/runners/registration-token
+       * @secure
+       */
+      repoGetRunnerRegistrationToken: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/runners/registration-token`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name ListActionRuns
+       * @summary List a repository's action runs
+       * @request GET:/repos/{owner}/{repo}/actions/runs
+       * @secure
+       */
+      listActionRuns: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/runs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name ActionRun
+       * @summary Get an action run
+       * @request GET:/repos/{owner}/{repo}/actions/runs/{run_id}
+       * @secure
+       */
+      actionRun: (owner, repo, runId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/runs/${runId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListActionsSecrets
+       * @summary List an repo's actions secrets
+       * @request GET:/repos/{owner}/{repo}/actions/secrets
+       * @secure
+       */
+      repoListActionsSecrets: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/secrets`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UpdateRepoSecret
+       * @summary Create or Update a secret value in a repository
+       * @request PUT:/repos/{owner}/{repo}/actions/secrets/{secretname}
+       * @secure
+       */
+      updateRepoSecret: (owner, repo, secretname, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/secrets/${secretname}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name DeleteRepoSecret
+       * @summary Delete a secret in a repository
+       * @request DELETE:/repos/{owner}/{repo}/actions/secrets/{secretname}
+       * @secure
+       */
+      deleteRepoSecret: (owner, repo, secretname, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/secrets/${secretname}`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name ListActionTasks
+       * @summary List a repository's action tasks
+       * @request GET:/repos/{owner}/{repo}/actions/tasks
+       * @secure
+       */
+      listActionTasks: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/tasks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetRepoVariablesList
+       * @summary Get repo-level variables list
+       * @request GET:/repos/{owner}/{repo}/actions/variables
+       * @secure
+       */
+      getRepoVariablesList: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/variables`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetRepoVariable
+       * @summary Get a repo-level variable
+       * @request GET:/repos/{owner}/{repo}/actions/variables/{variablename}
+       * @secure
+       */
+      getRepoVariable: (owner, repo, variablename, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/variables/${variablename}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UpdateRepoVariable
+       * @summary Update a repo-level variable
+       * @request PUT:/repos/{owner}/{repo}/actions/variables/{variablename}
+       * @secure
+       */
+      updateRepoVariable: (owner, repo, variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/variables/${variablename}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name CreateRepoVariable
+       * @summary Create a repo-level variable
+       * @request POST:/repos/{owner}/{repo}/actions/variables/{variablename}
+       * @secure
+       */
+      createRepoVariable: (owner, repo, variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/variables/${variablename}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name DeleteRepoVariable
+       * @summary Delete a repo-level variable
+       * @request DELETE:/repos/{owner}/{repo}/actions/variables/{variablename}
+       * @secure
+       */
+      deleteRepoVariable: (owner, repo, variablename, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/variables/${variablename}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name DispatchWorkflow
+       * @summary Dispatches a workflow
+       * @request POST:/repos/{owner}/{repo}/actions/workflows/{workflowfilename}/dispatches
+       * @secure
+       */
+      dispatchWorkflow: (owner, repo, workflowfilename, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/actions/workflows/${workflowfilename}/dispatches`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListActivityFeeds
+       * @summary List a repository's activity feeds
+       * @request GET:/repos/{owner}/{repo}/activities/feeds
+       * @secure
+       */
+      repoListActivityFeeds: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/activities/feeds`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetArchive
+       * @summary Get an archive of a repository
+       * @request GET:/repos/{owner}/{repo}/archive/{archive}
+       * @secure
+       */
+      repoGetArchive: (owner, repo, archive, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/archive/${archive}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetAssignees
+       * @summary Return all users that have write access and can be assigned to issues
+       * @request GET:/repos/{owner}/{repo}/assignees
+       * @secure
+       */
+      repoGetAssignees: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/assignees`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUpdateAvatar
+       * @summary Update a repository's avatar
+       * @request POST:/repos/{owner}/{repo}/avatar
+       * @secure
+       */
+      repoUpdateAvatar: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/avatar`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteAvatar
+       * @summary Delete a repository's avatar
+       * @request DELETE:/repos/{owner}/{repo}/avatar
+       * @secure
+       */
+      repoDeleteAvatar: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/avatar`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListBranchProtection
+       * @summary List branch protections for a repository
+       * @request GET:/repos/{owner}/{repo}/branch_protections
+       * @secure
+       */
+      repoListBranchProtection: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branch_protections`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateBranchProtection
+       * @summary Create a branch protections for a repository
+       * @request POST:/repos/{owner}/{repo}/branch_protections
+       * @secure
+       */
+      repoCreateBranchProtection: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branch_protections`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetBranchProtection
+       * @summary Get a specific branch protection for the repository
+       * @request GET:/repos/{owner}/{repo}/branch_protections/{name}
+       * @secure
+       */
+      repoGetBranchProtection: (owner, repo, name, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branch_protections/${name}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteBranchProtection
+       * @summary Delete a specific branch protection for the repository
+       * @request DELETE:/repos/{owner}/{repo}/branch_protections/{name}
+       * @secure
+       */
+      repoDeleteBranchProtection: (owner, repo, name, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branch_protections/${name}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditBranchProtection
+       * @summary Edit a branch protections for a repository. Only fields that are set will be changed
+       * @request PATCH:/repos/{owner}/{repo}/branch_protections/{name}
+       * @secure
+       */
+      repoEditBranchProtection: (owner, repo, name, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branch_protections/${name}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListBranches
+       * @summary List a repository's branches
+       * @request GET:/repos/{owner}/{repo}/branches
+       * @secure
+       */
+      repoListBranches: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branches`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateBranch
+       * @summary Create a branch
+       * @request POST:/repos/{owner}/{repo}/branches
+       * @secure
+       */
+      repoCreateBranch: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branches`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetBranch
+       * @summary Retrieve a specific branch from a repository, including its effective branch protection
+       * @request GET:/repos/{owner}/{repo}/branches/{branch}
+       * @secure
+       */
+      repoGetBranch: (owner, repo, branch, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branches/${branch}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteBranch
+       * @summary Delete a specific branch from a repository
+       * @request DELETE:/repos/{owner}/{repo}/branches/{branch}
+       * @secure
+       */
+      repoDeleteBranch: (owner, repo, branch, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branches/${branch}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUpdateBranch
+       * @summary Update a branch
+       * @request PATCH:/repos/{owner}/{repo}/branches/{branch}
+       * @secure
+       */
+      repoUpdateBranch: (owner, repo, branch, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/branches/${branch}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListCollaborators
+       * @summary List a repository's collaborators
+       * @request GET:/repos/{owner}/{repo}/collaborators
+       * @secure
+       */
+      repoListCollaborators: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/collaborators`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * @description If the user is a collaborator, return 204. If the user is not a collaborator, return 404.
+       *
+       * @tags repository
+       * @name RepoCheckCollaborator
+       * @summary Check if a user is a collaborator of a repository
+       * @request GET:/repos/{owner}/{repo}/collaborators/{collaborator}
+       * @secure
+       */
+      repoCheckCollaborator: (owner, repo, collaborator, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/collaborators/${collaborator}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoAddCollaborator
+       * @summary Add a collaborator to a repository
+       * @request PUT:/repos/{owner}/{repo}/collaborators/{collaborator}
+       * @secure
+       */
+      repoAddCollaborator: (owner, repo, collaborator, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/collaborators/${collaborator}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteCollaborator
+       * @summary Delete a collaborator from a repository
+       * @request DELETE:/repos/{owner}/{repo}/collaborators/{collaborator}
+       * @secure
+       */
+      repoDeleteCollaborator: (owner, repo, collaborator, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/collaborators/${collaborator}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetRepoPermissions
+       * @summary Get repository permissions for a user
+       * @request GET:/repos/{owner}/{repo}/collaborators/{collaborator}/permission
+       * @secure
+       */
+      repoGetRepoPermissions: (owner, repo, collaborator, params = {}) => this.request(
+        __spreadValues({
+          path: `/repos/${owner}/${repo}/collaborators/${collaborator}/permission`,
+          method: "GET",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetAllCommits
+       * @summary Get a list of all commits from a repository
+       * @request GET:/repos/{owner}/{repo}/commits
+       * @secure
+       */
+      repoGetAllCommits: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/commits`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetCombinedStatusByRef
+       * @summary Get a commit's combined status, by branch/tag/commit reference
+       * @request GET:/repos/{owner}/{repo}/commits/{ref}/status
+       * @secure
+       */
+      repoGetCombinedStatusByRef: (owner, repo, ref, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/commits/${ref}/status`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListStatusesByRef
+       * @summary Get a commit's statuses, by branch/tag/commit reference
+       * @request GET:/repos/{owner}/{repo}/commits/{ref}/statuses
+       * @secure
+       */
+      repoListStatusesByRef: (owner, repo, ref, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/commits/${ref}/statuses`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetCommitPullRequest
+       * @summary Get the pull request of the commit
+       * @request GET:/repos/{owner}/{repo}/commits/{sha}/pull
+       * @secure
+       */
+      repoGetCommitPullRequest: (owner, repo, sha, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/commits/${sha}/pull`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCompareDiff
+       * @summary Get commit comparison information
+       * @request GET:/repos/{owner}/{repo}/compare/{basehead}
+       * @secure
+       */
+      repoCompareDiff: (owner, repo, basehead, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/compare/${basehead}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetContentsList
+       * @summary Gets the metadata of all the entries of the root dir
+       * @request GET:/repos/{owner}/{repo}/contents
+       * @secure
+       */
+      repoGetContentsList: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/contents`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoChangeFiles
+       * @summary Modify multiple files in a repository
+       * @request POST:/repos/{owner}/{repo}/contents
+       * @secure
+       */
+      repoChangeFiles: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/contents`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetContents
+       * @summary Gets the metadata and contents (if a file) of an entry in a repository, or a list of entries if a dir
+       * @request GET:/repos/{owner}/{repo}/contents/{filepath}
+       * @secure
+       */
+      repoGetContents: (owner, repo, filepath, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/contents/${filepath}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUpdateFile
+       * @summary Update a file in a repository
+       * @request PUT:/repos/{owner}/{repo}/contents/{filepath}
+       * @secure
+       */
+      repoUpdateFile: (owner, repo, filepath, body, params = {}) => this.request(
+        __spreadValues({
+          path: `/repos/${owner}/${repo}/contents/${filepath}`,
+          method: "PUT",
+          body,
+          secure: true,
+          type: "application/json" /* Json */
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateFile
+       * @summary Create a file in a repository
+       * @request POST:/repos/{owner}/{repo}/contents/{filepath}
+       * @secure
+       */
+      repoCreateFile: (owner, repo, filepath, body, params = {}) => this.request(
+        __spreadValues({
+          path: `/repos/${owner}/${repo}/contents/${filepath}`,
+          method: "POST",
+          body,
+          secure: true,
+          type: "application/json" /* Json */
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteFile
+       * @summary Delete a file in a repository
+       * @request DELETE:/repos/{owner}/{repo}/contents/{filepath}
+       * @secure
+       */
+      repoDeleteFile: (owner, repo, filepath, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/contents/${filepath}`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoConvert
+       * @summary Convert a mirror repo to a normal repo.
+       * @request POST:/repos/{owner}/{repo}/convert
+       * @secure
+       */
+      repoConvert: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/convert`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoApplyDiffPatch
+       * @summary Apply diff patch to repository
+       * @request POST:/repos/{owner}/{repo}/diffpatch
+       * @secure
+       */
+      repoApplyDiffPatch: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/diffpatch`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetEditorConfig
+       * @summary Get the EditorConfig definitions of a file in a repository
+       * @request GET:/repos/{owner}/{repo}/editorconfig/{filepath}
+       * @secure
+       */
+      repoGetEditorConfig: (owner, repo, filepath, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/editorconfig/${filepath}`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListFlags
+       * @summary List a repository's flags
+       * @request GET:/repos/{owner}/{repo}/flags
+       * @secure
+       */
+      repoListFlags: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoReplaceAllFlags
+       * @summary Replace all flags of a repository
+       * @request PUT:/repos/{owner}/{repo}/flags
+       * @secure
+       */
+      repoReplaceAllFlags: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteAllFlags
+       * @summary Remove all flags from a repository
+       * @request DELETE:/repos/{owner}/{repo}/flags
+       * @secure
+       */
+      repoDeleteAllFlags: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCheckFlag
+       * @summary Check if a repository has a given flag
+       * @request GET:/repos/{owner}/{repo}/flags/{flag}
+       * @secure
+       */
+      repoCheckFlag: (owner, repo, flag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags/${flag}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoAddFlag
+       * @summary Add a flag to a repository
+       * @request PUT:/repos/{owner}/{repo}/flags/{flag}
+       * @secure
+       */
+      repoAddFlag: (owner, repo, flag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags/${flag}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteFlag
+       * @summary Remove a flag from a repository
+       * @request DELETE:/repos/{owner}/{repo}/flags/{flag}
+       * @secure
+       */
+      repoDeleteFlag: (owner, repo, flag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/flags/${flag}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name ListForks
+       * @summary List a repository's forks
+       * @request GET:/repos/{owner}/{repo}/forks
+       * @secure
+       */
+      listForks: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/forks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name CreateFork
+       * @summary Fork a repository
+       * @request POST:/repos/{owner}/{repo}/forks
+       * @secure
+       */
+      createFork: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/forks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetBlobs
+       * @summary Gets multiple blobs of a repository.
+       * @request GET:/repos/{owner}/{repo}/git/blobs
+       * @secure
+       */
+      getBlobs: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/blobs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetBlob
+       * @summary Gets the blob of a repository.
+       * @request GET:/repos/{owner}/{repo}/git/blobs/{sha}
+       * @secure
+       */
+      getBlob: (owner, repo, sha, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/blobs/${sha}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetSingleCommit
+       * @summary Get a single commit from a repository
+       * @request GET:/repos/{owner}/{repo}/git/commits/{sha}
+       * @secure
+       */
+      repoGetSingleCommit: (owner, repo, sha, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/commits/${sha}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDownloadCommitDiffOrPatch
+       * @summary Get a commit's diff or patch
+       * @request GET:/repos/{owner}/{repo}/git/commits/{sha}.{diffType}
+       * @secure
+       */
+      repoDownloadCommitDiffOrPatch: (owner, repo, sha, diffType, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/commits/${sha}.${diffType}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetNote
+       * @summary Get a note corresponding to a single commit from a repository
+       * @request GET:/repos/{owner}/{repo}/git/notes/{sha}
+       * @secure
+       */
+      repoGetNote: (owner, repo, sha, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/notes/${sha}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSetNote
+       * @summary Set a note corresponding to a single commit from a repository
+       * @request POST:/repos/{owner}/{repo}/git/notes/{sha}
+       * @secure
+       */
+      repoSetNote: (owner, repo, sha, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/notes/${sha}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoRemoveNote
+       * @summary Removes a note corresponding to a single commit from a repository
+       * @request DELETE:/repos/{owner}/{repo}/git/notes/{sha}
+       * @secure
+       */
+      repoRemoveNote: (owner, repo, sha, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/notes/${sha}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListAllGitRefs
+       * @summary Get specified ref or filtered repository's refs
+       * @request GET:/repos/{owner}/{repo}/git/refs
+       * @secure
+       */
+      repoListAllGitRefs: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/refs`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListGitRefs
+       * @summary Get specified ref or filtered repository's refs
+       * @request GET:/repos/{owner}/{repo}/git/refs/{ref}
+       * @secure
+       */
+      repoListGitRefs: (owner, repo, ref, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/refs/${ref}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetAnnotatedTag
+       * @summary Gets the tag object of an annotated tag (not lightweight tags)
+       * @request GET:/repos/{owner}/{repo}/git/tags/{sha}
+       * @secure
+       */
+      getAnnotatedTag: (owner, repo, sha, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/tags/${sha}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GetTree
+       * @summary Gets the tree of a repository.
+       * @request GET:/repos/{owner}/{repo}/git/trees/{sha}
+       * @secure
+       */
+      getTree: (owner, repo, sha, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/git/trees/${sha}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListHooks
+       * @summary List the hooks in a repository
+       * @request GET:/repos/{owner}/{repo}/hooks
+       * @secure
+       */
+      repoListHooks: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateHook
+       * @summary Create a hook
+       * @request POST:/repos/{owner}/{repo}/hooks
+       * @secure
+       */
+      repoCreateHook: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListGitHooks
+       * @summary List the Git hooks in a repository
+       * @request GET:/repos/{owner}/{repo}/hooks/git
+       * @secure
+       */
+      repoListGitHooks: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/git`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetGitHook
+       * @summary Get a Git hook
+       * @request GET:/repos/{owner}/{repo}/hooks/git/{id}
+       * @secure
+       */
+      repoGetGitHook: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/git/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteGitHook
+       * @summary Delete a Git hook in a repository
+       * @request DELETE:/repos/{owner}/{repo}/hooks/git/{id}
+       * @secure
+       */
+      repoDeleteGitHook: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/git/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditGitHook
+       * @summary Edit a Git hook in a repository
+       * @request PATCH:/repos/{owner}/{repo}/hooks/git/{id}
+       * @secure
+       */
+      repoEditGitHook: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/git/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetHook
+       * @summary Get a hook
+       * @request GET:/repos/{owner}/{repo}/hooks/{id}
+       * @secure
+       */
+      repoGetHook: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteHook
+       * @summary Delete a hook in a repository
+       * @request DELETE:/repos/{owner}/{repo}/hooks/{id}
+       * @secure
+       */
+      repoDeleteHook: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditHook
+       * @summary Edit a hook in a repository
+       * @request PATCH:/repos/{owner}/{repo}/hooks/{id}
+       * @secure
+       */
+      repoEditHook: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoTestHook
+       * @summary Test a push webhook
+       * @request POST:/repos/{owner}/{repo}/hooks/{id}/tests
+       * @secure
+       */
+      repoTestHook: (owner, repo, id, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/hooks/${id}/tests`,
+        method: "POST",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetIssueConfig
+       * @summary Returns the issue config for a repo
+       * @request GET:/repos/{owner}/{repo}/issue_config
+       * @secure
+       */
+      repoGetIssueConfig: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issue_config`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoValidateIssueConfig
+       * @summary Returns the validation information for a issue config
+       * @request GET:/repos/{owner}/{repo}/issue_config/validate
+       * @secure
+       */
+      repoValidateIssueConfig: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issue_config/validate`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetIssueTemplates
+       * @summary Get available issue templates for a repository
+       * @request GET:/repos/{owner}/{repo}/issue_templates
+       * @secure
+       */
+      repoGetIssueTemplates: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issue_templates`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListIssues
+       * @summary List a repository's issues
+       * @request GET:/repos/{owner}/{repo}/issues
+       * @secure
+       */
+      issueListIssues: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateIssue
+       * @summary Create an issue. If using deadline only the date will be taken into account, and time of day ignored.
+       * @request POST:/repos/{owner}/{repo}/issues
+       * @secure
+       */
+      issueCreateIssue: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetRepoComments
+       * @summary List all comments in a repository
+       * @request GET:/repos/{owner}/{repo}/issues/comments
+       * @secure
+       */
+      issueGetRepoComments: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetComment
+       * @summary Get a comment
+       * @request GET:/repos/{owner}/{repo}/issues/comments/{id}
+       * @secure
+       */
+      issueGetComment: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}`,
+        method: "GET",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteComment
+       * @summary Delete a comment
+       * @request DELETE:/repos/{owner}/{repo}/issues/comments/{id}
+       * @secure
+       */
+      issueDeleteComment: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditComment
+       * @summary Edit a comment
+       * @request PATCH:/repos/{owner}/{repo}/issues/comments/{id}
+       * @secure
+       */
+      issueEditComment: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListIssueCommentAttachments
+       * @summary List comment's attachments
+       * @request GET:/repos/{owner}/{repo}/issues/comments/{id}/assets
+       * @secure
+       */
+      issueListIssueCommentAttachments: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/assets`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateIssueCommentAttachment
+       * @summary Create a comment attachment
+       * @request POST:/repos/{owner}/{repo}/issues/comments/{id}/assets
+       * @secure
+       */
+      issueCreateIssueCommentAttachment: (owner, repo, id, data, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/assets`,
+        method: "POST",
+        query,
+        body: data,
+        secure: true,
+        type: "multipart/form-data" /* FormData */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetIssueCommentAttachment
+       * @summary Get a comment attachment
+       * @request GET:/repos/{owner}/{repo}/issues/comments/{id}/assets/{attachment_id}
+       * @secure
+       */
+      issueGetIssueCommentAttachment: (owner, repo, id, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/assets/${attachmentId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteIssueCommentAttachment
+       * @summary Delete a comment attachment
+       * @request DELETE:/repos/{owner}/{repo}/issues/comments/{id}/assets/{attachment_id}
+       * @secure
+       */
+      issueDeleteIssueCommentAttachment: (owner, repo, id, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/assets/${attachmentId}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditIssueCommentAttachment
+       * @summary Edit a comment attachment
+       * @request PATCH:/repos/{owner}/{repo}/issues/comments/{id}/assets/{attachment_id}
+       * @secure
+       */
+      issueEditIssueCommentAttachment: (owner, repo, id, attachmentId, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/assets/${attachmentId}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetCommentReactions
+       * @summary Get a list of reactions from a comment of an issue
+       * @request GET:/repos/{owner}/{repo}/issues/comments/{id}/reactions
+       * @secure
+       */
+      issueGetCommentReactions: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/reactions`,
+        method: "GET",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssuePostCommentReaction
+       * @summary Add a reaction to a comment of an issue
+       * @request POST:/repos/{owner}/{repo}/issues/comments/{id}/reactions
+       * @secure
+       */
+      issuePostCommentReaction: (owner, repo, id, content, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/reactions`,
+        method: "POST",
+        body: content,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteCommentReaction
+       * @summary Remove a reaction from a comment of an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/comments/{id}/reactions
+       * @secure
+       */
+      issueDeleteCommentReaction: (owner, repo, id, content, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/comments/${id}/reactions`,
+        method: "DELETE",
+        body: content,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListPinnedIssues
+       * @summary List a repo's pinned issues
+       * @request GET:/repos/{owner}/{repo}/issues/pinned
+       * @secure
+       */
+      repoListPinnedIssues: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/pinned`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetIssue
+       * @summary Get an issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}
+       * @secure
+       */
+      issueGetIssue: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDelete
+       * @summary Delete an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}
+       * @secure
+       */
+      issueDelete: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditIssue
+       * @summary Edit an issue. If using deadline only the date will be taken into account, and time of day ignored.
+       * @request PATCH:/repos/{owner}/{repo}/issues/{index}
+       * @secure
+       */
+      issueEditIssue: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListIssueAttachments
+       * @summary List issue's attachments
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/assets
+       * @secure
+       */
+      issueListIssueAttachments: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/assets`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateIssueAttachment
+       * @summary Create an issue attachment
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/assets
+       * @secure
+       */
+      issueCreateIssueAttachment: (owner, repo, index, data, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/assets`,
+        method: "POST",
+        query,
+        body: data,
+        secure: true,
+        type: "multipart/form-data" /* FormData */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetIssueAttachment
+       * @summary Get an issue attachment
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}
+       * @secure
+       */
+      issueGetIssueAttachment: (owner, repo, index, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/assets/${attachmentId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteIssueAttachment
+       * @summary Delete an issue attachment
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}
+       * @secure
+       */
+      issueDeleteIssueAttachment: (owner, repo, index, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/assets/${attachmentId}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditIssueAttachment
+       * @summary Edit an issue attachment
+       * @request PATCH:/repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}
+       * @secure
+       */
+      issueEditIssueAttachment: (owner, repo, index, attachmentId, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/assets/${attachmentId}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListBlocks
+       * @summary List issues that are blocked by this issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/blocks
+       * @secure
+       */
+      issueListBlocks: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/blocks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateIssueBlocking
+       * @summary Block the issue given in the body by the issue in path
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/blocks
+       * @secure
+       */
+      issueCreateIssueBlocking: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/blocks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueRemoveIssueBlocking
+       * @summary Unblock the issue given in the body by the issue in path
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/blocks
+       * @secure
+       */
+      issueRemoveIssueBlocking: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/blocks`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetComments
+       * @summary List all comments on an issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/comments
+       * @secure
+       */
+      issueGetComments: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/comments`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateComment
+       * @summary Add a comment to an issue
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/comments
+       * @secure
+       */
+      issueCreateComment: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/comments`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteCommentDeprecated
+       * @summary Delete a comment
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/comments/{id}
+       * @deprecated
+       * @secure
+       */
+      issueDeleteCommentDeprecated: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/comments/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditCommentDeprecated
+       * @summary Edit a comment
+       * @request PATCH:/repos/{owner}/{repo}/issues/{index}/comments/{id}
+       * @deprecated
+       * @secure
+       */
+      issueEditCommentDeprecated: (owner, repo, index, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/comments/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditIssueDeadline
+       * @summary Set an issue deadline. If set to null, the deadline is deleted. If using deadline only the date will be taken into account, and time of day ignored.
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/deadline
+       * @secure
+       */
+      issueEditIssueDeadline: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/deadline`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListIssueDependencies
+       * @summary List an issue's dependencies, i.e all issues that block this issue.
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/dependencies
+       * @secure
+       */
+      issueListIssueDependencies: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/dependencies`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateIssueDependencies
+       * @summary Make the issue in the url depend on the issue in the form.
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/dependencies
+       * @secure
+       */
+      issueCreateIssueDependencies: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/dependencies`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueRemoveIssueDependencies
+       * @summary Remove an issue dependency
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/dependencies
+       * @secure
+       */
+      issueRemoveIssueDependencies: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/dependencies`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetLabels
+       * @summary Get an issue's labels
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/labels
+       * @secure
+       */
+      issueGetLabels: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/labels`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueReplaceLabels
+       * @summary Replace an issue's labels
+       * @request PUT:/repos/{owner}/{repo}/issues/{index}/labels
+       * @secure
+       */
+      issueReplaceLabels: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/labels`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueAddLabel
+       * @summary Add a label to an issue
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/labels
+       * @secure
+       */
+      issueAddLabel: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/labels`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueClearLabels
+       * @summary Remove all labels from an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/labels
+       * @secure
+       */
+      issueClearLabels: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/labels`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueRemoveLabel
+       * @summary Remove a label from an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/labels/{identifier}
+       * @secure
+       */
+      issueRemoveLabel: (owner, repo, index, identifier, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/labels/${identifier}`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name PinIssue
+       * @summary Pin an Issue
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/pin
+       * @secure
+       */
+      pinIssue: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/pin`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name UnpinIssue
+       * @summary Unpin an Issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/pin
+       * @secure
+       */
+      unpinIssue: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/pin`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name MoveIssuePin
+       * @summary Moves the Pin to the given Position
+       * @request PATCH:/repos/{owner}/{repo}/issues/{index}/pin/{position}
+       * @secure
+       */
+      moveIssuePin: (owner, repo, index, position, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/pin/${position}`,
+        method: "PATCH",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetIssueReactions
+       * @summary Get a list reactions of an issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/reactions
+       * @secure
+       */
+      issueGetIssueReactions: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/reactions`,
+        method: "GET",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssuePostIssueReaction
+       * @summary Add a reaction to an issue
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/reactions
+       * @secure
+       */
+      issuePostIssueReaction: (owner, repo, index, content, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/reactions`,
+        method: "POST",
+        body: content,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteIssueReaction
+       * @summary Remove a reaction from an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/reactions
+       * @secure
+       */
+      issueDeleteIssueReaction: (owner, repo, index, content, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/reactions`,
+        method: "DELETE",
+        body: content,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteStopWatch
+       * @summary Delete an issue's existing stopwatch.
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/stopwatch/delete
+       * @secure
+       */
+      issueDeleteStopWatch: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/stopwatch/delete`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueStartStopWatch
+       * @summary Start stopwatch on an issue.
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/stopwatch/start
+       * @secure
+       */
+      issueStartStopWatch: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/stopwatch/start`,
+        method: "POST",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueStopStopWatch
+       * @summary Stop an issue's existing stopwatch.
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/stopwatch/stop
+       * @secure
+       */
+      issueStopStopWatch: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/stopwatch/stop`,
+        method: "POST",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueSubscriptions
+       * @summary Get users who subscribed on an issue.
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/subscriptions
+       * @secure
+       */
+      issueSubscriptions: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/subscriptions`,
+        method: "GET",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCheckSubscription
+       * @summary Check if user is subscribed to an issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/subscriptions/check
+       * @secure
+       */
+      issueCheckSubscription: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/subscriptions/check`,
+        method: "GET",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueAddSubscription
+       * @summary Subscribe user to issue
+       * @request PUT:/repos/{owner}/{repo}/issues/{index}/subscriptions/{user}
+       * @secure
+       */
+      issueAddSubscription: (owner, repo, index, user, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/subscriptions/${user}`,
+        method: "PUT",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteSubscription
+       * @summary Unsubscribe user from issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/subscriptions/{user}
+       * @secure
+       */
+      issueDeleteSubscription: (owner, repo, index, user, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/subscriptions/${user}`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetCommentsAndTimeline
+       * @summary List all comments and events on an issue
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/timeline
+       * @secure
+       */
+      issueGetCommentsAndTimeline: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/timeline`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueTrackedTimes
+       * @summary List an issue's tracked times
+       * @request GET:/repos/{owner}/{repo}/issues/{index}/times
+       * @secure
+       */
+      issueTrackedTimes: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/times`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueAddTime
+       * @summary Add tracked time to a issue
+       * @request POST:/repos/{owner}/{repo}/issues/{index}/times
+       * @secure
+       */
+      issueAddTime: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/times`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueResetTime
+       * @summary Reset a tracked time of an issue
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/times
+       * @secure
+       */
+      issueResetTime: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/times`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteTime
+       * @summary Delete specific tracked time
+       * @request DELETE:/repos/{owner}/{repo}/issues/{index}/times/{id}
+       * @secure
+       */
+      issueDeleteTime: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/issues/${index}/times/${id}`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListKeys
+       * @summary List a repository's keys
+       * @request GET:/repos/{owner}/{repo}/keys
+       * @secure
+       */
+      repoListKeys: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/keys`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateKey
+       * @summary Add a key to a repository
+       * @request POST:/repos/{owner}/{repo}/keys
+       * @secure
+       */
+      repoCreateKey: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/keys`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetKey
+       * @summary Get a repository's key by id
+       * @request GET:/repos/{owner}/{repo}/keys/{id}
+       * @secure
+       */
+      repoGetKey: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/keys/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteKey
+       * @summary Delete a key from a repository
+       * @request DELETE:/repos/{owner}/{repo}/keys/{id}
+       * @secure
+       */
+      repoDeleteKey: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/keys/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueListLabels
+       * @summary Get all of a repository's labels
+       * @request GET:/repos/{owner}/{repo}/labels
+       * @secure
+       */
+      issueListLabels: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/labels`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateLabel
+       * @summary Create a label
+       * @request POST:/repos/{owner}/{repo}/labels
+       * @secure
+       */
+      issueCreateLabel: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/labels`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetLabel
+       * @summary Get a single label
+       * @request GET:/repos/{owner}/{repo}/labels/{id}
+       * @secure
+       */
+      issueGetLabel: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/labels/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteLabel
+       * @summary Delete a label
+       * @request DELETE:/repos/{owner}/{repo}/labels/{id}
+       * @secure
+       */
+      issueDeleteLabel: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/labels/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditLabel
+       * @summary Update a label
+       * @request PATCH:/repos/{owner}/{repo}/labels/{id}
+       * @secure
+       */
+      issueEditLabel: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/labels/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetLanguages
+       * @summary Get languages and number of bytes of code written
+       * @request GET:/repos/{owner}/{repo}/languages
+       * @secure
+       */
+      repoGetLanguages: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/languages`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetRawFileOrLfs
+       * @summary Get a file or it's LFS object from a repository
+       * @request GET:/repos/{owner}/{repo}/media/{filepath}
+       * @secure
+       */
+      repoGetRawFileOrLfs: (owner, repo, filepath, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/media/${filepath}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetMilestonesList
+       * @summary Get all of a repository's opened milestones
+       * @request GET:/repos/{owner}/{repo}/milestones
+       * @secure
+       */
+      issueGetMilestonesList: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/milestones`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueCreateMilestone
+       * @summary Create a milestone
+       * @request POST:/repos/{owner}/{repo}/milestones
+       * @secure
+       */
+      issueCreateMilestone: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/milestones`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueGetMilestone
+       * @summary Get a milestone
+       * @request GET:/repos/{owner}/{repo}/milestones/{id}
+       * @secure
+       */
+      issueGetMilestone: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/milestones/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueDeleteMilestone
+       * @summary Delete a milestone
+       * @request DELETE:/repos/{owner}/{repo}/milestones/{id}
+       * @secure
+       */
+      issueDeleteMilestone: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/milestones/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags issue
+       * @name IssueEditMilestone
+       * @summary Update a milestone
+       * @request PATCH:/repos/{owner}/{repo}/milestones/{id}
+       * @secure
+       */
+      issueEditMilestone: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/milestones/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoMirrorSync
+       * @summary Sync a mirrored repository
+       * @request POST:/repos/{owner}/{repo}/mirror-sync
+       * @secure
+       */
+      repoMirrorSync: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/mirror-sync`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoNewPinAllowed
+       * @summary Returns if new Issue Pins are allowed
+       * @request GET:/repos/{owner}/{repo}/new_pin_allowed
+       * @secure
+       */
+      repoNewPinAllowed: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/new_pin_allowed`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyGetRepoList
+       * @summary List users's notification threads on a specific repo
+       * @request GET:/repos/{owner}/{repo}/notifications
+       * @secure
+       */
+      notifyGetRepoList: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/notifications`,
+        method: "GET",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags notification
+       * @name NotifyReadRepoList
+       * @summary Mark notification threads as read, pinned or unread on a specific repo
+       * @request PUT:/repos/{owner}/{repo}/notifications
+       * @secure
+       */
+      notifyReadRepoList: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/notifications`,
+        method: "PUT",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListPullRequests
+       * @summary List a repo's pull requests. If a pull request is selected but fails to be retrieved for any reason, it will be a null value in the list of results.
+       * @request GET:/repos/{owner}/{repo}/pulls
+       * @secure
+       */
+      repoListPullRequests: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreatePullRequest
+       * @summary Create a pull request
+       * @request POST:/repos/{owner}/{repo}/pulls
+       * @secure
+       */
+      repoCreatePullRequest: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListPinnedPullRequests
+       * @summary List a repo's pinned pull requests
+       * @request GET:/repos/{owner}/{repo}/pulls/pinned
+       * @secure
+       */
+      repoListPinnedPullRequests: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/pinned`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullRequestByBaseHead
+       * @summary Get a pull request by base and head
+       * @request GET:/repos/{owner}/{repo}/pulls/{base}/{head}
+       * @secure
+       */
+      repoGetPullRequestByBaseHead: (owner, repo, base, head, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${base}/${head}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullRequest
+       * @summary Get a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}
+       * @secure
+       */
+      repoGetPullRequest: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditPullRequest
+       * @summary Update a pull request. If using deadline only the date will be taken into account, and time of day ignored.
+       * @request PATCH:/repos/{owner}/{repo}/pulls/{index}
+       * @secure
+       */
+      repoEditPullRequest: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDownloadPullDiffOrPatch
+       * @summary Get a pull request diff or patch
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}.{diffType}
+       * @secure
+       */
+      repoDownloadPullDiffOrPatch: (owner, repo, index, diffType, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}.${diffType}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullRequestCommits
+       * @summary Get commits for a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/commits
+       * @secure
+       */
+      repoGetPullRequestCommits: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/commits`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullRequestFiles
+       * @summary Get changed files for a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/files
+       * @secure
+       */
+      repoGetPullRequestFiles: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/files`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoPullRequestIsMerged
+       * @summary Check if a pull request has been merged
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/merge
+       * @secure
+       */
+      repoPullRequestIsMerged: (owner, repo, index, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/merge`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoMergePullRequest
+       * @summary Merge a pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/merge
+       * @secure
+       */
+      repoMergePullRequest: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/merge`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCancelScheduledAutoMerge
+       * @summary Cancel the scheduled auto merge for the given pull request
+       * @request DELETE:/repos/{owner}/{repo}/pulls/{index}/merge
+       * @secure
+       */
+      repoCancelScheduledAutoMerge: (owner, repo, index, params = {}) => this.request(
+        __spreadValues({
+          path: `/repos/${owner}/${repo}/pulls/${index}/merge`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreatePullReviewRequests
+       * @summary Create review requests for a pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/requested_reviewers
+       * @secure
+       */
+      repoCreatePullReviewRequests: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/requested_reviewers`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeletePullReviewRequests
+       * @summary Cancel review requests for a pull request
+       * @request DELETE:/repos/{owner}/{repo}/pulls/{index}/requested_reviewers
+       * @secure
+       */
+      repoDeletePullReviewRequests: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/requested_reviewers`,
+        method: "DELETE",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListPullReviews
+       * @summary List all reviews for a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/reviews
+       * @secure
+       */
+      repoListPullReviews: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreatePullReview
+       * @summary Create a review to an pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/reviews
+       * @secure
+       */
+      repoCreatePullReview: (owner, repo, index, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullReview
+       * @summary Get a specific review for a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}
+       * @secure
+       */
+      repoGetPullReview: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSubmitPullReview
+       * @summary Submit a pending review to an pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}
+       * @secure
+       */
+      repoSubmitPullReview: (owner, repo, index, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeletePullReview
+       * @summary Delete a specific review from a pull request
+       * @request DELETE:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}
+       * @secure
+       */
+      repoDeletePullReview: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullReviewComments
+       * @summary Get a specific review for a pull request
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/comments
+       * @secure
+       */
+      repoGetPullReviewComments: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/comments`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreatePullReviewComment
+       * @summary Add a new comment to a pull request review
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/comments
+       * @secure
+       */
+      repoCreatePullReviewComment: (owner, repo, index, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/comments`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPullReviewComment
+       * @summary Get a pull review comment
+       * @request GET:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/comments/{comment}
+       * @secure
+       */
+      repoGetPullReviewComment: (owner, repo, index, id, comment, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/comments/${comment}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeletePullReviewComment
+       * @summary Delete a pull review comment
+       * @request DELETE:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/comments/{comment}
+       * @secure
+       */
+      repoDeletePullReviewComment: (owner, repo, index, id, comment, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/comments/${comment}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDismissPullReview
+       * @summary Dismiss a review for a pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/dismissals
+       * @secure
+       */
+      repoDismissPullReview: (owner, repo, index, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/dismissals`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUnDismissPullReview
+       * @summary Cancel to dismiss a review for a pull request
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/reviews/{id}/undismissals
+       * @secure
+       */
+      repoUnDismissPullReview: (owner, repo, index, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/reviews/${id}/undismissals`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUpdatePullRequest
+       * @summary Merge PR's baseBranch into headBranch
+       * @request POST:/repos/{owner}/{repo}/pulls/{index}/update
+       * @secure
+       */
+      repoUpdatePullRequest: (owner, repo, index, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/pulls/${index}/update`,
+        method: "POST",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListPushMirrors
+       * @summary Get all push mirrors of the repository
+       * @request GET:/repos/{owner}/{repo}/push_mirrors
+       * @secure
+       */
+      repoListPushMirrors: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/push_mirrors`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoAddPushMirror
+       * @summary Set up a new push mirror in a repository
+       * @request POST:/repos/{owner}/{repo}/push_mirrors
+       * @secure
+       */
+      repoAddPushMirror: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/push_mirrors`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoPushMirrorSync
+       * @summary Sync all push mirrored repository
+       * @request POST:/repos/{owner}/{repo}/push_mirrors-sync
+       * @secure
+       */
+      repoPushMirrorSync: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/push_mirrors-sync`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetPushMirrorByRemoteName
+       * @summary Get push mirror of the repository by remoteName
+       * @request GET:/repos/{owner}/{repo}/push_mirrors/{name}
+       * @secure
+       */
+      repoGetPushMirrorByRemoteName: (owner, repo, name, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/push_mirrors/${name}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeletePushMirror
+       * @summary Remove a push mirror from a repository by remoteName
+       * @request DELETE:/repos/{owner}/{repo}/push_mirrors/{name}
+       * @secure
+       */
+      repoDeletePushMirror: (owner, repo, name, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/push_mirrors/${name}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetRawFile
+       * @summary Get a file from a repository
+       * @request GET:/repos/{owner}/{repo}/raw/{filepath}
+       * @secure
+       */
+      repoGetRawFile: (owner, repo, filepath, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/raw/${filepath}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListReleases
+       * @summary List a repo's releases
+       * @request GET:/repos/{owner}/{repo}/releases
+       * @secure
+       */
+      repoListReleases: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateRelease
+       * @summary Create a release
+       * @request POST:/repos/{owner}/{repo}/releases
+       * @secure
+       */
+      repoCreateRelease: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetLatestRelease
+       * @summary Gets the most recent non-prerelease, non-draft release of a repository, sorted by created_at
+       * @request GET:/repos/{owner}/{repo}/releases/latest
+       * @secure
+       */
+      repoGetLatestRelease: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/latest`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetReleaseByTag
+       * @summary Get a release by tag name
+       * @request GET:/repos/{owner}/{repo}/releases/tags/{tag}
+       * @secure
+       */
+      repoGetReleaseByTag: (owner, repo, tag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/tags/${tag}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteReleaseByTag
+       * @summary Delete a release by tag name
+       * @request DELETE:/repos/{owner}/{repo}/releases/tags/{tag}
+       * @secure
+       */
+      repoDeleteReleaseByTag: (owner, repo, tag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/tags/${tag}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetRelease
+       * @summary Get a release
+       * @request GET:/repos/{owner}/{repo}/releases/{id}
+       * @secure
+       */
+      repoGetRelease: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteRelease
+       * @summary Delete a release
+       * @request DELETE:/repos/{owner}/{repo}/releases/{id}
+       * @secure
+       */
+      repoDeleteRelease: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditRelease
+       * @summary Update a release
+       * @request PATCH:/repos/{owner}/{repo}/releases/{id}
+       * @secure
+       */
+      repoEditRelease: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListReleaseAttachments
+       * @summary List release's attachments
+       * @request GET:/repos/{owner}/{repo}/releases/{id}/assets
+       * @secure
+       */
+      repoListReleaseAttachments: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}/assets`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateReleaseAttachment
+       * @summary Create a release attachment
+       * @request POST:/repos/{owner}/{repo}/releases/{id}/assets
+       * @secure
+       */
+      repoCreateReleaseAttachment: (owner, repo, id, data, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}/assets`,
+        method: "POST",
+        query,
+        body: data,
+        secure: true,
+        type: "multipart/form-data" /* FormData */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetReleaseAttachment
+       * @summary Get a release attachment
+       * @request GET:/repos/{owner}/{repo}/releases/{id}/assets/{attachment_id}
+       * @secure
+       */
+      repoGetReleaseAttachment: (owner, repo, id, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}/assets/${attachmentId}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteReleaseAttachment
+       * @summary Delete a release attachment
+       * @request DELETE:/repos/{owner}/{repo}/releases/{id}/assets/{attachment_id}
+       * @secure
+       */
+      repoDeleteReleaseAttachment: (owner, repo, id, attachmentId, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}/assets/${attachmentId}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditReleaseAttachment
+       * @summary Edit a release attachment
+       * @request PATCH:/repos/{owner}/{repo}/releases/{id}/assets/{attachment_id}
+       * @secure
+       */
+      repoEditReleaseAttachment: (owner, repo, id, attachmentId, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/releases/${id}/assets/${attachmentId}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetReviewers
+       * @summary Return all users that can be requested to review in this repo
+       * @request GET:/repos/{owner}/{repo}/reviewers
+       * @secure
+       */
+      repoGetReviewers: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/reviewers`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSigningKey
+       * @summary Get signing-key.gpg for given repository
+       * @request GET:/repos/{owner}/{repo}/signing-key.gpg
+       * @secure
+       */
+      repoSigningKey: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/signing-key.gpg`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListStargazers
+       * @summary List a repo's stargazers
+       * @request GET:/repos/{owner}/{repo}/stargazers
+       * @secure
+       */
+      repoListStargazers: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/stargazers`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListStatuses
+       * @summary Get a commit's statuses
+       * @request GET:/repos/{owner}/{repo}/statuses/{sha}
+       * @secure
+       */
+      repoListStatuses: (owner, repo, sha, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/statuses/${sha}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateStatus
+       * @summary Create a commit status
+       * @request POST:/repos/{owner}/{repo}/statuses/{sha}
+       * @secure
+       */
+      repoCreateStatus: (owner, repo, sha, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/statuses/${sha}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListSubscribers
+       * @summary List a repo's watchers
+       * @request GET:/repos/{owner}/{repo}/subscribers
+       * @secure
+       */
+      repoListSubscribers: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/subscribers`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UserCurrentCheckSubscription
+       * @summary Check if the current user is watching a repo
+       * @request GET:/repos/{owner}/{repo}/subscription
+       * @secure
+       */
+      userCurrentCheckSubscription: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/subscription`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UserCurrentPutSubscription
+       * @summary Watch a repo
+       * @request PUT:/repos/{owner}/{repo}/subscription
+       * @secure
+       */
+      userCurrentPutSubscription: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/subscription`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UserCurrentDeleteSubscription
+       * @summary Unwatch a repo
+       * @request DELETE:/repos/{owner}/{repo}/subscription
+       * @secure
+       */
+      userCurrentDeleteSubscription: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/subscription`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSyncForkDefaultInfo
+       * @summary Gets information about syncing the fork default branch with the base branch
+       * @request GET:/repos/{owner}/{repo}/sync_fork
+       * @secure
+       */
+      repoSyncForkDefaultInfo: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/sync_fork`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSyncForkDefault
+       * @summary Syncs the default branch of a fork with the base branch
+       * @request POST:/repos/{owner}/{repo}/sync_fork
+       * @secure
+       */
+      repoSyncForkDefault: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/sync_fork`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSyncForkBranchInfo
+       * @summary Gets information about syncing a fork branch with the base branch
+       * @request GET:/repos/{owner}/{repo}/sync_fork/{branch}
+       * @secure
+       */
+      repoSyncForkBranchInfo: (owner, repo, branch, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/sync_fork/${branch}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoSyncForkBranch
+       * @summary Syncs a fork branch with the base branch
+       * @request POST:/repos/{owner}/{repo}/sync_fork/{branch}
+       * @secure
+       */
+      repoSyncForkBranch: (owner, repo, branch, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/sync_fork/${branch}`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListTagProtection
+       * @summary List tag protections for a repository
+       * @request GET:/repos/{owner}/{repo}/tag_protections
+       * @secure
+       */
+      repoListTagProtection: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tag_protections`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateTagProtection
+       * @summary Create a tag protections for a repository
+       * @request POST:/repos/{owner}/{repo}/tag_protections
+       * @secure
+       */
+      repoCreateTagProtection: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tag_protections`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetTagProtection
+       * @summary Get a specific tag protection for the repository
+       * @request GET:/repos/{owner}/{repo}/tag_protections/{id}
+       * @secure
+       */
+      repoGetTagProtection: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tag_protections/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteTagProtection
+       * @summary Delete a specific tag protection for the repository
+       * @request DELETE:/repos/{owner}/{repo}/tag_protections/{id}
+       * @secure
+       */
+      repoDeleteTagProtection: (owner, repo, id, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tag_protections/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditTagProtection
+       * @summary Edit a tag protections for a repository. Only fields that are set will be changed
+       * @request PATCH:/repos/{owner}/{repo}/tag_protections/{id}
+       * @secure
+       */
+      repoEditTagProtection: (owner, repo, id, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tag_protections/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListTags
+       * @summary List a repository's tags
+       * @request GET:/repos/{owner}/{repo}/tags
+       * @secure
+       */
+      repoListTags: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tags`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateTag
+       * @summary Create a new git tag in a repository
+       * @request POST:/repos/{owner}/{repo}/tags
+       * @secure
+       */
+      repoCreateTag: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tags`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetTag
+       * @summary Get the tag of a repository by tag name
+       * @request GET:/repos/{owner}/{repo}/tags/{tag}
+       * @secure
+       */
+      repoGetTag: (owner, repo, tag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tags/${tag}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteTag
+       * @summary Delete a repository's tag by name
+       * @request DELETE:/repos/{owner}/{repo}/tags/{tag}
+       * @secure
+       */
+      repoDeleteTag: (owner, repo, tag, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/tags/${tag}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListTeams
+       * @summary List a repository's teams
+       * @request GET:/repos/{owner}/{repo}/teams
+       * @secure
+       */
+      repoListTeams: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/teams`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCheckTeam
+       * @summary Check if a team is assigned to a repository
+       * @request GET:/repos/{owner}/{repo}/teams/{team}
+       * @secure
+       */
+      repoCheckTeam: (owner, repo, team, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/teams/${team}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoAddTeam
+       * @summary Add a team to a repository
+       * @request PUT:/repos/{owner}/{repo}/teams/{team}
+       * @secure
+       */
+      repoAddTeam: (owner, repo, team, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/teams/${team}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteTeam
+       * @summary Delete a team from a repository
+       * @request DELETE:/repos/{owner}/{repo}/teams/{team}
+       * @secure
+       */
+      repoDeleteTeam: (owner, repo, team, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/teams/${team}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoTrackedTimes
+       * @summary List a repo's tracked times
+       * @request GET:/repos/{owner}/{repo}/times
+       * @secure
+       */
+      repoTrackedTimes: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/times`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name UserTrackedTimes
+       * @summary List a user's tracked times in a repo
+       * @request GET:/repos/{owner}/{repo}/times/{user}
+       * @deprecated
+       * @secure
+       */
+      userTrackedTimes: (owner, repo, user, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/times/${user}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoListTopics
+       * @summary Get list of topics that a repository has
+       * @request GET:/repos/{owner}/{repo}/topics
+       * @secure
+       */
+      repoListTopics: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/topics`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoUpdateTopics
+       * @summary Replace list of topics for a repository
+       * @request PUT:/repos/{owner}/{repo}/topics
+       * @secure
+       */
+      repoUpdateTopics: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/topics`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoAddTopic
+       * @summary Add a topic to a repository
+       * @request PUT:/repos/{owner}/{repo}/topics/{topic}
+       * @secure
+       */
+      repoAddTopic: (owner, repo, topic, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/topics/${topic}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteTopic
+       * @summary Delete a topic from a repository
+       * @request DELETE:/repos/{owner}/{repo}/topics/{topic}
+       * @secure
+       */
+      repoDeleteTopic: (owner, repo, topic, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/topics/${topic}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoTransfer
+       * @summary Transfer a repo ownership
+       * @request POST:/repos/{owner}/{repo}/transfer
+       * @secure
+       */
+      repoTransfer: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/transfer`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name AcceptRepoTransfer
+       * @summary Accept a repo transfer
+       * @request POST:/repos/{owner}/{repo}/transfer/accept
+       * @secure
+       */
+      acceptRepoTransfer: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/transfer/accept`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RejectRepoTransfer
+       * @summary Reject a repo transfer
+       * @request POST:/repos/{owner}/{repo}/transfer/reject
+       * @secure
+       */
+      rejectRepoTransfer: (owner, repo, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/transfer/reject`,
+        method: "POST",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoCreateWikiPage
+       * @summary Create a wiki page
+       * @request POST:/repos/{owner}/{repo}/wiki/new
+       * @secure
+       */
+      repoCreateWikiPage: (owner, repo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/wiki/new`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetWikiPage
+       * @summary Get a wiki page
+       * @request GET:/repos/{owner}/{repo}/wiki/page/{pageName}
+       * @secure
+       */
+      repoGetWikiPage: (owner, repo, pageName, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/wiki/page/${pageName}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoDeleteWikiPage
+       * @summary Delete a wiki page
+       * @request DELETE:/repos/{owner}/{repo}/wiki/page/{pageName}
+       * @secure
+       */
+      repoDeleteWikiPage: (owner, repo, pageName, params = {}) => this.request(
+        __spreadValues({
+          path: `/repos/${owner}/${repo}/wiki/page/${pageName}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoEditWikiPage
+       * @summary Edit a wiki page
+       * @request PATCH:/repos/{owner}/{repo}/wiki/page/{pageName}
+       * @secure
+       */
+      repoEditWikiPage: (owner, repo, pageName, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/wiki/page/${pageName}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetWikiPages
+       * @summary Get all wiki pages
+       * @request GET:/repos/{owner}/{repo}/wiki/pages
+       * @secure
+       */
+      repoGetWikiPages: (owner, repo, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/wiki/pages`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetWikiPageRevisions
+       * @summary Get revisions of a wiki page
+       * @request GET:/repos/{owner}/{repo}/wiki/revisions/{pageName}
+       * @secure
+       */
+      repoGetWikiPageRevisions: (owner, repo, pageName, query, params = {}) => this.request(__spreadValues({
+        path: `/repos/${owner}/${repo}/wiki/revisions/${pageName}`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name GenerateRepo
+       * @summary Create a repository using a template
+       * @request POST:/repos/{template_owner}/{template_repo}/generate
+       * @secure
+       */
+      generateRepo: (templateOwner, templateRepo, body, params = {}) => this.request(__spreadValues({
+        path: `/repos/${templateOwner}/${templateRepo}/generate`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params))
+    };
+    this.repositories = {
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name RepoGetById
+       * @summary Get a repository by id
+       * @request GET:/repositories/{id}
+       * @secure
+       */
+      repoGetById: (id, params = {}) => this.request(__spreadValues({
+        path: `/repositories/${id}`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.settings = {
+      /**
+       * No description
+       *
+       * @tags settings
+       * @name GetGeneralApiSettings
+       * @summary Get instance's global settings for api
+       * @request GET:/settings/api
+       * @secure
+       */
+      getGeneralApiSettings: (params = {}) => this.request(__spreadValues({
+        path: `/settings/api`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags settings
+       * @name GetGeneralAttachmentSettings
+       * @summary Get instance's global settings for Attachment
+       * @request GET:/settings/attachment
+       * @secure
+       */
+      getGeneralAttachmentSettings: (params = {}) => this.request(__spreadValues({
+        path: `/settings/attachment`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags settings
+       * @name GetGeneralRepositorySettings
+       * @summary Get instance's global settings for repositories
+       * @request GET:/settings/repository
+       * @secure
+       */
+      getGeneralRepositorySettings: (params = {}) => this.request(__spreadValues({
+        path: `/settings/repository`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags settings
+       * @name GetGeneralUiSettings
+       * @summary Get instance's global settings for ui
+       * @request GET:/settings/ui
+       * @secure
+       */
+      getGeneralUiSettings: (params = {}) => this.request(__spreadValues({
+        path: `/settings/ui`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.signingKeyGpg = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetSigningKey
+       * @summary Get default signing-key.gpg
+       * @request GET:/signing-key.gpg
+       * @secure
+       */
+      getSigningKey: (params = {}) => this.request(__spreadValues({
+        path: `/signing-key.gpg`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.signingKeySsh = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetSshSigningKey
+       * @summary Get default signing-key.ssh
+       * @request GET:/signing-key.ssh
+       * @secure
+       */
+      getSshSigningKey: (params = {}) => this.request(__spreadValues({
+        path: `/signing-key.ssh`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+    this.teams = {
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetTeam
+       * @summary Get a team
+       * @request GET:/teams/{id}
+       * @secure
+       */
+      orgGetTeam: (id, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgDeleteTeam
+       * @summary Delete a team
+       * @request DELETE:/teams/{id}
+       * @secure
+       */
+      orgDeleteTeam: (id, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgEditTeam
+       * @summary Edit a team
+       * @request PATCH:/teams/{id}
+       * @secure
+       */
+      orgEditTeam: (id, body, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeamActivityFeeds
+       * @summary List a team's activity feeds
+       * @request GET:/teams/{id}/activities/feeds
+       * @secure
+       */
+      orgListTeamActivityFeeds: (id, query, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/activities/feeds`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeamMembers
+       * @summary List a team's members
+       * @request GET:/teams/{id}/members
+       * @secure
+       */
+      orgListTeamMembers: (id, query, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/members`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeamMember
+       * @summary List a particular member of team
+       * @request GET:/teams/{id}/members/{username}
+       * @secure
+       */
+      orgListTeamMember: (id, username, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/members/${username}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgAddTeamMember
+       * @summary Add a team member
+       * @request PUT:/teams/{id}/members/{username}
+       * @secure
+       */
+      orgAddTeamMember: (id, username, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/members/${username}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgRemoveTeamMember
+       * @summary Remove a team member
+       * @request DELETE:/teams/{id}/members/{username}
+       * @secure
+       */
+      orgRemoveTeamMember: (id, username, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/members/${username}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeamRepos
+       * @summary List a team's repos
+       * @request GET:/teams/{id}/repos
+       * @secure
+       */
+      orgListTeamRepos: (id, query, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/repos`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListTeamRepo
+       * @summary List a particular repo of team
+       * @request GET:/teams/{id}/repos/{org}/{repo}
+       * @secure
+       */
+      orgListTeamRepo: (id, org, repo, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/repos/${org}/${repo}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgAddTeamRepository
+       * @summary Add a repository to a team
+       * @request PUT:/teams/{id}/repos/{org}/{repo}
+       * @secure
+       */
+      orgAddTeamRepository: (id, org, repo, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/repos/${org}/${repo}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * @description This does not delete the repository, it only removes the repository from the team.
+       *
+       * @tags organization
+       * @name OrgRemoveTeamRepository
+       * @summary Remove a repository from a team
+       * @request DELETE:/teams/{id}/repos/{org}/{repo}
+       * @secure
+       */
+      orgRemoveTeamRepository: (id, org, repo, params = {}) => this.request(__spreadValues({
+        path: `/teams/${id}/repos/${org}/${repo}`,
+        method: "DELETE",
+        secure: true
+      }, params))
+    };
+    this.topics = {
+      /**
+       * No description
+       *
+       * @tags repository
+       * @name TopicSearch
+       * @summary Search for topics by keyword
+       * @request GET:/topics/search
+       * @secure
+       */
+      topicSearch: (query, params = {}) => this.request(__spreadValues({
+        path: `/topics/search`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params))
+    };
+    this.user = {
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetCurrent
+       * @summary Get the authenticated user
+       * @request GET:/user
+       * @secure
+       */
+      userGetCurrent: (params = {}) => this.request(__spreadValues({
+        path: `/user`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserSearchRunJobs
+       * @summary Search for user's action jobs according filter conditions
+       * @request GET:/user/actions/runners/jobs
+       * @secure
+       */
+      userSearchRunJobs: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/runners/jobs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetRunnerRegistrationToken
+       * @summary Get an user's actions runner registration token
+       * @request GET:/user/actions/runners/registration-token
+       * @secure
+       */
+      userGetRunnerRegistrationToken: (params = {}) => this.request(
+        __spreadValues({
+          path: `/user/actions/runners/registration-token`,
+          method: "GET",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UpdateUserSecret
+       * @summary Create or Update a secret value in a user scope
+       * @request PUT:/user/actions/secrets/{secretname}
+       * @secure
+       */
+      updateUserSecret: (secretname, body, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/secrets/${secretname}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name DeleteUserSecret
+       * @summary Delete a secret in a user scope
+       * @request DELETE:/user/actions/secrets/{secretname}
+       * @secure
+       */
+      deleteUserSecret: (secretname, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/secrets/${secretname}`,
+        method: "DELETE",
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name GetUserVariablesList
+       * @summary Get the user-level list of variables which is created by current doer
+       * @request GET:/user/actions/variables
+       * @secure
+       */
+      getUserVariablesList: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/variables`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name GetUserVariable
+       * @summary Get a user-level variable which is created by current doer
+       * @request GET:/user/actions/variables/{variablename}
+       * @secure
+       */
+      getUserVariable: (variablename, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/variables/${variablename}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UpdateUserVariable
+       * @summary Update a user-level variable which is created by current doer
+       * @request PUT:/user/actions/variables/{variablename}
+       * @secure
+       */
+      updateUserVariable: (variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/variables/${variablename}`,
+        method: "PUT",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name CreateUserVariable
+       * @summary Create a user-level variable
+       * @request POST:/user/actions/variables/{variablename}
+       * @secure
+       */
+      createUserVariable: (variablename, body, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/variables/${variablename}`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name DeleteUserVariable
+       * @summary Delete a user-level variable which is created by current doer
+       * @request DELETE:/user/actions/variables/{variablename}
+       * @secure
+       */
+      deleteUserVariable: (variablename, params = {}) => this.request(__spreadValues({
+        path: `/user/actions/variables/${variablename}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetOAuth2Applications
+       * @summary List the authenticated user's oauth2 applications
+       * @request GET:/user/applications/oauth2
+       * @secure
+       */
+      userGetOAuth2Applications: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/applications/oauth2`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCreateOAuth2Application
+       * @summary Creates a new OAuth2 application
+       * @request POST:/user/applications/oauth2
+       * @secure
+       */
+      userCreateOAuth2Application: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/applications/oauth2`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetOAuth2Application
+       * @summary Get an OAuth2 application
+       * @request GET:/user/applications/oauth2/{id}
+       * @secure
+       */
+      userGetOAuth2Application: (id, params = {}) => this.request(__spreadValues({
+        path: `/user/applications/oauth2/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserDeleteOAuth2Application
+       * @summary Delete an OAuth2 application
+       * @request DELETE:/user/applications/oauth2/{id}
+       * @secure
+       */
+      userDeleteOAuth2Application: (id, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/applications/oauth2/${id}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserUpdateOAuth2Application
+       * @summary Update an OAuth2 application, this includes regenerating the client secret
+       * @request PATCH:/user/applications/oauth2/{id}
+       * @secure
+       */
+      userUpdateOAuth2Application: (id, body, params = {}) => this.request(__spreadValues({
+        path: `/user/applications/oauth2/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserUpdateAvatar
+       * @summary Update avatar of the current user
+       * @request POST:/user/avatar
+       * @secure
+       */
+      userUpdateAvatar: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/avatar`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserDeleteAvatar
+       * @summary Delete avatar of the current user. It will be replaced by a default one
+       * @request DELETE:/user/avatar
+       * @secure
+       */
+      userDeleteAvatar: (params = {}) => this.request(__spreadValues({
+        path: `/user/avatar`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserBlockUser
+       * @summary Blocks a user from the doer
+       * @request PUT:/user/block/{username}
+       * @secure
+       */
+      userBlockUser: (username, params = {}) => this.request(__spreadValues({
+        path: `/user/block/${username}`,
+        method: "PUT",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListEmails
+       * @summary List all email addresses of the current user
+       * @request GET:/user/emails
+       * @secure
+       */
+      userListEmails: (params = {}) => this.request(__spreadValues({
+        path: `/user/emails`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserAddEmail
+       * @summary Add an email addresses to the current user's account
+       * @request POST:/user/emails
+       * @secure
+       */
+      userAddEmail: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/emails`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserDeleteEmail
+       * @summary Delete email addresses from the current user's account
+       * @request DELETE:/user/emails
+       * @secure
+       */
+      userDeleteEmail: (body, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/emails`,
+          method: "DELETE",
+          body,
+          secure: true,
+          type: "application/json" /* Json */
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListFollowers
+       * @summary List the authenticated user's followers
+       * @request GET:/user/followers
+       * @secure
+       */
+      userCurrentListFollowers: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/followers`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListFollowing
+       * @summary List the users that the authenticated user is following
+       * @request GET:/user/following
+       * @secure
+       */
+      userCurrentListFollowing: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/following`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentCheckFollowing
+       * @summary Check whether a user is followed by the authenticated user
+       * @request GET:/user/following/{username}
+       * @secure
+       */
+      userCurrentCheckFollowing: (username, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/following/${username}`,
+          method: "GET",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentPutFollow
+       * @summary Follow a user
+       * @request PUT:/user/following/{username}
+       * @secure
+       */
+      userCurrentPutFollow: (username, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/following/${username}`,
+          method: "PUT",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentDeleteFollow
+       * @summary Unfollow a user
+       * @request DELETE:/user/following/{username}
+       * @secure
+       */
+      userCurrentDeleteFollow: (username, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/following/${username}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name GetVerificationToken
+       * @summary Get a Token to verify
+       * @request GET:/user/gpg_key_token
+       * @secure
+       */
+      getVerificationToken: (params = {}) => this.request(__spreadValues({
+        path: `/user/gpg_key_token`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserVerifyGpgKey
+       * @summary Verify a GPG key
+       * @request POST:/user/gpg_key_verify
+       * @secure
+       */
+      userVerifyGpgKey: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/gpg_key_verify`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListGpgKeys
+       * @summary List the authenticated user's GPG keys
+       * @request GET:/user/gpg_keys
+       * @secure
+       */
+      userCurrentListGpgKeys: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/gpg_keys`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentPostGpgKey
+       * @summary Add a GPG public key to current user's account
+       * @request POST:/user/gpg_keys
+       * @secure
+       */
+      userCurrentPostGpgKey: (Form, params = {}) => this.request(__spreadValues({
+        path: `/user/gpg_keys`,
+        method: "POST",
+        body: Form,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentGetGpgKey
+       * @summary Get a GPG key
+       * @request GET:/user/gpg_keys/{id}
+       * @secure
+       */
+      userCurrentGetGpgKey: (id, params = {}) => this.request(__spreadValues({
+        path: `/user/gpg_keys/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentDeleteGpgKey
+       * @summary Remove a GPG public key from current user's account
+       * @request DELETE:/user/gpg_keys/{id}
+       * @secure
+       */
+      userCurrentDeleteGpgKey: (id, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/gpg_keys/${id}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListHooks
+       * @summary List the authenticated user's webhooks
+       * @request GET:/user/hooks
+       * @secure
+       */
+      userListHooks: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/hooks`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCreateHook
+       * @summary Create a hook
+       * @request POST:/user/hooks
+       * @secure
+       */
+      userCreateHook: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/hooks`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetHook
+       * @summary Get a hook
+       * @request GET:/user/hooks/{id}
+       * @secure
+       */
+      userGetHook: (id, params = {}) => this.request(__spreadValues({
+        path: `/user/hooks/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserDeleteHook
+       * @summary Delete a hook
+       * @request DELETE:/user/hooks/{id}
+       * @secure
+       */
+      userDeleteHook: (id, params = {}) => this.request(__spreadValues({
+        path: `/user/hooks/${id}`,
+        method: "DELETE",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserEditHook
+       * @summary Update a hook
+       * @request PATCH:/user/hooks/{id}
+       * @secure
+       */
+      userEditHook: (id, body, params = {}) => this.request(__spreadValues({
+        path: `/user/hooks/${id}`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListKeys
+       * @summary List the authenticated user's public keys
+       * @request GET:/user/keys
+       * @secure
+       */
+      userCurrentListKeys: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/keys`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentPostKey
+       * @summary Create a public key
+       * @request POST:/user/keys
+       * @secure
+       */
+      userCurrentPostKey: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/keys`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentGetKey
+       * @summary Get a public key
+       * @request GET:/user/keys/{id}
+       * @secure
+       */
+      userCurrentGetKey: (id, params = {}) => this.request(__spreadValues({
+        path: `/user/keys/${id}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentDeleteKey
+       * @summary Delete a public key
+       * @request DELETE:/user/keys/{id}
+       * @secure
+       */
+      userCurrentDeleteKey: (id, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/keys/${id}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListBlockedUsers
+       * @summary List the authenticated user's blocked users
+       * @request GET:/user/list_blocked
+       * @secure
+       */
+      userListBlockedUsers: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/list_blocked`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListCurrentUserOrgs
+       * @summary List the current user's organizations
+       * @request GET:/user/orgs
+       * @secure
+       */
+      orgListCurrentUserOrgs: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/orgs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetQuota
+       * @summary Get quota information for the authenticated user
+       * @request GET:/user/quota
+       * @secure
+       */
+      userGetQuota: (params = {}) => this.request(__spreadValues({
+        path: `/user/quota`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListQuotaArtifacts
+       * @summary List the artifacts affecting the authenticated user's quota
+       * @request GET:/user/quota/artifacts
+       * @secure
+       */
+      userListQuotaArtifacts: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/quota/artifacts`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListQuotaAttachments
+       * @summary List the attachments affecting the authenticated user's quota
+       * @request GET:/user/quota/attachments
+       * @secure
+       */
+      userListQuotaAttachments: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/quota/attachments`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCheckQuota
+       * @summary Check if the authenticated user is over quota for a given subject
+       * @request GET:/user/quota/check
+       * @secure
+       */
+      userCheckQuota: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/quota/check`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListQuotaPackages
+       * @summary List the packages affecting the authenticated user's quota
+       * @request GET:/user/quota/packages
+       * @secure
+       */
+      userListQuotaPackages: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/quota/packages`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListRepos
+       * @summary List the repos that the authenticated user owns
+       * @request GET:/user/repos
+       * @secure
+       */
+      userCurrentListRepos: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/repos`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags repository, user
+       * @name CreateCurrentUserRepo
+       * @summary Create a repository
+       * @request POST:/user/repos
+       * @secure
+       */
+      createCurrentUserRepo: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/repos`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name GetUserSettings
+       * @summary Get current user's account settings
+       * @request GET:/user/settings
+       * @secure
+       */
+      getUserSettings: (params = {}) => this.request(__spreadValues({
+        path: `/user/settings`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UpdateUserSettings
+       * @summary Update settings in current user's account
+       * @request PATCH:/user/settings
+       * @secure
+       */
+      updateUserSettings: (body, params = {}) => this.request(__spreadValues({
+        path: `/user/settings`,
+        method: "PATCH",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListStarred
+       * @summary The repos that the authenticated user has starred
+       * @request GET:/user/starred
+       * @secure
+       */
+      userCurrentListStarred: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/starred`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentCheckStarring
+       * @summary Whether the authenticated is starring the repo
+       * @request GET:/user/starred/{owner}/{repo}
+       * @secure
+       */
+      userCurrentCheckStarring: (owner, repo, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/starred/${owner}/${repo}`,
+          method: "GET",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentPutStar
+       * @summary Star the given repo
+       * @request PUT:/user/starred/{owner}/{repo}
+       * @secure
+       */
+      userCurrentPutStar: (owner, repo, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/starred/${owner}/${repo}`,
+          method: "PUT",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentDeleteStar
+       * @summary Unstar the given repo
+       * @request DELETE:/user/starred/{owner}/{repo}
+       * @secure
+       */
+      userCurrentDeleteStar: (owner, repo, params = {}) => this.request(
+        __spreadValues({
+          path: `/user/starred/${owner}/${repo}`,
+          method: "DELETE",
+          secure: true
+        }, params)
+      ),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetStopWatches
+       * @summary Get list of all existing stopwatches
+       * @request GET:/user/stopwatches
+       * @secure
+       */
+      userGetStopWatches: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/stopwatches`,
+        method: "GET",
+        query,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentListSubscriptions
+       * @summary List repositories watched by the authenticated user
+       * @request GET:/user/subscriptions
+       * @secure
+       */
+      userCurrentListSubscriptions: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/subscriptions`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListTeams
+       * @summary List all the teams a user belongs to
+       * @request GET:/user/teams
+       * @secure
+       */
+      userListTeams: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/teams`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCurrentTrackedTimes
+       * @summary List the current user's tracked times
+       * @request GET:/user/times
+       * @secure
+       */
+      userCurrentTrackedTimes: (query, params = {}) => this.request(__spreadValues({
+        path: `/user/times`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserUnblockUser
+       * @summary Unblocks a user from the doer
+       * @request PUT:/user/unblock/{username}
+       * @secure
+       */
+      userUnblockUser: (username, params = {}) => this.request(__spreadValues({
+        path: `/user/unblock/${username}`,
+        method: "PUT",
+        secure: true
+      }, params))
+    };
+    this.users = {
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserSearch
+       * @summary Search for users
+       * @request GET:/users/search
+       * @secure
+       */
+      userSearch: (query, params = {}) => this.request(__spreadValues({
+        path: `/users/search`,
+        method: "GET",
+        query,
+        secure: true,
+        format: "json"
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGet
+       * @summary Get a user
+       * @request GET:/users/{username}
+       * @secure
+       */
+      userGet: (username, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListActivityFeeds
+       * @summary List a user's activity feeds
+       * @request GET:/users/{username}/activities/feeds
+       * @secure
+       */
+      userListActivityFeeds: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/activities/feeds`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListFollowers
+       * @summary List the given user's followers
+       * @request GET:/users/{username}/followers
+       * @secure
+       */
+      userListFollowers: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/followers`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListFollowing
+       * @summary List the users that the given user is following
+       * @request GET:/users/{username}/following
+       * @secure
+       */
+      userListFollowing: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/following`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCheckFollowing
+       * @summary Check if one user is following another user
+       * @request GET:/users/{username}/following/{target}
+       * @secure
+       */
+      userCheckFollowing: (username, target, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/following/${target}`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListGpgKeys
+       * @summary List the given user's GPG keys
+       * @request GET:/users/{username}/gpg_keys
+       * @secure
+       */
+      userListGpgKeys: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/gpg_keys`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetHeatmapData
+       * @summary Get a user's heatmap
+       * @request GET:/users/{username}/heatmap
+       * @secure
+       */
+      userGetHeatmapData: (username, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/heatmap`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListKeys
+       * @summary List the given user's public keys
+       * @request GET:/users/{username}/keys
+       * @secure
+       */
+      userListKeys: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/keys`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgListUserOrgs
+       * @summary List a user's organizations
+       * @request GET:/users/{username}/orgs
+       * @secure
+       */
+      orgListUserOrgs: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/orgs`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags organization
+       * @name OrgGetUserPermissions
+       * @summary Get user permissions in organization
+       * @request GET:/users/{username}/orgs/{org}/permissions
+       * @secure
+       */
+      orgGetUserPermissions: (username, org, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/orgs/${org}/permissions`,
+        method: "GET",
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListRepos
+       * @summary List the repos owned by the given user
+       * @request GET:/users/{username}/repos
+       * @secure
+       */
+      userListRepos: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/repos`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListStarred
+       * @summary The repos that the given user has starred
+       * @request GET:/users/{username}/starred
+       * @secure
+       */
+      userListStarred: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/starred`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserListSubscriptions
+       * @summary List the repositories watched by a user
+       * @request GET:/users/{username}/subscriptions
+       * @secure
+       */
+      userListSubscriptions: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/subscriptions`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserGetTokens
+       * @summary List the specified user's access tokens
+       * @request GET:/users/{username}/tokens
+       * @secure
+       */
+      userGetTokens: (username, query, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/tokens`,
+        method: "GET",
+        query,
+        secure: true
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserCreateToken
+       * @summary Generate an access token for the specified user
+       * @request POST:/users/{username}/tokens
+       * @secure
+       */
+      userCreateToken: (username, body, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/tokens`,
+        method: "POST",
+        body,
+        secure: true,
+        type: "application/json" /* Json */
+      }, params)),
+      /**
+       * No description
+       *
+       * @tags user
+       * @name UserDeleteAccessToken
+       * @summary Delete an access token from the specified user's account
+       * @request DELETE:/users/{username}/tokens/{token}
+       * @secure
+       */
+      userDeleteAccessToken: (username, token, params = {}) => this.request(__spreadValues({
+        path: `/users/${username}/tokens/${token}`,
+        method: "DELETE",
+        secure: true
+      }, params))
+    };
+    this.version = {
+      /**
+       * No description
+       *
+       * @tags miscellaneous
+       * @name GetVersion
+       * @summary Returns the version of the running application
+       * @request GET:/version
+       * @secure
+       */
+      getVersion: (params = {}) => this.request(__spreadValues({
+        path: `/version`,
+        method: "GET",
+        secure: true
+      }, params))
+    };
+  }
+};
+
+// src/index.ts
+function forgejoApi(baseUrl, options) {
+  return new Api(__spreadProps(__spreadValues({}, options), {
+    baseUrl: `${baseUrl}/api/v1`,
+    baseApiParams: {
+      format: "json"
+    },
+    securityWorker: (securityData) => {
+      if (!(options == null ? void 0 : options.token)) {
+        return;
+      }
+      return {
+        secure: true,
+        headers: {
+          Authorization: `Bearer ${options.token}`
+        }
+      };
+    }
+  }));
+}
+
+/**
+ * @title Forgejo API
+ * @version 14.0.0-155-f6480949+gitea-1.22.0
+ * @license This file is distributed under the MIT license for the purpose of interoperability (http://opensource.org/licenses/MIT)
+ * @baseUrl /api/v1
+ *
+ * This documentation describes the Forgejo API.
+ */
+
+;// CONCATENATED MODULE: ./node_modules/@greem/forgejo-actions/lib/forgejo.js
+
+
+const context = new Context();
+/**
+ * Returns a hydrated API client ready to use for Forgejo Actions
+ */
+function forgejoClient(baseUrl, options) {
+    if (options != undefined && options.token === undefined) {
+        options.token = process.env.FORGEJO_TOKEN;
+    }
+    if (baseUrl === undefined) {
+        baseUrl = context.serverUrl;
+    }
+    return forgejoApi(baseUrl, options);
+}
+
 // EXTERNAL MODULE: ./node_modules/@actions/glob/lib/glob.js
 var glob = __nccwpck_require__(8090);
 // EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
 var io = __nccwpck_require__(7436);
-// EXTERNAL MODULE: ./node_modules/@octokit/plugin-request-log/dist-node/index.js
-var dist_node = __nccwpck_require__(8883);
-// EXTERNAL MODULE: ./node_modules/@octokit/plugin-retry/dist-node/index.js
-var plugin_retry_dist_node = __nccwpck_require__(6298);
 ;// CONCATENATED MODULE: ./src/async-function.ts
 const AsyncFunction = Object.getPrototypeOf(async () => null).constructor;
 function callAsyncFunction(args, source) {
     const fn = new AsyncFunction(...Object.keys(args), source);
     return fn(...Object.values(args));
-}
-
-;// CONCATENATED MODULE: ./src/retry-options.ts
-
-function getRetryOptions(retries, exemptStatusCodes, defaultOptions) {
-    var _a;
-    if (retries <= 0) {
-        return [{ enabled: false }, defaultOptions.request];
-    }
-    const retryOptions = {
-        enabled: true
-    };
-    if (exemptStatusCodes.length > 0) {
-        retryOptions.doNotRetry = exemptStatusCodes;
-    }
-    // The GitHub type has some defaults for `options.request`
-    // see: https://github.com/actions/toolkit/blob/4fbc5c941a57249b19562015edbd72add14be93d/packages/github/src/utils.ts#L15
-    // We pass these in here so they are not overidden.
-    const requestOptions = {
-        ...defaultOptions.request,
-        retries
-    };
-    core.debug(`GitHub client configured with: (retries: ${requestOptions.retries}, retry-exempt-status-code: ${(_a = retryOptions.doNotRetry) !== null && _a !== void 0 ? _a : 'octokit default: [400, 401, 403, 404, 422]'})`);
-    return [retryOptions, requestOptions];
-}
-function parseNumberArray(listString) {
-    if (!listString) {
-        return [];
-    }
-    const split = listString.trim().split(',');
-    return split.map(x => parseInt(x));
 }
 
 // EXTERNAL MODULE: external "path"
@@ -36252,44 +37764,19 @@ const wrapRequire = new Proxy(require, {
 
 
 
-
-
-
-
 process.on('unhandledRejection', handleError);
 main().catch(handleError);
 async function main() {
-    const token = core.getInput('github-token', { required: true });
-    const debug = core.getBooleanInput('debug');
-    const userAgent = core.getInput('user-agent');
-    const previews = core.getInput('previews');
+    const token = core.getInput('forgejo-token', { required: true });
     const baseUrl = core.getInput('base-url');
-    const retries = parseInt(core.getInput('retries'));
-    const exemptStatusCodes = parseNumberArray(core.getInput('retry-exempt-status-codes'));
-    const [retryOpts, requestOpts] = getRetryOptions(retries, exemptStatusCodes, utils.defaults);
-    const baseUserAgent = userAgent || 'actions/github-script';
-    const finalUserAgent = getUserAgentWithOrchestrationId(baseUserAgent);
-    const opts = {
-        log: debug ? console : undefined,
-        userAgent: finalUserAgent,
-        previews: previews ? previews.split(',') : undefined,
-        retry: retryOpts,
-        request: requestOpts
-    };
-    // Setting `baseUrl` to undefined will prevent the default value from being used
-    // https://github.com/actions/github-script/issues/436
-    if (baseUrl) {
-        opts.baseUrl = baseUrl;
-    }
-    const github = (0,lib_github.getOctokit)(token, opts, plugin_retry_dist_node.retry, dist_node.requestLog);
+    const forgejo = forgejoClient(baseUrl, { token: token });
     const script = core.getInput('script', { required: true });
     // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
     const result = await callAsyncFunction({
         require: wrapRequire,
         __original_require__: require,
-        github,
-        octokit: github,
-        context: lib_github.context,
+        forgejo,
+        context: context,
         core: core,
         exec: exec,
         glob: glob,
@@ -36314,20 +37801,6 @@ async function main() {
 function handleError(err) {
     console.error(err);
     core.setFailed(`Unhandled error: ${err}`);
-}
-/**
- * Gets the user agent string with orchestration ID appended if available
- * @param userAgent The base user agent string
- * @returns The user agent string with orchestration ID appended if ACTIONS_ORCHESTRATION_ID is set
- */
-function getUserAgentWithOrchestrationId(userAgent) {
-    const orchestrationId = process.env['ACTIONS_ORCHESTRATION_ID'];
-    if (!orchestrationId) {
-        return userAgent;
-    }
-    // Sanitize orchestration ID - replace invalid characters with underscore
-    const sanitized = orchestrationId.replace(/[^a-zA-Z0-9._-]/g, '_');
-    return `${userAgent} actions_orchestration_id/${sanitized}`;
 }
 
 })();

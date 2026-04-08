@@ -1,1 +1,3 @@
 /node_modules/
+/packagelib/forgejo/node_modules
+/packagelib/forgejo/lib
