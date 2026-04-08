@@ -44,8 +44,8 @@ jobs:
           forgejo-token: ${{ secrets.FJTOKEN }}
       - run: |
           echo "- Validating relative require output"
-          if [[ "${{steps.relative-require.outputs.result}}" != "@actions/github-script" ]]; then
-            echo $'::error::\u274C' "Expected '$expected', got ${{steps.relative-require.outputs.result}}"
+          if [[ "${{steps.relative-require.outputs.result}}" != "@greem/forgejo-script" ]]; then
+            echo $'::error::\u274C' "Expected '@greem/forgejo-script', got ${{steps.relative-require.outputs.result}}"
             exit 1
           fi
           echo $'\u2705 Test passed' | tee -a $GITHUB_STEP_SUMMARY
