@@ -14,7 +14,7 @@ jobs:
     name: 'Integration test: return'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - id: output-set
         uses: ./
         with:
@@ -34,7 +34,7 @@ jobs:
     name: 'Integration test: relative-path require'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - id: relative-require
         uses: ./
         with:
@@ -52,7 +52,7 @@ jobs:
     name: 'Integration test: npm package require'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/install-dependencies
       - id: npm-require
         uses: ./
