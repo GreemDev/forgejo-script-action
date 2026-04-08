@@ -1,0 +1,55 @@
+{
+  "name": "@greem/forgejo-actions",
+  "version": "1.0.0",
+  "description": "Actions forgejo lib",
+  "keywords": [
+    "github",
+    "actions"
+  ],
+  "homepage": "https://github.com/GreemDev/forgejo-script-action/tree/main/packagelib/github",
+  "license": "MIT",
+  "type": "module",
+  "main": "lib/forgejo.js",
+  "types": "lib/forgejo.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/forgejo.d.ts",
+      "import": "./lib/forgejo.js"
+    }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib",
+    "!.DS_Store"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GreemDev/forgejo-script-action.git",
+    "directory": "packageslib/forgejo"
+  },
+  "scripts": {
+    "audit-moderate": "npm install && npm audit --json --audit-level=moderate > audit.json",
+    "test": "jest",
+    "build": "tsc",
+    "format": "prettier --write **/*.ts",
+    "format-check": "prettier --check **/*.ts",
+    "tsc": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/GreemDev/forgejo-script-action/issues"
+  },
+  "dependencies": {
+    "@actions/http-client": "^3.0.2",
+    "@greem/forgejo-js": "14.0.0",
+    "undici": "^6.23.0"
+  },
+  "devDependencies": {
+    "proxy": "^2.1.1"
+  }
+}
