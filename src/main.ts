@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
-import { forgejoClient, context } from '@greem/forgejo-actions'
+import {forgejoClient, context} from '@greem/forgejo-actions'
 import * as glob from '@actions/glob'
 import * as io from '@actions/io'
 import {callAsyncFunction} from './async-function'
@@ -10,10 +10,12 @@ process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
 async function main(): Promise<void> {
-  const token = core.getInput('forgejo-token', {required: !(process.env.FORGEJO_ACTIONS === "true")})
+  const token = core.getInput('forgejo-token', {
+    required: !(process.env.FORGEJO_ACTIONS === 'true')
+  })
   const baseUrl = core.getInput('base-url')
 
-  const forgejo = forgejoClient(baseUrl, { token: token })
+  const forgejo = forgejoClient(baseUrl, {token: token})
   const script = core.getInput('script', {required: true})
 
   // Using property/value shorthand on `require` (e.g. `{require}`) causes compilation errors.
