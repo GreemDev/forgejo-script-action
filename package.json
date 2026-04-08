@@ -12,9 +12,9 @@
   "scripts": {
     "build": "npm run build:types && ncc build src/main.ts",
     "build:types": "tsc src/async-function.ts -t es5 --declaration --allowJs --emitDeclarationOnly --outDir types",
-    "format:check": "prettier --check src __test__",
-    "format:write": "prettier --write src __test__",
-    "lint": "eslint src __test__",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "lint": "eslint src",
     "style:check": "run-p --continue-on-error --aggregate-output format:check lint",
     "style:write": "run-p --continue-on-error --aggregate-output format:write lint",
     "pre-commit": "exit 0",
