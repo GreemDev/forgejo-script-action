@@ -10,7 +10,7 @@ process.on('unhandledRejection', handleError)
 main().catch(handleError)
 
 async function main(): Promise<void> {
-  const token = core.getInput('forgejo-token', {required: true})
+  const token = core.getInput('forgejo-token', {required: !(process.env.FORGEJO_ACTIONS === "true")})
   const baseUrl = core.getInput('base-url')
 
   const forgejo = forgejoClient(baseUrl, { token: token })
