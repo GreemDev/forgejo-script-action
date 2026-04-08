@@ -21,6 +21,7 @@ jobs:
           script: return core.getInput('input-value')
           result-encoding: string
           input-value: output
+          forgejo-token: ${{ secrets.FJTOKEN }}
       - run: |
           echo "- Validating output is produced"
           expected="output"
@@ -40,6 +41,7 @@ jobs:
         with:
           script: return require('./package.json').name
           result-encoding: string
+          forgejo-token: ${{ secrets.FJTOKEN }}
       - run: |
           echo "- Validating relative require output"
           if [[ "${{steps.relative-require.outputs.result}}" != "@actions/github-script" ]]; then
@@ -59,6 +61,7 @@ jobs:
         with:
           script: return require('@actions/core/package.json').name
           result-encoding: string
+          forgejo-token: ${{ secrets.FJTOKEN }}
       - run: |
           echo "- Validating npm require output"
           expected="@actions/core"
